@@ -1,4 +1,4 @@
-package sofa;
+package com.sw19.sofa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
