@@ -1,6 +1,5 @@
-package com.sw19.sofa.domain.Tag.entity;
+package com.sw19.sofa.domain.tag.entity;
 
-import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

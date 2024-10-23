@@ -1,6 +1,6 @@
 package com.sw19.sofa.domain.folder.entity;
 
-import com.sw19.sofa.domain.Tag.entity.Tag;
+import com.sw19.sofa.domain.tag.entity.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
