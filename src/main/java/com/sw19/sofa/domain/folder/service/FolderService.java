@@ -6,6 +6,7 @@ import com.sw19.sofa.domain.folder.repository.FolderRepository;
 import com.sw19.sofa.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class FolderService {
 
     private final FolderRepository folderRepository;
 
+    @Transactional(readOnly = true)
     public FolderListRes getFolderList(Member member) {
         List<FolderDto> folderDtoList = folderRepository.findAllByMember(member).stream().map(FolderDto::new).toList();
         return new FolderListRes(folderDtoList);
