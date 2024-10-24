@@ -28,8 +28,8 @@ public class FolderController implements FolderApi {
 
     @Override
     @PostMapping
-    public ResponseEntity<FolderListRes> addFolder(@AuthMember Member member, @RequestParam String name) {
-        FolderListRes res = folderService.addFolder(member, name);
+    public ResponseEntity<FolderListRes> addFolder(@AuthMember Member member, @RequestBody FolderReq req) {
+        FolderListRes res = folderService.addFolder(member, req);
         return BaseResponse.ok(res);
     }
 

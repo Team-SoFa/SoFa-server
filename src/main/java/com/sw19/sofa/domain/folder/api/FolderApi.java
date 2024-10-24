@@ -25,7 +25,7 @@ public interface FolderApi {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "폴더 추가 후 전체 폴더(아이디, 폴더 이름) 리스트 반환")
     })
-    ResponseEntity<FolderListRes> addFolder(Member member, String name);
+    ResponseEntity<FolderListRes> addFolder(Member member, FolderReq req);
 
     @Operation(summary = "폴더 삭제", description = "폴더 아이디를 통해 폴더를 삭제합니다.")
     @ApiResponses({

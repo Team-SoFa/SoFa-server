@@ -29,9 +29,9 @@ public class FolderService {
     }
 
     @Transactional
-    public FolderListRes addFolder(Member member, String name) {
+    public FolderListRes addFolder(Member member, FolderReq req) {
         Folder folder = Folder.builder()
-                .name(name)
+                .name(req.name())
                 .build();
         folderRepository.save(folder);
         return getFolderList(member);
