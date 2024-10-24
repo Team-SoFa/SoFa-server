@@ -1,12 +1,3 @@
----
-name: 풀 리퀘 리포트
-about: Describe this issue template's purpose here.
-title: "[Feat] 이슈 제목"
-labels: ''
-assignees: ''
-
----
-
 ## 📌 작업 내용
 - 내용을 적어주세요.
 
