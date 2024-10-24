@@ -23,15 +23,17 @@ public class LinkCard {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "article_id")
     private Article article;
+    private String memo;
     @Column(name = "is_share")
     private String isShare;
     @Column(name = "visited_at")
     private LocalDateTime visitedAt;
 
     @Builder
-    public LinkCard(Folder folder, Article article, String isShare, LocalDateTime visitedAt) {
+    public LinkCard(Folder folder, Article article, String memo, String isShare, LocalDateTime visitedAt) {
         this.folder = folder;
         this.article = article;
+        this.memo = memo;
         this.isShare = isShare;
         this.visitedAt = visitedAt;
     }
