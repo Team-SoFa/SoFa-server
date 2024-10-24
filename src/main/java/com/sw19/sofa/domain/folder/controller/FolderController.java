@@ -8,9 +8,7 @@ import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +21,13 @@ public class FolderController implements FolderApi {
     @GetMapping
     public ResponseEntity<FolderListRes> getFolderList(@AuthMember Member member) {
         FolderListRes res = folderService.getFolderList(member);
+        return BaseResponse.ok(res);
+    }
+
+    @Override
+    @PostMapping
+    public ResponseEntity<FolderListRes> addFolder(@AuthMember Member member, @RequestParam String name) {
+        FolderListRes res = folderService.addFolder(member, name);
         return BaseResponse.ok(res);
     }
 }

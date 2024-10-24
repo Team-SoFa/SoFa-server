@@ -12,7 +12,13 @@ import org.springframework.http.ResponseEntity;
 public interface FolderApi {
     @Operation(summary = "전체 폴더 목록 조회", description = "전체 폴더 목록에 대해 아이디와 이름 정보를 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "전체 폴더 정보(아이디, 폴더 이름) 리스트")
+            @ApiResponse(responseCode = "200", description = "전체 폴더(아이디, 폴더 이름) 리스트 반환")
     })
     ResponseEntity<FolderListRes> getFolderList(Member member);
+
+    @Operation(summary = "폴더 추가", description = "새로운 폴더를 추가합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "폴더 추가 후 전체 폴더(아이디, 폴더 이름) 리스트 반환")
+    })
+    ResponseEntity<FolderListRes> addFolder(Member member, String name);
 }
