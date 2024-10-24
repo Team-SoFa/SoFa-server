@@ -1,11 +1,14 @@
 package com.sw19.sofa.domain.linkcard.entity;
 
+import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -17,17 +20,19 @@ public class LinkCard {
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "folder_id")
     private Folder folder;
-    private String url;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "article_id")
+    private Article article;
     @Column(name = "is_share")
     private String isShare;
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "visited_at")
+    private LocalDateTime visitedAt;
 
     @Builder
-    public LinkCard(Folder folder, String url, String isShare, String imageUrl) {
+    public LinkCard(Folder folder, Article article, String isShare, LocalDateTime visitedAt) {
         this.folder = folder;
-        this.url = url;
+        this.article = article;
         this.isShare = isShare;
-        this.imageUrl = imageUrl;
+        this.visitedAt = visitedAt;
     }
 }
