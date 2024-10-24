@@ -1,6 +1,8 @@
 package com.sw19.sofa.domain.folder.api;
 
+import com.sw19.sofa.domain.folder.dto.request.FolderReq;
 import com.sw19.sofa.domain.folder.dto.response.FolderListRes;
+import com.sw19.sofa.domain.folder.dto.response.FolderRes;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,4 +34,12 @@ public interface FolderApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     ResponseEntity<String> delFolder(String id);
+
+    @Operation(summary = "폴더 수정", description = "폴더 아이디를 통해 폴더 정보를 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "수정 후 폴더 정보(아이디, 이름)"),
+            @ApiResponse(responseCode = "404", description = "code: F-001 | message: 존재하지 않는 폴더입니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    ResponseEntity<FolderRes> editFolder(String id, FolderReq req);
 }

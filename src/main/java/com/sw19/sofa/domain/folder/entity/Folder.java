@@ -29,4 +29,8 @@ public class Folder {
     public String getEncryptId(){
         return EncryptionUtil.encrypt(id);
     }
+
+    public void edit(String name){
+        this.name = name;
+    }
 }

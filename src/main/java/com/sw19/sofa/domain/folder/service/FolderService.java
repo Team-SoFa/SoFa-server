@@ -1,9 +1,9 @@
 package com.sw19.sofa.domain.folder.service;
 
+import com.sw19.sofa.domain.folder.dto.request.FolderReq;
 import com.sw19.sofa.domain.folder.dto.response.FolderListRes;
 import com.sw19.sofa.domain.folder.dto.response.FolderRes;
 import com.sw19.sofa.domain.folder.entity.Folder;
-import com.sw19.sofa.domain.folder.error.FolderErrorCode;
 import com.sw19.sofa.domain.folder.repository.FolderRepository;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.error.exception.BusinessException;
@@ -41,6 +41,14 @@ public class FolderService {
     public void delFolder(String decryptId) {
         Folder folder = findFolder(decryptId);
         folderRepository.delete(folder);
+    }
+
+    @Transactional
+    public FolderRes editFolder(String decryptId, FolderReq req) {
+        Folder folder = findFolder(decryptId);
+        folder.edit(req.name());
+        Folder save = folderRepository.save(folder);
+        return new FolderRes(save);
     }
 
     private Folder findFolder(String decryptId){
