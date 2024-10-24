@@ -30,4 +30,11 @@ public class FolderController implements FolderApi {
         FolderListRes res = folderService.addFolder(member, name);
         return BaseResponse.ok(res);
     }
+
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delFolder(@PathVariable("id") String id) {
+        folderService.delFolder(id);
+        return BaseResponse.ok("폴더 삭제 완료");
+    }
 }

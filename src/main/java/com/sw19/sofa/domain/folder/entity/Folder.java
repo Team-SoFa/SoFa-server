@@ -29,8 +29,4 @@ public class Folder {
     public String getEncryptId(){
         return EncryptionUtil.encrypt(id);
     }
-    public Long getDecryptId(String encryptedId){
-        return EncryptionUtil.decrypt(encryptedId);
-    }
-
 }
