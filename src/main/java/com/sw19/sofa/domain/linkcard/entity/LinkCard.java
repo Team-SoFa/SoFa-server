@@ -23,6 +23,7 @@ public class LinkCard {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "article_id")
     private Article article;
+    private String title;
     private String memo;
     @Column(name = "is_share")
     private Boolean isShare;
@@ -32,9 +33,10 @@ public class LinkCard {
     private LocalDateTime visitedAt;
 
     @Builder
-    public LinkCard(Folder folder, Article article, String memo, Boolean isShare, Boolean isAlarm, LocalDateTime visitedAt) {
+    public LinkCard(Folder folder, Article article, String title, String memo, Boolean isShare, Boolean isAlarm, LocalDateTime visitedAt) {
         this.folder = folder;
         this.article = article;
+        this.title = title;
         this.memo = memo;
         this.isShare = isShare;
         this.isAlarm = isAlarm;
