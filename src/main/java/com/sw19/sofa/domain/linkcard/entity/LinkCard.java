@@ -2,6 +2,7 @@ package com.sw19.sofa.domain.linkcard.entity;
 
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.folder.entity.Folder;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,5 +42,9 @@ public class LinkCard {
         this.isShare = isShare;
         this.isAlarm = isAlarm;
         this.visitedAt = visitedAt;
+    }
+
+    public String getEncryptUserId() {
+        return EncryptionUtil.encrypt(this.id);
     }
 }
