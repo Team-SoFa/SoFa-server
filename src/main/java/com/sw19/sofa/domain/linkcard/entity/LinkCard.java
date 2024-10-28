@@ -25,16 +25,19 @@ public class LinkCard {
     private Article article;
     private String memo;
     @Column(name = "is_share")
-    private String isShare;
+    private Boolean isShare;
+    @Column(name = "is_alarm")
+    private Boolean isAlarm;
     @Column(name = "visited_at")
     private LocalDateTime visitedAt;
 
     @Builder
-    public LinkCard(Folder folder, Article article, String memo, String isShare, LocalDateTime visitedAt) {
+    public LinkCard(Folder folder, Article article, String memo, Boolean isShare, Boolean isAlarm, LocalDateTime visitedAt) {
         this.folder = folder;
         this.article = article;
         this.memo = memo;
         this.isShare = isShare;
+        this.isAlarm = isAlarm;
         this.visitedAt = visitedAt;
     }
 }
