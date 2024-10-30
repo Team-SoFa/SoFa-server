@@ -11,6 +11,7 @@ import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,7 +23,7 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @PostMapping("/ai")
-    public ResponseEntity<CreateLinkCardBasicInfoRes> createLinkCardBasicInfo(@AuthMember Member member, @RequestBody CreateLinkCardBasicInfoReq req) {
+    public ResponseEntity<CreateLinkCardBasicInfoRes> createLinkCardBasicInfo(@AuthMember Member member,@Validated @RequestBody CreateLinkCardBasicInfoReq req) {
         CreateLinkCardBasicInfoRes res = linkCardMangeService.createLinkCardBasicInfo(member, req);
         return BaseResponse.ok(res);
     }
@@ -36,7 +37,7 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @PostMapping
-    public ResponseEntity<String> addLinkCard(@RequestBody  LinkCardReq req) {
+    public ResponseEntity<String> addLinkCard(@Validated @RequestBody  LinkCardReq req) {
         linkCardMangeService.addLinkCard(req);
         return BaseResponse.ok("링크 카드 추가 완료");
     }
