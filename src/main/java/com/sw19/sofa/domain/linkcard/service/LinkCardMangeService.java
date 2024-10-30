@@ -4,6 +4,7 @@ import com.sw19.sofa.domain.ai.service.AiService;
 import com.sw19.sofa.domain.folder.service.FolderTagService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
+import com.sw19.sofa.domain.linkcard.dto.enums.TagType;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
 import com.sw19.sofa.domain.member.entity.Member;
@@ -36,7 +37,7 @@ public class LinkCardMangeService {
         List<FolderWithTagListDto> folderWithTagList = folderTagService.getFolderListWithTagListByFolderIdList(member);
         FolderDto folderDto = aiService.createFolder(req.url(), tagDtoList, folderWithTagList);
 
-        List<LinkCardTagDto> linkCardTagDtoList = tagDtoList.stream().map(LinkCardTagDto::new).toList();
+        List<LinkCardTagDto> linkCardTagDtoList = tagDtoList.stream().map(tagDto -> new LinkCardTagDto(tagDto, TagType.AI)).toList();
         LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(folderDto);
 
         return new CreateLinkCardBasicInfoRes(titleAndStringDto.title(), titleAndStringDto.summary(), linkCardTagDtoList, linkCardFolderDto);
