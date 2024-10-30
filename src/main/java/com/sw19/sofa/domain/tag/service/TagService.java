@@ -1,7 +1,7 @@
 package com.sw19.sofa.domain.tag.service;
 
-import com.sw19.sofa.global.common.dto.TagDto;
 import com.sw19.sofa.domain.tag.repository.TagRepository;
+import com.sw19.sofa.global.common.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +14,12 @@ public class TagService {
 
     public List<TagDto> getTagDtoList(List<String> tagNameList){
         return tagRepository.findAllByNameIn(tagNameList).stream()
+                .map(TagDto::new)
+                .toList();
+    }
+
+    public List<TagDto> getTagDtoListByArticleId(Long articleId){
+        return tagRepository.findAllByArticleId(articleId).stream()
                 .map(TagDto::new)
                 .toList();
     }
