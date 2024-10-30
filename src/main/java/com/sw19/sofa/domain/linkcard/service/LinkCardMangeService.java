@@ -1,14 +1,21 @@
 package com.sw19.sofa.domain.linkcard.service;
 
 import com.sw19.sofa.domain.ai.service.AiService;
+import com.sw19.sofa.domain.article.entity.Article;
+import com.sw19.sofa.domain.article.service.ArticleService;
+import com.sw19.sofa.domain.folder.entity.Folder;
+import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.folder.service.FolderTagService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
+import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
+import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.member.entity.MemberTag;
 import com.sw19.sofa.domain.memberTag.service.MemberTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.dto.*;
@@ -28,6 +35,9 @@ public class LinkCardMangeService {
     private final FolderTagService folderTagService;
     private final LinkCardService linkCardService;
     private final MemberTagService memberTagService;
+    private final FolderService folderService;
+    private final ArticleService articleService;
+    private final LinkCardTagService linkCardTagService;
 
     @Transactional(readOnly = true)
     public CreateLinkCardBasicInfoRes createLinkCardBasicInfo(Member member, CreateLinkCardBasicInfoReq req) {
@@ -61,5 +71,17 @@ public class LinkCardMangeService {
         linkCardTagDtoList.addAll(memberTagDtoList.stream().map(LinkCardTagDto::new).toList());
 
         return new LinkCardRes(linkCard, linkCardTagDtoList);
+    }
+
+    @Transactional
+    public void addLinkCard(LinkCardReq req) {
+        Folder folder = folderService.findFolder(req.folderId());
+        Article article = articleService.getArticleByUrl(req.url());
+
+        LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
+
+        List<Long> memberTagIdList = req.tagList().stream().map(EncryptionUtil::decrypt).toList();
+        List<MemberTag> memberTagList = memberTagService.getMemberTagListById(memberTagIdList);
+        linkCardTagService.addLinkCardTag(linkCard, memberTagList);
     }
 }
