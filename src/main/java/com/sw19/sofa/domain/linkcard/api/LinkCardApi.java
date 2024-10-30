@@ -1,10 +1,14 @@
 package com.sw19.sofa.domain.linkcard.api;
 
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
+import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.global.error.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,4 +28,13 @@ public interface LinkCardApi {
             @ApiResponse(responseCode = "200", description = "링크 카드 정보")
     })
     ResponseEntity<LinkCardRes> getLinkCard(String id);
+
+    @Operation(summary = "링크 카드 추가", description = "링크 카드를 추가합니다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "링크 카드 추가 완료"),
+            @ApiResponse(responseCode = "404", description = "code: AR-001 | message: 기본 정보를 찾지 못했습니다.. <br>" +
+                    "code: F-001 | message: 존재하지 않는 폴더입니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    ResponseEntity<String> addLinkCard(LinkCardReq req);
 }
