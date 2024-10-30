@@ -1,4 +1,4 @@
-package com.sw19.sofa.domain.member.repository;
+package com.sw19.sofa.domain.memberTag.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sw19.sofa.domain.member.entity.MemberTag;

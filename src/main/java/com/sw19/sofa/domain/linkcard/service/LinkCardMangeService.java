@@ -9,7 +9,7 @@ import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
 import com.sw19.sofa.domain.member.entity.Member;
-import com.sw19.sofa.domain.member.service.MemberTagService;
+import com.sw19.sofa.domain.memberTag.service.MemberTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.dto.*;
 import com.sw19.sofa.global.util.EncryptionUtil;

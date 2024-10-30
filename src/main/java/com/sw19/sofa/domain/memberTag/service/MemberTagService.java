@@ -1,6 +1,6 @@
-package com.sw19.sofa.domain.member.service;
+package com.sw19.sofa.domain.memberTag.service;
 
-import com.sw19.sofa.domain.member.repository.MemberTagRepository;
+import com.sw19.sofa.domain.memberTag.repository.MemberTagRepository;
 import com.sw19.sofa.global.common.dto.MemberTagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
