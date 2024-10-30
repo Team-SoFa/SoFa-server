@@ -51,7 +51,8 @@ public class FolderService {
         return new FolderRes(save);
     }
 
-    private Folder findFolder(String decryptId){
+    @Transactional(readOnly = true)
+    public Folder findFolder(String decryptId){
         Long id = EncryptionUtil.decrypt(decryptId);
         return folderRepository.findById(id).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
     }
