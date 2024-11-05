@@ -1,6 +1,7 @@
 package com.sw19.sofa.domain.folder.entity;
 
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,6 +23,14 @@ public class Folder {
     @Builder
     public Folder(Member member, String name) {
         this.member = member;
+        this.name = name;
+    }
+
+    public String getEncryptId(){
+        return EncryptionUtil.encrypt(id);
+    }
+
+    public void edit(String name){
         this.name = name;
     }
 }
