@@ -18,8 +18,8 @@ public class TagService {
                 .toList();
     }
 
-    public List<TagDto> getTagDtoListByArticleId(Long articleId){
-        return tagRepository.findAllByArticleId(articleId).stream()
+    public List<TagDto> getTagDtoListByIdList(List<Long> tagIdList){
+        return tagRepository.findAllByIdIn(tagIdList).stream()
                 .map(TagDto::new)
                 .toList();
     }

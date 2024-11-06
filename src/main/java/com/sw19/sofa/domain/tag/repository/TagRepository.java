@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TagRepository extends JpaRepository<Tag, Long>, TagCustomRepository {
+public interface TagRepository extends JpaRepository<Tag, Long> {
     List<Tag> findAllByNameIn(List<String> nameList);
+    List<Tag> findAllByIdIn(List<Long> id);
 }
