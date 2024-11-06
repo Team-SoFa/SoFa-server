@@ -24,7 +24,7 @@ public record LinkCardDto(
         LinkCardFolderDto folder
 ) {
     public LinkCardDto(LinkCard linkCard) {
-        this(linkCard.getEncryptUserId(),
+        this(linkCard.getEncryptId(),
                 linkCard.getTitle(),
                 linkCard.getMemo(),
                 linkCard.getCreatedAt(),

@@ -40,7 +40,7 @@ public class LinkCard extends BaseTimeEntity {
         this.views = views;
         this.visitedAt = visitedAt;
     }
-    public String getEncryptUserId() {
+    public String getEncryptId() {
         return EncryptionUtil.encrypt(this.id);
     }
 }
