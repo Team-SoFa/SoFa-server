@@ -1,5 +1,6 @@
 package com.sw19.sofa.domain.article.entity;
 
+import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,4 +27,8 @@ public class Article {
         this.imageUrl = imageUrl;
         this.summary = summary;
     }
+    public String getEncryptUserId() {
+        return EncryptionUtil.encrypt(this.id);
+    }
+
 }

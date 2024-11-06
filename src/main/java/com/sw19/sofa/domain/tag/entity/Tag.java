@@ -1,5 +1,6 @@
 package com.sw19.sofa.domain.tag.entity;
 
+import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,4 +20,8 @@ public class Tag {
     public Tag(String name) {
         this.name = name;
     }
+    public String getEncryptUserId() {
+        return EncryptionUtil.encrypt(this.id);
+    }
+
 }
