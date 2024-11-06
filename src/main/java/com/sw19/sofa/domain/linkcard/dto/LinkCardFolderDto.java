@@ -6,8 +6,8 @@ import com.sw19.sofa.global.util.EncryptionUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record LinkCardFolderDto(
-        @Schema(name = "폴더 아이디") String id,
-        @Schema(name = "폴더명") String name
+        @Schema(description = "폴더 아이디") String id,
+        @Schema(description = "폴더명") String name
 ) {
     public LinkCardFolderDto(FolderDto folderDto){
         this(EncryptionUtil.encrypt(folderDto.id()), folderDto.name());

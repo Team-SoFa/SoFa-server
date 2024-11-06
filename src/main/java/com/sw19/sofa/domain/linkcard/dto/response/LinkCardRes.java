@@ -8,21 +8,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 public record LinkCardRes(
-        @Schema(name = "아이디")
+        @Schema(description = "아이디")
         String id,
-        @Schema(name = "제목")
+        @Schema(description = "제목")
         String title,
-        @Schema(name = "링크 주소")
+        @Schema(description = "링크 주소")
         String url,
-        @Schema(name = "이미지 주소")
+        @Schema(description = "이미지 주소")
         String imageUrl,
-        @Schema(name = "AI 요약")
+        @Schema(description = "AI 요약")
         String summary,
-        @Schema(name = "메모")
+        @Schema(description = "메모")
         String memo,
-        @Schema(name = "폴더")
+        @Schema(description = "폴더")
         LinkCardFolderDto folder,
-        @Schema(name = "태그 리스트")
+        @Schema(description = "태그 리스트")
         List<LinkCardTagDto> tagList
 
 ) {
