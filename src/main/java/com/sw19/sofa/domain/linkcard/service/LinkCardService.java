@@ -4,15 +4,20 @@ import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
+import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.error.LinkCardErrorCode;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
+import com.sw19.sofa.global.common.dto.ListRes;
+import com.sw19.sofa.global.common.dto.enums.SortBy;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +42,28 @@ public class LinkCardService {
                 .build();
 
         return linkCardRepository.save(linkCard);
+    }
+
+
+
+    @Transactional(readOnly = true)
+    public ListRes<LinkCardSimpleRes> getLinkCardSimpleResListByFolderIdAndSortCondition(Long folderId,  SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
+        List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderId, sortBy, sortOrder, limit, lastId);
+        boolean hasNext = false;
+
+        if(linkCardList.size() > limit){
+            hasNext = true;
+            linkCardList.remove(limit);
+        }
+
+        List<LinkCardSimpleRes> linkCardSimpleResList = linkCardList.stream().map(LinkCardSimpleRes::new).toList();
+
+        return new ListRes<>(
+                linkCardSimpleResList,
+                limit,
+                linkCardSimpleResList.size(),
+                hasNext
+        );
+
     }
 }
