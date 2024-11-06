@@ -1,4 +1,4 @@
-package com.sw19.sofa.domain.linkcard.entity.enums;
+package com.sw19.sofa.domain.linkcard.enums;
 
 import com.sw19.sofa.global.common.converter.AbstractCodedEnumConverter;
 import com.sw19.sofa.global.common.converter.CodedEnum;
