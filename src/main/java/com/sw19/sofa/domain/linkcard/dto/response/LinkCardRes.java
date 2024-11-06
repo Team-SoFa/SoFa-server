@@ -20,8 +20,6 @@ public record LinkCardRes(
         String summary,
         @Schema(name = "메모")
         String memo,
-        @Schema(name = "알림 여부")
-        Boolean isAlarm,
         @Schema(name = "폴더")
         LinkCardFolderDto folder,
         @Schema(name = "태그 리스트")
@@ -36,7 +34,6 @@ public record LinkCardRes(
                         linkCardDto.article().imageUrl(),
                         linkCardDto.article().summary(),
                         linkCardDto.memo(),
-                        linkCardDto.alarm(),
                         linkCardDto.folder(),
                         linkCardTagDtoList
                 );

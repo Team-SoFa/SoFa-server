@@ -8,19 +8,24 @@ import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.folder.service.FolderTagService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
+import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
+import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
-import com.sw19.sofa.domain.member.entity.MemberTag;
-import com.sw19.sofa.domain.memberTag.service.MemberTagService;
+import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
-import com.sw19.sofa.global.common.dto.*;
+import com.sw19.sofa.global.common.dto.FolderDto;
+import com.sw19.sofa.global.common.dto.FolderWithTagListDto;
+import com.sw19.sofa.global.common.dto.TagDto;
+import com.sw19.sofa.global.common.dto.TitleAndSummaryDto;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +34,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LinkCardMangeService {
     private final AiService aiService;
     private final TagService tagService;
+    private final CustomTagService customTagService;
     private final FolderTagService folderTagService;
     private final LinkCardService linkCardService;
-    private final MemberTagService memberTagService;
     private final FolderService folderService;
     private final ArticleService articleService;
     private final LinkCardTagService linkCardTagService;
@@ -61,14 +67,14 @@ public class LinkCardMangeService {
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
         LinkCardDto linkCard = linkCardService.getLinkCard(linkCardId);
 
+        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.getLinkCardTagSimpleDtoListByLinkCardId(linkCardId);
+
+        List<Long> tagIdList = linkCardTagSimpleDtoList.stream().filter(linkCardTagInfoDto -> linkCardTagInfoDto.tagType().equals(TagType.AI)).map(LinkCardTagSimpleDto::id).toList();
+        List<Long> customIdList = linkCardTagSimpleDtoList.stream().filter(linkCardTagInfoDto -> linkCardTagInfoDto.tagType().equals(TagType.CUSTOM)).map(LinkCardTagSimpleDto::id).toList();
+
         List<LinkCardTagDto> linkCardTagDtoList = new ArrayList<>();
-
-        Long articleId = EncryptionUtil.decrypt(linkCard.article().id());
-        List<TagDto> tagDtoList = tagService.getTagDtoListByArticleId(articleId);
-        linkCardTagDtoList.addAll(tagDtoList.stream().map(LinkCardTagDto::new).toList());
-
-        List<MemberTagDto> memberTagDtoList = memberTagService.getMemberTagDtoListByLinkCardId(linkCardId);
-        linkCardTagDtoList.addAll(memberTagDtoList.stream().map(LinkCardTagDto::new).toList());
+        linkCardTagDtoList.addAll(tagService.getTagDtoListByIdList(tagIdList).stream().map(LinkCardTagDto::new).toList());
+        linkCardTagDtoList.addAll(customTagService.getCustomTagDtoListByIdList(customIdList).stream().map(LinkCardTagDto::new).toList());
 
         return new LinkCardRes(linkCard, linkCardTagDtoList);
     }
@@ -79,9 +85,5 @@ public class LinkCardMangeService {
         Article article = articleService.getArticleByUrl(req.url());
 
         LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
-
-        List<Long> memberTagIdList = req.tagList().stream().map(EncryptionUtil::decrypt).toList();
-        List<MemberTag> memberTagList = memberTagService.getMemberTagListById(memberTagIdList);
-        linkCardTagService.addLinkCardTag(linkCard, memberTagList);
     }
 }
