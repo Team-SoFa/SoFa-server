@@ -25,8 +25,12 @@ public class Folder {
         this.member = member;
         this.name = name;
     }
-    public String getEncryptUserId() {
-        return EncryptionUtil.encrypt(this.id);
+
+    public String getEncryptId(){
+        return EncryptionUtil.encrypt(id);
     }
 
+    public void edit(String name){
+        this.name = name;
+    }
 }
