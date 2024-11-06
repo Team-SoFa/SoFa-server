@@ -1,6 +1,7 @@
 package com.sw19.sofa.domain.folder.entity;
 
 import com.sw19.sofa.domain.tag.entity.Tag;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,4 +27,8 @@ public class FolderTag {
         this.tag = tag;
         this.folder = folder;
     }
+    public String getEncryptUserId() {
+        return EncryptionUtil.encrypt(this.id);
+    }
+
 }

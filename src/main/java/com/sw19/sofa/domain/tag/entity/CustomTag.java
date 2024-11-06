@@ -1,5 +1,7 @@
-package com.sw19.sofa.domain.member.entity;
+package com.sw19.sofa.domain.tag.entity;
 
+import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberTag {
+public class CustomTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,8 +21,12 @@ public class MemberTag {
     private String name;
 
     @Builder
-    public MemberTag(Member member, String name) {
+    public CustomTag(Member member, String name) {
         this.member = member;
         this.name = name;
     }
+    public String getEncryptUserId() {
+        return EncryptionUtil.encrypt(this.id);
+    }
+
 }

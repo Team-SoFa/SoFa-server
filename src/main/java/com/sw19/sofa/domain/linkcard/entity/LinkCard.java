@@ -2,6 +2,7 @@ package com.sw19.sofa.domain.linkcard.entity;
 
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.folder.entity.Folder;
+import com.sw19.sofa.global.common.entity.BaseTimeEntity;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LinkCard {
+public class LinkCard extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,24 +27,19 @@ public class LinkCard {
     private Article article;
     private String title;
     private String memo;
-    @Column(name = "is_share")
-    private Boolean isShare;
-    @Column(name = "is_alarm")
-    private Boolean isAlarm;
+    private Long views;
     @Column(name = "visited_at")
     private LocalDateTime visitedAt;
 
     @Builder
-    public LinkCard(Folder folder, Article article, String title, String memo, Boolean isShare, Boolean isAlarm, LocalDateTime visitedAt) {
+    public LinkCard(Folder folder, Article article, String title, String memo, Long views, LocalDateTime visitedAt) {
         this.folder = folder;
         this.article = article;
         this.title = title;
         this.memo = memo;
-        this.isShare = isShare;
-        this.isAlarm = isAlarm;
+        this.views = views;
         this.visitedAt = visitedAt;
     }
-
     public String getEncryptUserId() {
         return EncryptionUtil.encrypt(this.id);
     }

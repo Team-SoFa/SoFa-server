@@ -1,7 +1,8 @@
 package com.sw19.sofa.domain.linkcard.entity;
 
-import com.sw19.sofa.domain.member.entity.MemberTag;
+import com.sw19.sofa.domain.linkcard.entity.enums.TagType;
 import com.sw19.sofa.global.common.entity.BaseTimeEntity;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,13 +19,20 @@ public class LinkCardTag extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "linkCard_id")
     private LinkCard linkCard;
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "member_tag_id")
-    private MemberTag memberTag;
+    @Column(name = "tag_id")
+    private Long tagId;
+    @Column(name = "tag_type")
+    private TagType tagType;
 
     @Builder
-    public LinkCardTag(LinkCard linkCard, MemberTag memberTag) {
+    public LinkCardTag(LinkCard linkCard, Long tagId, TagType tagType) {
         this.linkCard = linkCard;
-        this.memberTag = memberTag;
+        this.tagId = tagId;
+        this.tagType = tagType;
     }
+
+    public String getEncryptUserId() {
+        return EncryptionUtil.encrypt(this.id);
+    }
+
 }

@@ -27,8 +27,8 @@ public class Article {
         this.imageUrl = imageUrl;
         this.summary = summary;
     }
-
     public String getEncryptUserId() {
-        return EncryptionUtil.encrypt(id);
+        return EncryptionUtil.encrypt(this.id);
     }
+
 }
