@@ -31,9 +31,8 @@ public class LinkCardService {
                 .article(article)
                 .folder(folder)
                 .title(req.title())
-                .isShare(false)
-                .isAlarm(req.isAlarm())
                 .memo(req.memo())
+                .views(0L)
                 .visitedAt(LocalDateTime.now())
                 .build();
 

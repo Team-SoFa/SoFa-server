@@ -16,15 +16,16 @@ public class LinkCardTagService {
     private final LinkCardTagRepository linkCardTagRepository;
 
     @Transactional
-    public List<LinkCardTag> addLinkCardTag(LinkCard linkCard, List<Long> tagIdList){
-        List<LinkCardTag> linkCardTagList = tagIdList.stream().map(
-                tagId -> LinkCardTag.builder()
+    public void addLinkCardTagList(LinkCard linkCard, List<LinkCardTagSimpleDto> tagDtoList){
+        List<LinkCardTag> linkCardTagList = tagDtoList.stream().map(
+                tagDto -> LinkCardTag.builder()
                         .linkCard(linkCard)
-                        .tagId(tagId)
+                        .tagId(tagDto.id())
+                        .tagType(tagDto.tagType())
                         .build()
         ).toList();
 
-         return linkCardTagRepository.saveAll(linkCardTagList);
+        linkCardTagRepository.saveAll(linkCardTagList);
     }
 
     public List<LinkCardTagSimpleDto> getLinkCardTagSimpleDtoListByLinkCardId(Long linkCardId){
