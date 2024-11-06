@@ -19,6 +19,8 @@ public record LinkCardReq(
         @Schema(description = "태그 리스트")
         List<LinkCardTagSimpleDto> tagList,
         @Schema(description = "메모")
-        String memo
+        String memo,
+        @Schema(description = "AI 요약")
+        String summary
 ) {
 }
