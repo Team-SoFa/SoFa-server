@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/linkCard")
+@RequestMapping("/linkCard")
 public class LinkCardController implements LinkCardApi {
 
     private final LinkCardMangeService linkCardMangeService;
@@ -37,7 +37,7 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @PostMapping
-    public ResponseEntity<String> addLinkCard(@Validated @RequestBody  LinkCardReq req) {
+    public ResponseEntity<String> addLinkCard(@Validated @RequestBody LinkCardReq req) {
         linkCardMangeService.addLinkCard(req);
         return BaseResponse.ok("링크 카드 추가 완료");
     }
