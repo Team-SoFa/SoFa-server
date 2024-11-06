@@ -14,15 +14,15 @@ import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
+import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
-import com.sw19.sofa.global.common.dto.FolderDto;
-import com.sw19.sofa.global.common.dto.FolderWithTagListDto;
-import com.sw19.sofa.global.common.dto.TagDto;
-import com.sw19.sofa.global.common.dto.TitleAndSummaryDto;
+import com.sw19.sofa.global.common.dto.*;
+import com.sw19.sofa.global.common.dto.enums.SortBy;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,5 +88,13 @@ public class LinkCardMangeService {
 
         linkCardTagService.addLinkCardTagList(linkCard, req.tagList());
 
+    }
+
+    @Transactional(readOnly = true)
+    public ListRes<LinkCardSimpleRes> getLinkCardList(String encryptFolderId, SortBy sortBy, SortOrder sortOrder, String encryptLastId, int limit) {
+        Long folderId = EncryptionUtil.decrypt(encryptFolderId);
+        Long lastId = EncryptionUtil.decrypt(encryptLastId);
+
+        return linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, sortBy, sortOrder, limit, lastId);
     }
 }
