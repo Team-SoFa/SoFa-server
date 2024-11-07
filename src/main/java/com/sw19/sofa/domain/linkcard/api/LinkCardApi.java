@@ -43,7 +43,7 @@ public interface LinkCardApi {
     @Operation(summary = "링크 카드 리스트 조회", description = "링크 카드 리스트를 조회합니다 <br>" +
             "정렬 순서 및 정렬 방식 변경 시 새로운 조회 필요")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "링크 카드 간소화 리스트")
+            @ApiResponse(responseCode = "200", description = "링크 카드 간소화(아이디, 제목, 이미지, url) 리스트")
     })
     ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
             @Schema(description = "폴더 아이디") String folderId,
