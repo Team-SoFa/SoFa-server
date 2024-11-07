@@ -86,4 +86,10 @@ public class LinkCardService {
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
         linkCard.editFolder(folder);
     }
+
+    @Transactional
+    public void enterLinkCard(LinkCard linkCard) {
+        linkCard.enter();
+        linkCardRepository.save(linkCard);
+    }
 }

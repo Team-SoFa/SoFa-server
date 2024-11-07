@@ -136,4 +136,13 @@ public class LinkCardMangeService {
         linkCardService.editLinkCardFolder(linkCardId,folder);
         return new LinkCardFolderRes(folder);
     }
+
+    @Transactional
+    public void enterLinkCard(String encryptId) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptId);
+
+        LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
+        linkCardService.enterLinkCard(linkCard);
+        articleService.enterArticle(linkCard.getArticle());
+    }
 }

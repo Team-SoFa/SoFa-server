@@ -15,13 +15,13 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String url;
-    private String views;
+    private Long views;
     @Column(name = "image_url")
     private String imageUrl;
     private String summary;
 
     @Builder
-    public Article(String url, String views, String imageUrl, String summary) {
+    public Article(String url, Long views, String imageUrl, String summary) {
         this.url = url;
         this.views = views;
         this.imageUrl = imageUrl;
@@ -31,4 +31,7 @@ public class Article {
         return EncryptionUtil.encrypt(this.id);
     }
 
+    public void enter() {
+        this.views += 1;
+    }
 }

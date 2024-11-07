@@ -17,4 +17,10 @@ public class ArticleService {
     public Article getArticleByUrl(String url){
         return articleRepository.findByUrl(url).orElseThrow(() -> new BusinessException(ArticleErrorCode.NOT_FOUND_ARTICLE));
     }
+
+    @Transactional
+    public void enterArticle(Article article) {
+        article.enter();
+        articleRepository.save(article);
+    }
 }
