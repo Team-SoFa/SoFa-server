@@ -34,6 +34,6 @@ public class LinkCardTagService {
     }
 
     public void deleteLinkCardTag(Long linkCardId, Long tagId, TagType tagType) {
-        linkCardTagRepository.deleteByLinkCardIdAndTagIdAndTagType(linkCardId, tagId, tagType);
+        linkCardTagRepository.deleteByLinkCard_IdAndTagIdAndTagType(linkCardId, tagId, tagType);
     }
 }

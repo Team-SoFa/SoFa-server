@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface LinkCardTagRepository extends JpaRepository<LinkCardTag, Long> {
     List<LinkCardTag> findAllByLinkCardId(Long linkCardId);
-    void deleteByLinkCardIdAndTagIdAndTagType(Long linkCardId, Long tagId, TagType tagType);
+    void deleteByLinkCard_IdAndTagIdAndTagType(Long linkCardId, Long tagId, TagType tagType);
 }
