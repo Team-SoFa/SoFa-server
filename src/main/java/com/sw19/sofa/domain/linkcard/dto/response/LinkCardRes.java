@@ -32,7 +32,7 @@ public record LinkCardRes(
                         linkCardDto.title(),
                         linkCardDto.article().url(),
                         linkCardDto.article().imageUrl(),
-                        linkCardDto.article().summary(),
+                        linkCardDto.summary(),
                         linkCardDto.memo(),
                         linkCardDto.folder(),
                         linkCardTagDtoList

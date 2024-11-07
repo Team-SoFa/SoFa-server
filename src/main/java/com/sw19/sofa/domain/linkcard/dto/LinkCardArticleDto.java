@@ -9,11 +9,9 @@ public record LinkCardArticleDto(
         @Schema(description = "링크 주소")
         String url,
         @Schema(description = "이미지 주소")
-        String imageUrl,
-        @Schema(description = "AI 요약")
-        String summary
+        String imageUrl
 ) {
     public LinkCardArticleDto(Article article) {
-        this(article.getEncryptUserId(), article.getUrl(), article.getImageUrl(), article.getSummary());
+        this(article.getEncryptUserId(), article.getUrl(), article.getImageUrl());
     }
 }
