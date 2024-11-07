@@ -50,4 +50,8 @@ public class LinkCard extends BaseTimeEntity {
         this.memo = memo;
         this.summary = summary;
     }
+
+    public void editFolder(Folder folder){
+        this.folder = folder;
+    }
 }

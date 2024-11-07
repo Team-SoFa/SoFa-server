@@ -72,11 +72,18 @@ public class LinkCardService {
 
     }
 
+    @Transactional
     public LinkCardInfoRes editLinkCardInfo(Long id, String title, String memo, String summary) {
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
         linkCard.editInfo(title,memo,summary);
         LinkCard save = linkCardRepository.save(linkCard);
 
         return new LinkCardInfoRes(save);
+    }
+
+    @Transactional
+    public void editLinkCardFolder(Long id, Folder folder){
+        LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
+        linkCard.editFolder(folder);
     }
 }

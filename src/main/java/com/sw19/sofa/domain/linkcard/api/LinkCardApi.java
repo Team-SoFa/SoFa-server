@@ -1,10 +1,8 @@
 package com.sw19.sofa.domain.linkcard.api;
 
-import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
-import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
-import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
-import com.sw19.sofa.domain.linkcard.dto.request.LinkCardTagListReq;
+import com.sw19.sofa.domain.linkcard.dto.request.*;
 import com.sw19.sofa.domain.linkcard.dto.response.*;
+import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
@@ -69,5 +67,23 @@ public interface LinkCardApi {
     })
     ResponseEntity<LinkCardTagListRes> addLinkCardTag(
             @Schema(description = "링크 카드 아이디") String id, LinkCardTagListReq req
+    );
+
+    @Operation(summary = "링크 카드 태그 삭제", description = "링크 카드에 태그를 삭제합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "삭제 성공 메세지")
+    })
+    ResponseEntity<String> deleteLinkCardTag(
+            @Schema(description = "링크 카드 아이디") String id,
+            @Schema(description = "태그 아이디") String tagId,
+            @Schema(description = "태그 타입", example = "AI/CUSTOM") TagType tagType
+    );
+
+    @Operation(summary = "링크 카드 폴더 변경", description = "링크 카드 폴더를 변경합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "변경된 폴더 정보")
+    })
+    ResponseEntity<LinkCardFolderRes> editLinkCardFolder(
+            @Schema(description = "링크 카드 아이디") String id, LinkCardFolderReq req
     );
 }

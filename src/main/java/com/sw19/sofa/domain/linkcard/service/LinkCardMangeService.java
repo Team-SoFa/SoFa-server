@@ -120,4 +120,20 @@ public class LinkCardMangeService {
         return new LinkCardTagListRes(linkCardTagDtoList);
     }
 
+    @Transactional
+    public void deleteLinkCardTag(String encryptLinkCardId, String encryptTagId, TagType tagType) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptLinkCardId);
+        Long tagId = EncryptionUtil.decrypt(encryptTagId);
+
+        linkCardTagService.deleteLinkCardTag(linkCardId, tagId, tagType);
+    }
+
+    @Transactional
+    public LinkCardFolderRes editLinkCardFolder(String encryptLinkCardId, String encryptFolderId) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptLinkCardId);
+
+        Folder folder = folderService.findFolder(encryptFolderId);
+        linkCardService.editLinkCardFolder(linkCardId,folder);
+        return new LinkCardFolderRes(folder);
+    }
 }

@@ -1,11 +1,9 @@
 package com.sw19.sofa.domain.linkcard.controller;
 
 import com.sw19.sofa.domain.linkcard.api.LinkCardApi;
-import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
-import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
-import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
-import com.sw19.sofa.domain.linkcard.dto.request.LinkCardTagListReq;
+import com.sw19.sofa.domain.linkcard.dto.request.*;
 import com.sw19.sofa.domain.linkcard.dto.response.*;
+import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.linkcard.service.LinkCardMangeService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.BaseResponse;
@@ -70,6 +68,24 @@ public class LinkCardController implements LinkCardApi {
             @PathVariable String id, @RequestBody LinkCardTagListReq req
     ) {
         LinkCardTagListRes res = linkCardMangeService.addLinkCardTag(id, req.tagList());
+        return BaseResponse.ok(res);
+    }
+
+    @Override
+    @DeleteMapping("/{id}/tag")
+    public ResponseEntity<String> deleteLinkCardTag(
+            @PathVariable String id, @RequestParam  String tagId, @RequestParam TagType tagType
+    ) {
+        linkCardMangeService.deleteLinkCardTag(id, tagId, tagType);
+        return BaseResponse.ok("삭제 성공");
+    }
+
+    @Override
+    @PatchMapping("/{id}/folder")
+    public ResponseEntity<LinkCardFolderRes> editLinkCardFolder(
+            @PathVariable String id, @RequestBody LinkCardFolderReq req
+    ) {
+        LinkCardFolderRes res = linkCardMangeService.editLinkCardFolder(id,req.id());
         return BaseResponse.ok(res);
     }
 }
