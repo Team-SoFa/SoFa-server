@@ -13,10 +13,7 @@ import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
-import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
+import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
@@ -67,7 +64,7 @@ public class LinkCardMangeService {
     @Transactional(readOnly = true)
     public LinkCardRes getLinkCard(String encryptId){
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
-        LinkCardDto linkCard = linkCardService.getLinkCard(linkCardId);
+        LinkCardDto linkCard = linkCardService.getLinkCardDto(linkCardId);
 
         List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.getLinkCardTagSimpleDtoListByLinkCardId(linkCardId);
 
@@ -106,4 +103,21 @@ public class LinkCardMangeService {
 
         return linkCardService.editLinkCardInfo(linkCardId, req.title(),req.memo(),req.summary());
     }
+
+    @Transactional
+    public LinkCardTagListRes addLinkCardTag(String encryptId, List<LinkCardTagSimpleDto> tagList) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptId);
+        LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
+        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.addLinkCardTagList(linkCard, tagList).stream().map(LinkCardTagSimpleDto::new).toList();
+
+        List<Long> tagIdList = linkCardTagSimpleDtoList.stream().filter(linkCardTagInfoDto -> linkCardTagInfoDto.tagType().equals(TagType.AI)).map(LinkCardTagSimpleDto::id).toList();
+        List<Long> customIdList = linkCardTagSimpleDtoList.stream().filter(linkCardTagInfoDto -> linkCardTagInfoDto.tagType().equals(TagType.CUSTOM)).map(LinkCardTagSimpleDto::id).toList();
+
+        List<LinkCardTagDto> linkCardTagDtoList = new ArrayList<>();
+        linkCardTagDtoList.addAll(tagService.getTagDtoListByIdList(tagIdList).stream().map(LinkCardTagDto::new).toList());
+        linkCardTagDtoList.addAll(customTagService.getCustomTagDtoListByIdList(customIdList).stream().map(LinkCardTagDto::new).toList());
+
+        return new LinkCardTagListRes(linkCardTagDtoList);
+    }
+
 }

@@ -3,10 +3,8 @@ package com.sw19.sofa.domain.linkcard.api;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
-import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
+import com.sw19.sofa.domain.linkcard.dto.request.LinkCardTagListReq;
+import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
@@ -63,5 +61,13 @@ public interface LinkCardApi {
     })
     ResponseEntity<LinkCardInfoRes> editLinkCardInfo(
             @Schema(description = "링크 카드 아이디") String id, LinkCardInfoEditReq req
+    );
+
+    @Operation(summary = "링크 카드 태그 추가", description = "링크 카드에 태그를 추가합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "추가된 태그 정보 리스트")
+    })
+    ResponseEntity<LinkCardTagListRes> addLinkCardTag(
+            @Schema(description = "링크 카드 아이디") String id, LinkCardTagListReq req
     );
 }

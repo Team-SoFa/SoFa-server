@@ -16,7 +16,7 @@ public class LinkCardTagService {
     private final LinkCardTagRepository linkCardTagRepository;
 
     @Transactional
-    public void addLinkCardTagList(LinkCard linkCard, List<LinkCardTagSimpleDto> tagDtoList){
+    public List<LinkCardTag> addLinkCardTagList(LinkCard linkCard, List<LinkCardTagSimpleDto> tagDtoList){
         List<LinkCardTag> linkCardTagList = tagDtoList.stream().map(
                 tagDto -> LinkCardTag.builder()
                         .linkCard(linkCard)
@@ -25,7 +25,7 @@ public class LinkCardTagService {
                         .build()
         ).toList();
 
-        linkCardTagRepository.saveAll(linkCardTagList);
+        return linkCardTagRepository.saveAll(linkCardTagList);
     }
 
     public List<LinkCardTagSimpleDto> getLinkCardTagSimpleDtoListByLinkCardId(Long linkCardId){

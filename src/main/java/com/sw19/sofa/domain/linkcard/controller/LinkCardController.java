@@ -4,10 +4,8 @@ import com.sw19.sofa.domain.linkcard.api.LinkCardApi;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
-import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
-import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
+import com.sw19.sofa.domain.linkcard.dto.request.LinkCardTagListReq;
+import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.service.LinkCardMangeService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.BaseResponse;
@@ -63,6 +61,15 @@ public class LinkCardController implements LinkCardApi {
             @PathVariable String id, @Validated @RequestBody LinkCardInfoEditReq req
     ) {
         LinkCardInfoRes res = linkCardMangeService.editLinkCardInfo(id, req);
+        return BaseResponse.ok(res);
+    }
+
+    @Override
+    @PostMapping("/{id}/tag")
+    public ResponseEntity<LinkCardTagListRes> addLinkCardTag(
+            @PathVariable String id, @RequestBody LinkCardTagListReq req
+    ) {
+        LinkCardTagListRes res = linkCardMangeService.addLinkCardTag(id, req.tagList());
         return BaseResponse.ok(res);
     }
 }
