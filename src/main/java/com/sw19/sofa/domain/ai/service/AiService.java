@@ -33,7 +33,7 @@ public class AiService {
                 .orElse(null);
     }
 
-    public TitleAndSummaryDto createTitleAndStringDto(String url){
+    public TitleAndSummaryDto createTitleAndStummaryDto(String url){
         return new TitleAndSummaryDto("testTitle", "testSummary");
     }
 }

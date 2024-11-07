@@ -3,6 +3,7 @@ package com.sw19.sofa.domain.linkcard.service;
 import com.sw19.sofa.domain.ai.service.AiService;
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.article.service.ArticleService;
+import com.sw19.sofa.domain.article.service.ArticleTagService;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.folder.service.FolderTagService;
@@ -17,6 +18,7 @@ import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.dto.*;
@@ -43,14 +45,30 @@ public class LinkCardMangeService {
     private final FolderService folderService;
     private final ArticleService articleService;
     private final LinkCardTagService linkCardTagService;
+    private final ArticleTagService articleTagService;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public CreateLinkCardBasicInfoRes createLinkCardBasicInfo(Member member, CreateLinkCardBasicInfoReq req) {
+        ArticleDto articleDto = articleService.getArticleDtoByUrlOrElseNull(req.url());
+        List<TagDto> tagDtoList;
+        TitleAndSummaryDto titleAndSummaryDto;
 
-        TitleAndSummaryDto titleAndStringDto = aiService.createTitleAndStringDto(req.url());
+        if(articleDto != null){
+            List<ArticleTagDto> articleTagDtoList = articleTagService.getArticleTagDtoListByArticleId(articleDto.id());
+            titleAndSummaryDto = new TitleAndSummaryDto(articleDto.title(), articleDto.summary());
 
-        List<String> tagList = aiService.createTagList(req.url());
-        List<TagDto> tagDtoList = tagService.getTagDtoList(tagList);
+            List<Long> tagIdList = articleTagDtoList.stream().map(ArticleTagDto::tagId).toList();
+            tagDtoList = tagService.getTagDtoListByIdList(tagIdList);
+        }else{
+            titleAndSummaryDto = aiService.createTitleAndStummaryDto(req.url());
+
+            List<String> tagNameList = aiService.createTagList(req.url());
+            List<Tag> tagList = tagService.getTagList(tagNameList);
+            tagDtoList = tagList.stream().map(TagDto::new).toList();
+
+            Article article = articleService.addArticle(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), req.imageUrl());
+            articleTagService.addArticleTagListByArticleAndTagListIn(article ,tagList);
+        }
 
         List<FolderWithTagListDto> folderWithTagList = folderTagService.getFolderListWithTagListByFolderIdList(member);
         FolderDto folderDto = aiService.createFolder(req.url(), tagDtoList, folderWithTagList);
@@ -58,7 +76,7 @@ public class LinkCardMangeService {
         List<LinkCardTagDto> linkCardTagDtoList = tagDtoList.stream().map(LinkCardTagDto::new).toList();
         LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(folderDto);
 
-        return new CreateLinkCardBasicInfoRes(titleAndStringDto.title(), titleAndStringDto.summary(), linkCardTagDtoList, linkCardFolderDto);
+        return new CreateLinkCardBasicInfoRes(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), linkCardTagDtoList, linkCardFolderDto);
     }
 
     @Transactional(readOnly = true)
