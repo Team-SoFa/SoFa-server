@@ -15,13 +15,15 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String url;
+    private String title;
     private Long views;
     @Column(name = "image_url")
     private String imageUrl;
     private String summary;
 
     @Builder
-    public Article(String url, Long views, String imageUrl, String summary) {
+    public Article(String title, String url, Long views, String imageUrl, String summary) {
+        this.title = title;
         this.url = url;
         this.views = views;
         this.imageUrl = imageUrl;
