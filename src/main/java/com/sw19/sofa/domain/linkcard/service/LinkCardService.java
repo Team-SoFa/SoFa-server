@@ -86,4 +86,9 @@ public class LinkCardService {
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
         linkCard.editFolder(folder);
     }
+
+    public void enterLinkCard(Long id) {
+        LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
+        linkCard.enter();
+    }
 }

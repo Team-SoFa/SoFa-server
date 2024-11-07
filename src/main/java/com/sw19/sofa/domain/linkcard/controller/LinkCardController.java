@@ -88,4 +88,11 @@ public class LinkCardController implements LinkCardApi {
         LinkCardFolderRes res = linkCardMangeService.editLinkCardFolder(id,req.id());
         return BaseResponse.ok(res);
     }
+
+    @Override
+    @PostMapping("/{id}/enter")
+    public ResponseEntity<String> enterLinkCard(@PathVariable String id) {
+        linkCardMangeService.enterLinkCard(id);
+        return  BaseResponse.ok("링크 카드 방문 정보 반영");
+    }
 }

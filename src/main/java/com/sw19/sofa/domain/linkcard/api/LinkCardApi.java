@@ -86,4 +86,12 @@ public interface LinkCardApi {
     ResponseEntity<LinkCardFolderRes> editLinkCardFolder(
             @Schema(description = "링크 카드 아이디") String id, LinkCardFolderReq req
     );
+
+    @Operation(summary = "링크 카드 방문", description = "링크 카드 방문 정보 반영")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "방문 정보 반영 성공 메세지")
+    })
+    ResponseEntity<String> enterLinkCard(
+            @Schema(description = "링크 카드 아이디") String id
+    );
 }

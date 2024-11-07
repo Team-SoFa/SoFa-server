@@ -54,4 +54,9 @@ public class LinkCard extends BaseTimeEntity {
     public void editFolder(Folder folder){
         this.folder = folder;
     }
+
+    public void enter() {
+        this.views += 1;
+        this.visitedAt = LocalDateTime.now();
+    }
 }
