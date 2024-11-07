@@ -7,12 +7,10 @@ import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
-import com.sw19.sofa.domain.linkcard.error.LinkCardErrorCode;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
-import com.sw19.sofa.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +24,14 @@ public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
 
     @Transactional(readOnly = true)
-    public LinkCardDto getLinkCard(Long id){
-        LinkCard linkCard = linkCardRepository.findById(id).orElseThrow(() -> new BusinessException(LinkCardErrorCode.NOT_FOUND_LINK_CARD));
+    public LinkCardDto getLinkCardDto(Long id){
+        LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
         return new LinkCardDto(linkCard);
+    }
+
+    @Transactional(readOnly = true)
+    public LinkCard getLinkCard(Long id){
+        return linkCardRepository.findByIdOrElseThrowException(id);
     }
 
     @Transactional
@@ -70,7 +73,7 @@ public class LinkCardService {
     }
 
     public LinkCardInfoRes editLinkCardInfo(Long id, String title, String memo, String summary) {
-        LinkCard linkCard = linkCardRepository.findById(id).orElseThrow(() -> new BusinessException(LinkCardErrorCode.NOT_FOUND_LINK_CARD));
+        LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
         linkCard.editInfo(title,memo,summary);
         LinkCard save = linkCardRepository.save(linkCard);
 
