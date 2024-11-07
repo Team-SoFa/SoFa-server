@@ -12,6 +12,8 @@ public record LinkCardDto(
         String title,
         @Schema(description = "메모")
         String memo,
+        @Schema(description = "요약")
+        String summary,
         @Schema(description = "생성 시간")
         LocalDateTime createdAt,
         @Schema(description = "수정 시간")
@@ -27,6 +29,7 @@ public record LinkCardDto(
         this(linkCard.getEncryptId(),
                 linkCard.getTitle(),
                 linkCard.getMemo(),
+                linkCard.getSummary(),
                 linkCard.getCreatedAt(),
                 linkCard.getModifiedAt(),
                 linkCard.getVisitedAt(),
