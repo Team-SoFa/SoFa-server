@@ -33,7 +33,7 @@ public interface LinkCardApi {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "링크 카드 정보")
     })
-    ResponseEntity<LinkCardRes> getLinkCard(String id);
+    ResponseEntity<LinkCardRes> getLinkCard(@Schema(description = "링크 카드 아이디") String id);
 
     @Operation(summary = "링크 카드 추가", description = "링크 카드를 추가합니다")
     @ApiResponses({
@@ -49,11 +49,19 @@ public interface LinkCardApi {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "링크 카드 간소화 리스트")
     })
-    ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(String folderId, SortBy sortBy, SortOrder sortOrder, String lastId, int limit);
+    ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
+            @Schema(description = "폴더 아이디") String folderId,
+            @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 조회순)/MOST_VIEWED(최다 조회순)") SortBy sortBy,
+            @Schema(description = "정렬 순서", example = "ASCENDING(오름차순)/DESCENDING(내림차순)") SortOrder sortOrder,
+            @Schema(description = "마지막 링크카드 아이디", example = "처음 조회시에는 0 입력") String lastId,
+            @Schema(description = "요청 갯수") int limit
+    );
 
     @Operation(summary = "링크 카드 타이틀, 메모, 요약 수정", description = "링크 카드의 타이틀, 메모, 요약을 수정합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수정된 링크 카드 타이틀, 메모, 요약 정보")
     })
-    ResponseEntity<LinkCardInfoRes> editLinkCardInfo(String id, LinkCardInfoEditReq req);
+    ResponseEntity<LinkCardInfoRes> editLinkCardInfo(
+            @Schema(description = "링크 카드 아이디") String id, LinkCardInfoEditReq req
+    );
 }

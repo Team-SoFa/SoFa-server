@@ -15,7 +15,6 @@ import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -52,11 +51,7 @@ public class LinkCardController implements LinkCardApi {
     @Override
     @GetMapping("/list/{folderId}")
     public ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
-            @PathVariable @Schema(description = "폴더 아이디") String folderId,
-            @RequestParam @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 조회순)/MOST_VIEWED(최다 조회순)") SortBy sortBy,
-            @RequestParam @Schema(description = "정렬 순서", example = "ASCENDING(오름차순)/DESCENDING(내림차순)") SortOrder sortOrder,
-            @RequestParam @Schema(description = "마지막 링크카드 아이디", example = "처음 조회시에는 0 입력") String lastId,
-            @RequestParam @Schema(description = "요청 갯수") int limit
+            @PathVariable String folderId, @RequestParam SortBy sortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit
     ) {
         ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardList(folderId, sortBy, sortOrder, lastId, limit);
         return BaseResponse.ok(res);
@@ -65,8 +60,7 @@ public class LinkCardController implements LinkCardApi {
     @Override
     @PatchMapping("/{id}/info")
     public ResponseEntity<LinkCardInfoRes> editLinkCardInfo(
-            @PathVariable @Schema(description = "링크 카드 아이디") String id,
-            @Validated @RequestBody LinkCardInfoEditReq req
+            @PathVariable String id, @Validated @RequestBody LinkCardInfoEditReq req
     ) {
         LinkCardInfoRes res = linkCardMangeService.editLinkCardInfo(id, req);
         return BaseResponse.ok(res);
