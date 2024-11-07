@@ -45,4 +45,9 @@ public class LinkCard extends BaseTimeEntity {
     public String getEncryptId() {
         return EncryptionUtil.encrypt(this.id);
     }
+    public void editInfo(String title, String memo, String summary){
+        this.title = title;
+        this.memo = memo;
+        this.summary = summary;
+    }
 }

@@ -2,8 +2,10 @@ package com.sw19.sofa.domain.linkcard.controller;
 
 import com.sw19.sofa.domain.linkcard.api.LinkCardApi;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
+import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
+import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.service.LinkCardMangeService;
@@ -57,6 +59,16 @@ public class LinkCardController implements LinkCardApi {
             @RequestParam @Schema(description = "요청 갯수") int limit
     ) {
         ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardList(folderId, sortBy, sortOrder, lastId, limit);
+        return BaseResponse.ok(res);
+    }
+
+    @Override
+    @PatchMapping("/{id}/info")
+    public ResponseEntity<LinkCardInfoRes> editLinkCardInfo(
+            @PathVariable @Schema(description = "링크 카드 아이디") String id,
+            @Validated @RequestBody LinkCardInfoEditReq req
+    ) {
+        LinkCardInfoRes res = linkCardMangeService.editLinkCardInfo(id, req);
         return BaseResponse.ok(res);
     }
 }

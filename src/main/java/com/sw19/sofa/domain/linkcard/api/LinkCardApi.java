@@ -1,8 +1,10 @@
 package com.sw19.sofa.domain.linkcard.api;
 
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
+import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
+import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.member.entity.Member;
@@ -42,10 +44,16 @@ public interface LinkCardApi {
     })
     ResponseEntity<String> addLinkCard(LinkCardReq req);
 
-    @Operation(summary = "링크 카드 리스트 조회", description = "링크 리스트를 조회합니다 <br>" +
+    @Operation(summary = "링크 카드 리스트 조회", description = "링크 카드 리스트를 조회합니다 <br>" +
             "정렬 순서 및 정렬 방식 변경 시 새로운 조회 필요")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "링크 카드 간소화 리스트")
     })
     ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(String folderId, SortBy sortBy, SortOrder sortOrder, String lastId, int limit);
+
+    @Operation(summary = "링크 카드 타이틀, 메모, 요약 수정", description = "링크 카드의 타이틀, 메모, 요약을 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "수정된 링크 카드 타이틀, 메모, 요약 정보")
+    })
+    ResponseEntity<LinkCardInfoRes> editLinkCardInfo(String id, LinkCardInfoEditReq req);
 }

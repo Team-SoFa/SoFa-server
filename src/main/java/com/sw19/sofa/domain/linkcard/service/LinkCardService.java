@@ -4,6 +4,7 @@ import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
+import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.error.LinkCardErrorCode;
@@ -66,5 +67,13 @@ public class LinkCardService {
                 hasNext
         );
 
+    }
+
+    public LinkCardInfoRes editLinkCardInfo(Long id, String title, String memo, String summary) {
+        LinkCard linkCard = linkCardRepository.findById(id).orElseThrow(() -> new BusinessException(LinkCardErrorCode.NOT_FOUND_LINK_CARD));
+        linkCard.editInfo(title,memo,summary);
+        LinkCard save = linkCardRepository.save(linkCard);
+
+        return new LinkCardInfoRes(save);
     }
 }

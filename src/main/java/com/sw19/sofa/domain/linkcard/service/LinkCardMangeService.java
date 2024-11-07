@@ -11,8 +11,10 @@ import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
+import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.CreateLinkCardBasicInfoRes;
+import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
@@ -96,5 +98,12 @@ public class LinkCardMangeService {
         Long lastId = EncryptionUtil.decrypt(encryptLastId);
 
         return linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, sortBy, sortOrder, limit, lastId);
+    }
+
+    @Transactional
+    public LinkCardInfoRes editLinkCardInfo(String encryptId, LinkCardInfoEditReq req) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptId);
+
+        return linkCardService.editLinkCardInfo(linkCardId, req.title(),req.memo(),req.summary());
     }
 }
