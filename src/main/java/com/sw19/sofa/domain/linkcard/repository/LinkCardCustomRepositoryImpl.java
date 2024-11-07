@@ -47,6 +47,8 @@ public class LinkCardCustomRepositoryImpl implements LinkCardCustomRepository{
             case RECENTLY_SAVED -> new OrderSpecifier<>(order, linkCard.createdAt);
             case RECENTLY_VIEWED -> new OrderSpecifier<>(order, linkCard.visitedAt);
             case MOST_VIEWED -> new OrderSpecifier<>(order, linkCard.views);
+            case RECENTLY_MODIFIED -> new OrderSpecifier<>(order,linkCard.modifiedAt);
+            case NAME -> new OrderSpecifier<>(order,linkCard.title);
         };
     }
 

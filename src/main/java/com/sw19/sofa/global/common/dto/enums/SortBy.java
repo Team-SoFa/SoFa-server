@@ -8,5 +8,9 @@ public enum SortBy {
     @Schema(name = "최근 조회순")
     RECENTLY_VIEWED,
     @Schema(name = "최다 조회순")
-    MOST_VIEWED
+    MOST_VIEWED,
+    @Schema(name = "최근 수정순")
+    RECENTLY_MODIFIED,
+    @Schema(name = "이름순")
+    NAME
 }

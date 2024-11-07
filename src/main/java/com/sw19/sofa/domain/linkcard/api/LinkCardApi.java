@@ -47,7 +47,7 @@ public interface LinkCardApi {
     })
     ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
             @Schema(description = "폴더 아이디") String folderId,
-            @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 방문순)/MOST_VIEWED(최다 방문순)") SortBy sortBy,
+            @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 방문순)/MOST_VIEWED(최다 방문순)/RECENTLY_MODIFIED(최근 수정순)/NAME(이름순)") SortBy sortBy,
             @Schema(description = "정렬 순서", example = "ASCENDING(오름차순)/DESCENDING(내림차순)") SortOrder sortOrder,
             @Schema(description = "마지막 링크카드 아이디", example = "처음 조회시에는 0 입력") String lastId,
             @Schema(description = "요청 갯수") int limit
