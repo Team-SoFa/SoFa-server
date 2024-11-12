@@ -97,4 +97,9 @@ public class LinkCardService {
         linkCard.enter();
         linkCardRepository.save(linkCard);
     }
+
+    @Transactional
+    public void deleteLinkCard(LinkCard linkCard){
+        linkCardRepository.delete(linkCard);
+    }
 }
