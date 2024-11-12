@@ -92,4 +92,11 @@ public class LinkCardService {
         linkCard.enter();
         linkCardRepository.save(linkCard);
     }
+
+    @Transactional
+    public void editLinkCardListInSrcFolderByDstFolder(Folder srcFolder, Folder dstFolder){
+        List<LinkCard> linkCardList = linkCardRepository.findAllByFolder(srcFolder);
+        linkCardList.forEach(linkCard -> linkCard.editFolder(dstFolder));
+        linkCardRepository.saveAll(linkCardList);
+    }
 }

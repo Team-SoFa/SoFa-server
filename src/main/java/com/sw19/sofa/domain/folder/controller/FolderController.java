@@ -35,8 +35,8 @@ public class FolderController implements FolderApi {
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delFolder(@PathVariable("id") String id) {
-        folderMangeService.delFolder(id);
+    public ResponseEntity<String> delFolder(@PathVariable("id") String id, @AuthMember Member member) {
+        folderMangeService.delFolder(id, member);
         return BaseResponse.ok("폴더 삭제 완료");
     }
 
