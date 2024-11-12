@@ -114,8 +114,15 @@ public class LinkCardMangeService {
     public ListRes<LinkCardSimpleRes> getLinkCardList(String encryptFolderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long folderId = EncryptionUtil.decrypt(encryptFolderId);
         Long lastId = EncryptionUtil.decrypt(encryptLastId);
+        ListRes<LinkCard> linkCardListRes = linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, linkCardSortBy, sortOrder, limit, lastId);
+        List<LinkCardSimpleRes> linkCardSimpleResList = linkCardListRes.data().stream().map(LinkCardSimpleRes::new).toList();
 
-        return linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, linkCardSortBy, sortOrder, limit, lastId);
+        return new ListRes<>(
+                linkCardSimpleResList,
+                linkCardListRes.limit(),
+                linkCardListRes.size(),
+                linkCardListRes.hasNext()
+        );
     }
 
     @Transactional
