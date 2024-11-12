@@ -98,7 +98,9 @@ public class LinkCardMangeService {
 
     @Transactional
     public void addLinkCard(LinkCardReq req) {
-        Folder folder = folderService.findFolder(req.folderId());
+        Long folderId = EncryptionUtil.decrypt(req.folderId());
+
+        Folder folder = folderService.findFolder(folderId);
         Article article = articleService.getArticleByUrl(req.url());
 
         LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
@@ -149,8 +151,9 @@ public class LinkCardMangeService {
     @Transactional
     public LinkCardFolderRes editLinkCardFolder(String encryptLinkCardId, String encryptFolderId) {
         Long linkCardId = EncryptionUtil.decrypt(encryptLinkCardId);
+        Long folderId = EncryptionUtil.decrypt(encryptFolderId);
 
-        Folder folder = folderService.findFolder(encryptFolderId);
+        Folder folder = folderService.findFolder(folderId);
         linkCardService.editLinkCardFolder(linkCardId,folder);
         return new LinkCardFolderRes(folder);
     }
