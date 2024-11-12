@@ -34,22 +34,6 @@ public class LinkCardService {
         return linkCardRepository.findByIdOrElseThrowException(id);
     }
 
-    @Transactional
-    public LinkCard addLinkCard(LinkCardReq req, Folder folder, Article article) {
-        LinkCard linkCard = LinkCard.builder()
-                .article(article)
-                .folder(folder)
-                .title(req.title())
-                .memo(req.memo())
-                .summary(req.summary())
-                .views(0L)
-                .visitedAt(LocalDateTime.now())
-                .build();
-
-        return linkCardRepository.save(linkCard);
-    }
-
-
 
     @Transactional(readOnly = true)
     public ListRes<LinkCardSimpleRes> getLinkCardSimpleResListByFolderIdAndSortCondition(Long folderId,  SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
@@ -71,6 +55,20 @@ public class LinkCardService {
         );
 
     }
+    @Transactional
+    public LinkCard addLinkCard(LinkCardReq req, Folder folder, Article article) {
+        LinkCard linkCard = LinkCard.builder()
+                .article(article)
+                .folder(folder)
+                .title(req.title())
+                .memo(req.memo())
+                .summary(req.summary())
+                .views(0L)
+                .visitedAt(LocalDateTime.now())
+                .build();
+
+        return linkCardRepository.save(linkCard);
+    }
 
     @Transactional
     public LinkCardInfoRes editLinkCardInfo(Long id, String title, String memo, String summary) {
@@ -88,15 +86,15 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void enterLinkCard(LinkCard linkCard) {
-        linkCard.enter();
-        linkCardRepository.save(linkCard);
-    }
-
-    @Transactional
     public void editLinkCardListInSrcFolderByDstFolder(Folder srcFolder, Folder dstFolder){
         List<LinkCard> linkCardList = linkCardRepository.findAllByFolder(srcFolder);
         linkCardList.forEach(linkCard -> linkCard.editFolder(dstFolder));
         linkCardRepository.saveAll(linkCardList);
+    }
+
+    @Transactional
+    public void enterLinkCard(LinkCard linkCard) {
+        linkCard.enter();
+        linkCardRepository.save(linkCard);
     }
 }

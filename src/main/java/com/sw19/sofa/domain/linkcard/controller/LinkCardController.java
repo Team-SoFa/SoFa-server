@@ -95,4 +95,11 @@ public class LinkCardController implements LinkCardApi {
         linkCardMangeService.enterLinkCard(id);
         return  BaseResponse.ok("링크 카드 방문 정보 반영");
     }
+
+    @Override
+    @PostMapping("/{id}/delete")
+    public ResponseEntity<String> moveLinkCardToRecycleBin(@PathVariable String id, @AuthMember Member member) {
+        linkCardMangeService.moveLinkCardToRecycleBin(member, id);
+        return  BaseResponse.ok("링크 카드 휴지통 이동 성공");
+    }
 }

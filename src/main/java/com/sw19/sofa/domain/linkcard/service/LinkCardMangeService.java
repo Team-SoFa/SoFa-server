@@ -21,6 +21,7 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
+import com.sw19.sofa.global.common.constants.Constants;
 import com.sw19.sofa.global.common.dto.*;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
@@ -100,7 +101,7 @@ public class LinkCardMangeService {
     public void addLinkCard(LinkCardReq req) {
         Long folderId = EncryptionUtil.decrypt(req.folderId());
 
-        Folder folder = folderService.findFolder(folderId);
+        Folder folder = folderService.getFolder(folderId);
         Article article = articleService.getArticleByUrl(req.url());
 
         LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
@@ -153,7 +154,7 @@ public class LinkCardMangeService {
         Long linkCardId = EncryptionUtil.decrypt(encryptLinkCardId);
         Long folderId = EncryptionUtil.decrypt(encryptFolderId);
 
-        Folder folder = folderService.findFolder(folderId);
+        Folder folder = folderService.getFolder(folderId);
         linkCardService.editLinkCardFolder(linkCardId,folder);
         return new LinkCardFolderRes(folder);
     }
@@ -165,5 +166,14 @@ public class LinkCardMangeService {
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
         linkCardService.enterLinkCard(linkCard);
         articleService.enterArticle(linkCard.getArticle());
+    }
+
+    @Transactional
+    public void moveLinkCardToRecycleBin(Member member, String encryptId) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptId);
+
+        LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
+        Folder recycleBinFolder = folderService.getFolderByNameAndMember(Constants.recycleBinName, member);
+        linkCard.editFolder(recycleBinFolder);
     }
 }

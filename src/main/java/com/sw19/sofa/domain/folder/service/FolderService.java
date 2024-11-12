@@ -52,7 +52,7 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public Folder getFolderByName(String name){
-        return folderRepository.findByName(name).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
+    public Folder getFolderByNameAndMember(String name, Member member){
+        return folderRepository.findByNameAndMember(name, member).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
     }
 }
