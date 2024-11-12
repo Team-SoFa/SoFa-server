@@ -2,6 +2,7 @@ package com.sw19.sofa.domain.recycleBin.api;
 
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.recycleBin.dto.enums.RecycleBinSortBy;
+import com.sw19.sofa.domain.recycleBin.dto.request.RecycleReq;
 import com.sw19.sofa.domain.recycleBin.dto.response.RecycleBinLinkCardRes;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
@@ -18,6 +19,15 @@ public interface RecycleBinApi {
     })
     ResponseEntity<String> permanentlyDelete(
             @Schema(description = "링크카드 아이디") String id
+    );
+
+    @Operation(summary = "복원", description = "링크 카드를 복원 합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "링크 카드 복원 성공 메세지")
+    })
+    ResponseEntity<String> recycle(
+            @Schema(description = "링크카드 아이디") String id,
+            RecycleReq req
     );
 
     @Operation(summary = "휴지통 링크 카드 목록 조회", description = "휴지통 내의 링크 카드 목록을 조회합니다..")

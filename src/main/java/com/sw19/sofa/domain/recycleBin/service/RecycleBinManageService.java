@@ -44,4 +44,12 @@ public class RecycleBinManageService {
                 linkCardListRes.hasNext()
         );
     }
+    @Transactional
+    public void recycle(String encryptLinkCardId, String encryptFolderId) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptLinkCardId);
+        Long folderId = EncryptionUtil.decrypt(encryptFolderId);
+
+        Folder folder = folderService.getFolder(folderId);
+        linkCardService.editLinkCardFolder(linkCardId, folder);
+    }
 }
