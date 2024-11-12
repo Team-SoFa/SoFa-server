@@ -27,20 +27,36 @@ public class LinkCard extends BaseTimeEntity {
     private Article article;
     private String title;
     private String memo;
+    private String summary;
     private Long views;
     @Column(name = "visited_at")
     private LocalDateTime visitedAt;
 
     @Builder
-    public LinkCard(Folder folder, Article article, String title, String memo, Long views, LocalDateTime visitedAt) {
+    public LinkCard(Folder folder, Article article, String title, String memo, String summary, Long views, LocalDateTime visitedAt) {
         this.folder = folder;
         this.article = article;
         this.title = title;
         this.memo = memo;
+        this.summary = summary;
         this.views = views;
         this.visitedAt = visitedAt;
     }
-    public String getEncryptUserId() {
+    public String getEncryptId() {
         return EncryptionUtil.encrypt(this.id);
+    }
+    public void editInfo(String title, String memo, String summary){
+        this.title = title;
+        this.memo = memo;
+        this.summary = summary;
+    }
+
+    public void editFolder(Folder folder){
+        this.folder = folder;
+    }
+
+    public void enter() {
+        this.views += 1;
+        this.visitedAt = LocalDateTime.now();
     }
 }

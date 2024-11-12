@@ -1,6 +1,6 @@
 package com.sw19.sofa.domain.linkcard.entity;
 
-import com.sw19.sofa.domain.linkcard.entity.enums.TagType;
+import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.global.common.entity.BaseTimeEntity;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import jakarta.persistence.*;
@@ -31,7 +31,7 @@ public class LinkCardTag extends BaseTimeEntity {
         this.tagType = tagType;
     }
 
-    public String getEncryptUserId() {
+    public String getEncryptId() {
         return EncryptionUtil.encrypt(this.id);
     }
 
