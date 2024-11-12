@@ -1,6 +1,7 @@
 package com.sw19.sofa.domain.linkcard.controller;
 
 import com.sw19.sofa.domain.linkcard.api.LinkCardApi;
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.domain.linkcard.dto.request.*;
 import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
@@ -8,7 +9,6 @@ import com.sw19.sofa.domain.linkcard.service.LinkCardMangeService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
@@ -47,9 +47,9 @@ public class LinkCardController implements LinkCardApi {
     @Override
     @GetMapping("/list/{folderId}")
     public ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
-            @PathVariable String folderId, @RequestParam SortBy sortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit
+            @PathVariable String folderId, @RequestParam(name = "sortBy") LinkCardSortBy linkCardSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit
     ) {
-        ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardList(folderId, sortBy, sortOrder, lastId, limit);
+        ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardList(folderId, linkCardSortBy, sortOrder, lastId, limit);
         return BaseResponse.ok(res);
     }
 

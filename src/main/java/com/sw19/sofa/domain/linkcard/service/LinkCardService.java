@@ -9,7 +9,7 @@ import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.global.common.dto.enums.SortBy;
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,10 +34,10 @@ public class LinkCardService {
         return linkCardRepository.findByIdOrElseThrowException(id);
     }
 
-
     @Transactional(readOnly = true)
-    public ListRes<LinkCardSimpleRes> getLinkCardSimpleResListByFolderIdAndSortCondition(Long folderId,  SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
-        List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderId, sortBy, sortOrder, limit, lastId);
+    public ListRes<LinkCardSimpleRes> getLinkCardSimpleResListByFolderIdAndSortCondition(Long folderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, int limit, Long lastId){
+        List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderId, linkCardSortBy, sortOrder, limit, lastId);
+
         boolean hasNext = false;
 
         if(linkCardList.size() > limit){

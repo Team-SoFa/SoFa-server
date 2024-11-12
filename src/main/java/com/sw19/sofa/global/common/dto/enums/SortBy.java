@@ -1,16 +1,11 @@
 package com.sw19.sofa.global.common.dto.enums;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.querydsl.core.types.OrderSpecifier;
+import com.sw19.sofa.domain.linkcard.entity.QLinkCard;
 
-public enum SortBy {
-    @Schema(name = "최근 저장순")
-    RECENTLY_SAVED,
-    @Schema(name = "최근 조회순")
-    RECENTLY_VIEWED,
-    @Schema(name = "최다 조회순")
-    MOST_VIEWED,
-    @Schema(name = "최근 수정순")
-    RECENTLY_MODIFIED,
-    @Schema(name = "이름순")
-    NAME
+
+public interface SortBy {
+    QLinkCard linkCard = QLinkCard.linkCard;
+
+    OrderSpecifier<?> getOrderSpecifier(SortOrder sortOrder);
 }
