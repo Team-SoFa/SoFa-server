@@ -2,17 +2,17 @@ package com.sw19.sofa.domain.recycleBin.controller;
 
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.recycleBin.api.RecycleBinApi;
+import com.sw19.sofa.domain.recycleBin.dto.enums.RecycleBinSortBy;
 import com.sw19.sofa.domain.recycleBin.dto.response.RecycleBinLinkCardRes;
 import com.sw19.sofa.domain.recycleBin.service.RecycleBinManageService;
 import com.sw19.sofa.global.common.dto.BaseResponse;
+import com.sw19.sofa.global.common.dto.ListRes;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,8 +29,10 @@ public class RecycleBinController implements RecycleBinApi {
 
     @Override
     @GetMapping
-    public ResponseEntity<RecycleBinLinkCardRes> getLinkCardListInRecycleBin(@AuthMember Member member) {
-        RecycleBinLinkCardRes res = recycleBinManageService.getLinkCardListInRecycleBin(member);
-        return null;
+    public ResponseEntity<ListRes<RecycleBinLinkCardRes>> getLinkCardListInRecycleBin(
+            @AuthMember Member member, @RequestParam(name = "sortBy") RecycleBinSortBy recycleBinSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit
+    ) {
+        ListRes<RecycleBinLinkCardRes> res = recycleBinManageService.getLinkCardListInRecycleBin(member, recycleBinSortBy, sortOrder, lastId, limit);
+        return BaseResponse.ok(res);
     }
 }
