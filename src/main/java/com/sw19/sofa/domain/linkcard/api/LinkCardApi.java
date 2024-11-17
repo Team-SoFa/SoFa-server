@@ -5,8 +5,8 @@ import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.global.common.dto.enums.SortBy;
-import com.sw19.sofa.global.common.dto.enums.SortOrder;
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
+import com.sw19.sofa.global.common.enums.SortOrder;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,7 +47,7 @@ public interface LinkCardApi {
     })
     ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
             @Schema(description = "폴더 아이디") String folderId,
-            @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 방문순)/MOST_VIEWED(최다 방문순)/RECENTLY_MODIFIED(최근 수정순)/NAME(이름순)") SortBy sortBy,
+            @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 방문순)/MOST_VIEWED(최다 방문순)/RECENTLY_MODIFIED(최근 수정순)/NAME(이름순)") LinkCardSortBy linkCardSortBy,
             @Schema(description = "정렬 순서", example = "ASCENDING(오름차순)/DESCENDING(내림차순)") SortOrder sortOrder,
             @Schema(description = "마지막 링크카드 아이디", example = "처음 조회시에는 0 입력") String lastId,
             @Schema(description = "요청 갯수") int limit

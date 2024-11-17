@@ -22,8 +22,8 @@ import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.dto.*;
-import com.sw19.sofa.global.common.dto.enums.SortBy;
-import com.sw19.sofa.global.common.dto.enums.SortOrder;
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
+import com.sw19.sofa.global.common.enums.SortOrder;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,11 +108,11 @@ public class LinkCardMangeService {
     }
 
     @Transactional(readOnly = true)
-    public ListRes<LinkCardSimpleRes> getLinkCardList(String encryptFolderId, SortBy sortBy, SortOrder sortOrder, String encryptLastId, int limit) {
+    public ListRes<LinkCardSimpleRes> getLinkCardList(String encryptFolderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long folderId = EncryptionUtil.decrypt(encryptFolderId);
         Long lastId = EncryptionUtil.decrypt(encryptLastId);
 
-        return linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, sortBy, sortOrder, limit, lastId);
+        return linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, linkCardSortBy, sortOrder, limit, lastId);
     }
 
     @Transactional
