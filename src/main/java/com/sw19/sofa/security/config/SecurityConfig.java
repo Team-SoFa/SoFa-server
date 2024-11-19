@@ -1,5 +1,8 @@
 package com.sw19.sofa.security.config;
 
+import com.sw19.sofa.domain.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.sw19.sofa.domain.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.sw19.sofa.domain.auth.service.CustomOAuth2UserService;
 import com.sw19.sofa.security.jwt.error.CustomAuthenticationEntryPoint;
 import com.sw19.sofa.security.jwt.error.JwtExceptionFilter;
 import com.sw19.sofa.security.jwt.filter.JwtAuthenticationFilter;
@@ -23,6 +26,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;  // 추가
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
     private static final String[] PERMIT_URLS = {
             /* swagger */
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources", "/swagger-resources/**",
@@ -30,15 +38,18 @@ public class SecurityConfig {
             /* health check */
             "/health-check",
 
-            /* auth */
-            "/auth/**",
+            /* oauth2 */
+            "/login/oauth2/**",
+            "/oauth2/**",
+
+            /* favicon */
+            "/favicon.ico"
     };
 
     private static final String[] SEMI_PERMIT_URLS = {
-      //GET만 허용해야 하는 URL
+            //GET만 허용해야 하는 URL
     };
 
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,21 +57,25 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .headers(headerConfig -> headerConfig.frameOptions(FrameOptionsConfig::disable))
-        ;
-
-        http.authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers(PERMIT_URLS).permitAll()
-                                .requestMatchers(HttpMethod.GET, SEMI_PERMIT_URLS).permitAll()
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .requestMatchers("/login/**", "/oauth2/**").permitAll() //test용
                                 .anyRequest().authenticated()
-
-                        )
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .failureHandler(oAuth2AuthenticationFailureHandler)
+                )
                 .exceptionHandling(exceptionConfig ->
                         exceptionConfig.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)
-        ;
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }
