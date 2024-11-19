@@ -43,24 +43,23 @@ public class GoogleOAuth2Service {
                 "&scope=email profile";
     }
 
+
     public OAuth2Response socialLogin(String code) {
         // 1. 구글 OAuth2 Access Token 받기
         String googleAccessToken = getGoogleAccessToken(code);
-        log.debug("Retrieved Google Access Token: {}", googleAccessToken); // Access Token 확인
+        System.out.println("Access Token: " + googleAccessToken);
 
         // 2. 구글 사용자 정보 받기
         GoogleUserResponse userInfo = getGoogleUserInfo(googleAccessToken);
-        log.debug("Retrieved Google User Info: {}", userInfo); // 사용자 정보 확인
+        System.out.println("User Info from Google - email: " + userInfo.getEmail() + ", name: " + userInfo.getName());
 
         // 3. 사용자 정보로 회원가입 또는 로그인 처리
         Member member = saveOrUpdate(userInfo);
-        log.debug("Processed Member: {}", member); // 사용자 정보 저장 확인
+        System.out.println("Saved Member Info - email: " + member.getEmail() + ", name: " + member.getName());
 
         // 4. JWT 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(member.getEncryptUserId());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getEncryptUserId());
-        log.debug("Generated Access Token: {}", accessToken); // Access Token 생성 확인
-        log.debug("Generated Refresh Token: {}", refreshToken); // Refresh Token 생성 확인
 
         return OAuth2Response.builder()
                 .accessToken(accessToken)
@@ -92,7 +91,7 @@ public class GoogleOAuth2Service {
                     GoogleTokenResponse.class
             );
 
-            log.debug("Access Token Response: {}", response); // Google 응답 확인
+            log.debug("Access Token Response: {}", response);
 
             if (response.getBody() != null) {
                 return response.getBody().getAccessToken();
@@ -102,7 +101,7 @@ public class GoogleOAuth2Service {
                     OAuth2ErrorCode.ACCESS_TOKEN_ERROR
             );
         } catch (RestClientException e) {
-            log.error("Failed to get Access Token: {}", e.getMessage()); // 예외 메시지 확인
+            log.error("Failed to get Access Token: {}", e.getMessage());
             throw new OAuth2AuthenticationProcessingException(
                     e.getMessage(),
                     OAuth2ErrorCode.ACCESS_TOKEN_ERROR
@@ -122,18 +121,18 @@ public class GoogleOAuth2Service {
                     entity,
                     GoogleUserResponse.class
             );
-
-            log.debug("User Info Response: {}", response); // Google 응답 확인
-
             if (response.getBody() != null) {
-                return response.getBody();
+
+                GoogleUserResponse userInfo = response.getBody();
+                return userInfo;
+                // return response.getBody();
             }
             throw new OAuth2AuthenticationProcessingException(
                     "사용자 정보를 가져오는데 실패했습니다.",
                     OAuth2ErrorCode.USER_INFO_RESPONSE_ERROR
             );
         } catch (RestClientException e) {
-            log.error("Failed to get User Info: {}", e.getMessage()); // 예외 메시지 확인
+            log.error("Failed to get User Info: {}", e.getMessage());
             throw new OAuth2AuthenticationProcessingException(
                     e.getMessage(),
                     OAuth2ErrorCode.USER_INFO_RESPONSE_ERROR
@@ -146,8 +145,12 @@ public class GoogleOAuth2Service {
         Member member = memberRepository.findByEmail(userInfo.getEmail())
                 .orElse(Member.builder()
                         .email(userInfo.getEmail())
+                        .name(userInfo.getName())
                         .authority(Authority.USER)
                         .build());
+
+        Member savedMember = memberRepository.save(member);
+        log.info("Saved member name: {}", savedMember.getName());
 
         return memberRepository.save(member);
     }

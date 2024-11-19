@@ -20,6 +20,7 @@ public class TestController {
     public ResponseEntity<Map<String, String>> getUserInfo(@AuthMember Member member) {
         Map<String, String> response = new HashMap<>();
         response.put("email", member.getEmail());
+        response.put("name", member.getName());
         response.put("message", "인증된 사용자입니다.");
         return ResponseEntity.ok(response);
     }

@@ -7,17 +7,18 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.member.entity.enums.Authority;
 import com.sw19.sofa.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
@@ -54,18 +55,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Member registerNewUser(GoogleUserInfo userInfo) {
         Member member = Member.builder()
                 .email(userInfo.getEmail())
+                .name(userInfo.getName())
                 .authority(Authority.USER)
                 .build();
 
+        //Member savedMember = memberRepository.save(member);
         return memberRepository.save(member);
     }
 
     private Member updateExistingUser(Member member, GoogleUserInfo userInfo) {
 
-        return memberRepository.save(member);
+        System.out.println("Updating existing user - current name: " + member.getName() + ", new name: " + userInfo.getName());
+
+        if (!member.getName().equals(userInfo.getName())) {
+            Member updatedMember = memberRepository.save(Member.builder()
+                    .email(member.getEmail())
+                    .name(userInfo.getName())
+                    .authority(member.getAuthority())
+                    .build());
+
+            System.out.println("Updated member - email: " + updatedMember.getEmail() + ", name: " + updatedMember.getName());
+        }
+        return member;
     }
 
-    // Google User Info를 담는 내부 클래스
     private static class GoogleUserInfo {
         private Map<String, Object> attributes;
 
