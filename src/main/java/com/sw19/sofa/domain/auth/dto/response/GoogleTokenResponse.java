@@ -14,8 +14,6 @@ public class GoogleTokenResponse {
     @JsonProperty("expires_in")
     private Integer expiresIn;
 
-    private String scope;
-
     @JsonProperty("token_type")
     private String tokenType;
 

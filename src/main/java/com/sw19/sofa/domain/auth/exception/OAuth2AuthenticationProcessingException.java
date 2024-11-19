@@ -12,7 +12,7 @@ public class OAuth2AuthenticationProcessingException extends BusinessException {
         super(message, errorCode);
     }
 
-    public OAuth2AuthenticationProcessingException(String message) {
-        super(message, OAuth2ErrorCode.AUTHENTICATION_PROCESSING_ERROR);
-    }
+//    public OAuth2AuthenticationProcessingException(String message) {
+//        super(message, OAuth2ErrorCode.AUTHENTICATION_PROCESSING_ERROR);
+//    }
 }
