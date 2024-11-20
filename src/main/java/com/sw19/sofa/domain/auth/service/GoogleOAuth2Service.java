@@ -146,7 +146,7 @@ public class GoogleOAuth2Service {
                 .orElse(Member.builder()
                         .email(userInfo.getEmail())
                         .name(userInfo.getName())
-                        .authority(Authority.USER)
+                        .authority(Authority.USER) // 기본으로는 일반유저로 권한줌
                         .build());
 
         Member savedMember = memberRepository.save(member);

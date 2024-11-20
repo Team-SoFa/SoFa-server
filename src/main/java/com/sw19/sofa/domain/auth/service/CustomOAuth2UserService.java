@@ -94,4 +94,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return (String) attributes.get("name");
         }
     }
+
 }
