@@ -15,6 +15,7 @@ public class CustomTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -25,8 +26,8 @@ public class CustomTag {
         this.member = member;
         this.name = name;
     }
-    public String getEncryptUserId() {
+
+    public String getEncryptId() {
         return EncryptionUtil.encrypt(this.id);
     }
-
 }
