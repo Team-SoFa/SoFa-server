@@ -3,6 +3,7 @@ package com.sw19.sofa.domain.tag.service;
 
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.tag.entity.Tag;
+import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
 import com.sw19.sofa.domain.tag.repository.TagRepository;
 import com.sw19.sofa.global.common.dto.TagDto;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TagService {
     private final TagRepository tagRepository;
+    private final CustomTagRepository customTagRepository;
 
     public List<Tag> getAllTags() {
         return tagRepository.findAll();
@@ -53,4 +55,13 @@ public class TagService {
         tagRepository.deleteAllLinkCardTagsByTagId(id);
         tagRepository.deleteById(id);
     }
+
+    public List<TagDto> searchTagsByKeyword(String keyword) {
+        return tagRepository.findAllByNameContainingIgnoreCase(keyword)
+                .stream()
+                .map(TagDto::new)
+                .toList();
+    }
+
+
 }

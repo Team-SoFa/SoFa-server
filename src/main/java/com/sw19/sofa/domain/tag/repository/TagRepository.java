@@ -17,6 +17,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     Optional<Tag> findByName(String name);
     List<Tag> findAllByType(TagType type);
     boolean existsByName(String name);
+    List<Tag> findAllByNameContainingIgnoreCase(String keyword);
 
     @Modifying
     @Query("DELETE FROM LinkCardTag lct WHERE lct.tagId = :tagId")
