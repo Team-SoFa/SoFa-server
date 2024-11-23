@@ -41,17 +41,16 @@ public class SearchBoxService {
                 req.keyword(),
                 folderId,
                 tagIds,
-                lastIdLong,
-                limit + 1
+                lastIdLong
         );
 
-        boolean hasNext = false;
-        if (linkCards.size() > limit) {
-            hasNext = true;
-            linkCards.remove(limit);
-        }
+        // limit + 1개를 가져와서 다음 페이지 존재 여부 확인
+        List<LinkCard> limitedCards = linkCards.stream().limit(limit + 1).toList();
+        boolean hasNext = limitedCards.size() > limit;
 
-        List<SearchBoxRes> searchResults = linkCards.stream()
+        // 실제 반환할 결과는 limit 개수만큼
+        List<SearchBoxRes> searchResults = limitedCards.stream()
+                .limit(limit)
                 .map(linkCard -> {
                     List<LinkCardTagSimpleDto> cardTags = linkCardTagService
                             .getLinkCardTagSimpleDtoListByLinkCardId(linkCard.getId());
