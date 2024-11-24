@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -24,13 +25,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-        log.info("OAuth2 로그인 성공");//로그 확인용
+        log.info("OAuth2 로그인 성공");
 
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
         // JWT 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(oAuth2User.getMember().getEncryptUserId());
         String refreshToken = jwtTokenProvider.createRefreshToken(oAuth2User.getMember().getEncryptUserId());
+
+        // SecurityContextHolder에 인증 정보 저장
+        Authentication jwtAuthentication = jwtTokenProvider.getAuthentication(accessToken);
+        SecurityContextHolder.getContext().setAuthentication(jwtAuthentication);
 
         // JSON 응답 생성
         response.setContentType("application/json;charset=UTF-8");
