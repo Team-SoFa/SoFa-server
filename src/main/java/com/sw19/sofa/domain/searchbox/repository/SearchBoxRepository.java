@@ -9,31 +9,39 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SearchBoxRepository extends JpaRepository<LinkCard, Long> {
+public interface SearchBoxRepository extends JpaRepository<LinkCard, Long>, SearchBoxCustomRepository  {
     @Query(value = """
         SELECT DISTINCT lc FROM LinkCard lc
         LEFT JOIN FETCH lc.article art
-        WHERE 
-        lc.id > :lastId
-        AND (:folderId IS NULL OR lc.folder.id = :folderId)
+        WHERE lc.id > :lastId
+        AND lc.folder.id = :folderId
+        ORDER BY lc.id ASC
+        """, nativeQuery = false)
+    List<LinkCard> searchByFolder(
+            @Param("folderId") Long folderId,
+            @Param("lastId") Long lastId);
+
+    @Query(value = """
+        SELECT DISTINCT lc FROM LinkCard lc
+        LEFT JOIN FETCH lc.article art
+        WHERE lc.id > :lastId
         AND EXISTS (
             SELECT 1 FROM LinkCardTag lt 
             WHERE lt.linkCard = lc 
-            AND (:tagIds IS NULL OR lt.tagId IN :tagIds)
-        )
-        AND (
-            LOWER(lc.article.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(lc.article.url) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(lc.article.summary) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(lc.memo) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(lc.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            AND lt.tagId IN :tagIds
         )
         ORDER BY lc.id ASC
-        """)
-    List<LinkCard> search(
-            @Param("keyword") String keyword,
-            @Param("folderId") Long folderId,
+        """, nativeQuery = false)
+    List<LinkCard> searchByTags(
             @Param("tagIds") List<Long> tagIds,
-            @Param("lastId") Long lastId
-    );
+            @Param("lastId") Long lastId);
+
+    @Query(value = """
+        SELECT DISTINCT lc FROM LinkCard lc
+        LEFT JOIN FETCH lc.article art
+        WHERE lc.id > :lastId
+        ORDER BY lc.id ASC
+        """, nativeQuery = false)
+    List<LinkCard> searchAll(
+            @Param("lastId") Long lastId);
 }

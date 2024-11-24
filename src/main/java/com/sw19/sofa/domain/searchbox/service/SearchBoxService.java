@@ -3,17 +3,20 @@ package com.sw19.sofa.domain.searchbox.service;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.service.LinkCardTagService;
-import com.sw19.sofa.domain.searchbox.repository.SearchBoxRepository;
-import com.sw19.sofa.domain.searchbox.dto.request.SearchBoxReq;
 import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
+import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
+import com.sw19.sofa.domain.searchbox.repository.SearchBoxRepository;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.TagDto;
+import com.sw19.sofa.global.common.enums.SortOrder;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,32 +26,76 @@ public class SearchBoxService {
     private final TagService tagService;
     private final LinkCardTagService linkCardTagService;
 
-    public ListRes<SearchBoxRes> search(SearchBoxReq req, String lastId, int limit) {
+    public ListRes<SearchBoxRes> searchByFolder(
+            String encryptedFolderId,
+            String lastId,
+            int limit,
+            SearchBoxSortBy sortBy,
+            SortOrder sortOrder
+    ) {
+        Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
-        Long folderId = req.encryptedFolderId() != null ?
-                EncryptionUtil.decrypt(req.encryptedFolderId()) : null;
 
-        List<Long> tagIds = null;
-        if (req.encryptedTagIds() != null && !req.encryptedTagIds().isEmpty()) {
-            tagIds = req.encryptedTagIds().stream()
-                    .map(EncryptionUtil::decrypt)
-                    .toList();
-        }
-
-        List<LinkCard> linkCards = searchBoxRepository.search(
-                req.keyword(),
+        List<LinkCard> linkCards = searchBoxRepository.searchByFolder(
                 folderId,
-                tagIds,
-                lastIdLong
+                lastIdLong,
+                limit + 1,
+                sortBy,
+                sortOrder
         );
 
-        // limit + 1개를 가져와서 다음 페이지 존재 여부 확인
-        List<LinkCard> limitedCards = linkCards.stream().limit(limit + 1).toList();
-        boolean hasNext = limitedCards.size() > limit;
+        return getSearchResult(linkCards, limit);
+    }
 
-        // 실제 반환할 결과는 limit 개수만큼
-        List<SearchBoxRes> searchResults = limitedCards.stream()
-                .limit(limit)
+    public ListRes<SearchBoxRes> searchByTags(
+            List<String> encryptedTagIds,
+            String lastId,
+            int limit,
+            SearchBoxSortBy sortBy,
+            SortOrder sortOrder
+    ) {
+        List<Long> tagIds = encryptedTagIds.stream()
+                .map(EncryptionUtil::decrypt)
+                .toList();
+        Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
+
+        List<LinkCard> linkCards = searchBoxRepository.searchByTags(
+                tagIds,
+                lastIdLong,
+                limit + 1,
+                sortBy,
+                sortOrder
+        );
+
+        return getSearchResult(linkCards, limit);
+    }
+
+    public ListRes<SearchBoxRes> searchAllLinkCards(
+            String lastId,
+            int limit,
+            SearchBoxSortBy sortBy,
+            SortOrder sortOrder
+    ) {
+        Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
+
+        List<LinkCard> linkCards = searchBoxRepository.searchAll(
+                lastIdLong,
+                limit + 1,
+                sortBy,
+                sortOrder
+        );
+
+        return getSearchResult(linkCards, limit);
+    }
+
+    private ListRes<SearchBoxRes> getSearchResult(List<LinkCard> linkCards, int limit) {
+        boolean hasNext = false;
+        if (linkCards.size() > limit) {
+            hasNext = true;
+            linkCards = linkCards.subList(0, limit);
+        }
+
+        List<SearchBoxRes> searchResults = linkCards.stream()
                 .map(linkCard -> {
                     List<LinkCardTagSimpleDto> cardTags = linkCardTagService
                             .getLinkCardTagSimpleDtoListByLinkCardId(linkCard.getId());
