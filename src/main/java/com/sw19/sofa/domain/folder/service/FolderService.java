@@ -29,31 +29,32 @@ public class FolderService {
     }
 
     @Transactional
-    public FolderListRes addFolder(Member member, FolderReq req) {
+    public void addFolder(String name) {
         Folder folder = Folder.builder()
-                .name(req.name())
+                .name(name)
                 .build();
         folderRepository.save(folder);
-        return getFolderList(member);
     }
 
     @Transactional
-    public void delFolder(String decryptId) {
-        Folder folder = findFolder(decryptId);
+    public void delFolder(Folder folder) {
         folderRepository.delete(folder);
     }
 
     @Transactional
-    public FolderRes editFolder(String decryptId, FolderReq req) {
-        Folder folder = findFolder(decryptId);
-        folder.edit(req.name());
+    public FolderRes editFolder(Folder folder, String name) {
+        folder.edit(name);
         Folder save = folderRepository.save(folder);
         return new FolderRes(save);
     }
 
     @Transactional(readOnly = true)
-    public Folder findFolder(String decryptId){
-        Long id = EncryptionUtil.decrypt(decryptId);
+    public Folder getFolder(Long id){
         return folderRepository.findById(id).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
+    }
+
+    @Transactional(readOnly = true)
+    public Folder getFolderByNameAndMember(String name, Member member){
+        return folderRepository.findByNameAndMember(name, member).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
     }
 }

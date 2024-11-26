@@ -33,7 +33,7 @@ public interface FolderApi {
             @ApiResponse(responseCode = "404", description = "code: F-001 | message: 존재하지 않는 폴더입니다.",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    ResponseEntity<String> delFolder(String id);
+    ResponseEntity<String> delFolder(String id, Member member);
 
     @Operation(summary = "폴더 수정", description = "폴더 아이디를 통해 폴더 정보를 수정합니다.")
     @ApiResponses({
