@@ -1,6 +1,7 @@
 package com.sw19.sofa.domain.tag.service;
 
 import com.sw19.sofa.domain.linkcard.enums.TagType;
+import com.sw19.sofa.domain.tag.dto.response.TagRes;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.error.TagErrorCode;
 import com.sw19.sofa.domain.tag.repository.CustomTagRepository;

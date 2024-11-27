@@ -3,9 +3,11 @@ package com.sw19.sofa.domain.searchbox.service;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.service.LinkCardTagService;
+import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
 import com.sw19.sofa.domain.searchbox.repository.SearchBoxRepository;
+import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.TagDto;
@@ -14,6 +16,7 @@ import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -24,15 +27,20 @@ public class SearchBoxService {
     private final SearchBoxRepository searchBoxRepository;
     private final TagService tagService;
     private final LinkCardTagService linkCardTagService;
+    private final SearchHistoryService searchHistoryService;
 
     public ListRes<SearchBoxRes> searchByFolder(
             String encryptedFolderId,
             String keyword,
+            Member member,
             String lastId,
             int limit,
             SearchBoxSortBy sortBy,
             SortOrder sortOrder
     ) {
+        if (StringUtils.hasText(keyword)) {
+            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
+        }
         Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
@@ -51,14 +59,22 @@ public class SearchBoxService {
     public ListRes<SearchBoxRes> searchByTags(
             List<String> encryptedTagIds,
             String keyword,
+            Member member,
             String lastId,
             int limit,
             SearchBoxSortBy sortBy,
             SortOrder sortOrder
     ) {
+        if (StringUtils.hasText(keyword)) {
+            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
+        }
         List<Long> tagIds = encryptedTagIds.stream()
                 .map(EncryptionUtil::decrypt)
                 .toList();
+
+        List<Tag> tags = tagService.getTagList(tagIds.stream().map(String::valueOf).toList());
+        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.getName()));
+
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
         List<LinkCard> linkCards = searchBoxRepository.searchByTags(
@@ -77,14 +93,22 @@ public class SearchBoxService {
             List<String> encryptedTagIds,
             String encryptedFolderId,
             String keyword,
+            Member member,
             String lastId,
             int limit,
             SearchBoxSortBy sortBy,
             SortOrder sortOrder
     ) {
+        if (StringUtils.hasText(keyword)) {
+            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
+        }
         List<Long> tagIds = encryptedTagIds.stream()
                 .map(EncryptionUtil::decrypt)
                 .toList();
+
+        List<Tag> tags = tagService.getTagList(tagIds.stream().map(String::valueOf).toList());
+        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.getName()));
+
         Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
@@ -103,11 +127,15 @@ public class SearchBoxService {
 
     public ListRes<SearchBoxRes> searchAllLinkCards(
             String keyword,
+            Member member,
             String lastId,
             int limit,
             SearchBoxSortBy sortBy,
             SortOrder sortOrder
     ) {
+        if (StringUtils.hasText(keyword)) {
+            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
+        }
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
         List<LinkCard> linkCards = searchBoxRepository.searchAll(

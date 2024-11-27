@@ -76,7 +76,7 @@ public class TagController implements TagApi {
     }
 
     @Override
-    @GetMapping("/search")
+    @GetMapping("/search") //태그 검색
     public ResponseEntity<List<TagRes>> searchTags(@RequestParam String keyword) {
         List<TagDto> tagDtos = tagService.searchTagsByKeyword(keyword);
         return ResponseEntity.ok(tagDtos.stream()
