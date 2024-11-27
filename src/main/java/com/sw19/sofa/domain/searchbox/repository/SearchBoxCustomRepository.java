@@ -9,6 +9,7 @@ import java.util.List;
 public interface SearchBoxCustomRepository {
     List<LinkCard> searchByFolder(
             Long folderId,
+            String keyword,
             Long lastId,
             int limit,
             SearchBoxSortBy sortBy,
@@ -17,6 +18,17 @@ public interface SearchBoxCustomRepository {
 
     List<LinkCard> searchByTags(
             List<Long> tagIds,
+            String keyword,
+            Long lastId,
+            int limit,
+            SearchBoxSortBy sortBy,
+            SortOrder sortOrder
+    );
+
+    List<LinkCard> searchByTagsAndFolder(
+            List<Long> tagIds,
+            Long folderId,
+            String keyword,
             Long lastId,
             int limit,
             SearchBoxSortBy sortBy,
@@ -24,6 +36,7 @@ public interface SearchBoxCustomRepository {
     );
 
     List<LinkCard> searchAll(
+            String keyword,
             Long lastId,
             int limit,
             SearchBoxSortBy sortBy,

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -28,6 +27,7 @@ public class SearchBoxService {
 
     public ListRes<SearchBoxRes> searchByFolder(
             String encryptedFolderId,
+            String keyword,
             String lastId,
             int limit,
             SearchBoxSortBy sortBy,
@@ -38,8 +38,9 @@ public class SearchBoxService {
 
         List<LinkCard> linkCards = searchBoxRepository.searchByFolder(
                 folderId,
+                keyword,
                 lastIdLong,
-                limit + 1,
+                limit,
                 sortBy,
                 sortOrder
         );
@@ -49,6 +50,7 @@ public class SearchBoxService {
 
     public ListRes<SearchBoxRes> searchByTags(
             List<String> encryptedTagIds,
+            String keyword,
             String lastId,
             int limit,
             SearchBoxSortBy sortBy,
@@ -61,8 +63,37 @@ public class SearchBoxService {
 
         List<LinkCard> linkCards = searchBoxRepository.searchByTags(
                 tagIds,
+                keyword,
                 lastIdLong,
-                limit + 1,
+                limit,
+                sortBy,
+                sortOrder
+        );
+
+        return getSearchResult(linkCards, limit);
+    }
+
+    public ListRes<SearchBoxRes> searchByTagsAndFolder(
+            List<String> encryptedTagIds,
+            String encryptedFolderId,
+            String keyword,
+            String lastId,
+            int limit,
+            SearchBoxSortBy sortBy,
+            SortOrder sortOrder
+    ) {
+        List<Long> tagIds = encryptedTagIds.stream()
+                .map(EncryptionUtil::decrypt)
+                .toList();
+        Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
+        Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
+
+        List<LinkCard> linkCards = searchBoxRepository.searchByTagsAndFolder(
+                tagIds,
+                folderId,
+                keyword,
+                lastIdLong,
+                limit,
                 sortBy,
                 sortOrder
         );
@@ -71,6 +102,7 @@ public class SearchBoxService {
     }
 
     public ListRes<SearchBoxRes> searchAllLinkCards(
+            String keyword,
             String lastId,
             int limit,
             SearchBoxSortBy sortBy,
@@ -79,8 +111,9 @@ public class SearchBoxService {
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
         List<LinkCard> linkCards = searchBoxRepository.searchAll(
+                keyword,
                 lastIdLong,
-                limit + 1,
+                limit,
                 sortBy,
                 sortOrder
         );

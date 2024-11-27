@@ -32,6 +32,7 @@ public class FolderService {
     public FolderListRes addFolder(Member member, FolderReq req) {
         Folder folder = Folder.builder()
                 .name(req.name())
+                .member(member)  //추가함 멤버 받아야해서
                 .build();
         folderRepository.save(folder);
         return getFolderList(member);

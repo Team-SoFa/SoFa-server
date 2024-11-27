@@ -10,6 +10,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Table(
+        indexes = {
+                @Index(name = "idx_tag_name", columnList = "name"),
+                @Index(name = "idx_tag_type", columnList = "type")
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
     @Id
@@ -28,7 +34,7 @@ public class Tag {
         this.type = type;
     }
 
-    public String getEncryptUserId() {
+    public String getEncryptId() {
         return EncryptionUtil.encrypt(this.id);
     }
 }

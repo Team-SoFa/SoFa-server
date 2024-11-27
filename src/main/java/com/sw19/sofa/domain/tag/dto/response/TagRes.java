@@ -13,7 +13,7 @@ public class TagRes {
     public TagRes(Tag tag) {
         this.id = tag.getId();
         this.name = tag.getName();
-        this.encryptedId = tag.getEncryptUserId();
+        this.encryptedId = tag.getEncryptId();
         this.type = tag.getType();
     }
 }

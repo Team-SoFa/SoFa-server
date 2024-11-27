@@ -12,6 +12,6 @@ public class CustomTagRes {
     public CustomTagRes(CustomTag customTag) {
         this.id = customTag.getId();
         this.name = customTag.getName();
-        this.encryptedId = customTag.getEncryptId();
+        this.encryptedId = customTag.getEncryptedId();
     }
 }

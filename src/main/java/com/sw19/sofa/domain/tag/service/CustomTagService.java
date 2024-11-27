@@ -36,6 +36,9 @@ public class CustomTagService {
 
     @Transactional(readOnly = true)
     public List<CustomTagDto> getCustomTagDtoListByIdList(List<Long> tagIdList) {
+        if (tagIdList == null || tagIdList.isEmpty()) {
+            return List.of();
+        }
         return customTagRepository.findAllByIdIn(tagIdList).stream()
                 .map(CustomTagDto::new)
                 .toList();
