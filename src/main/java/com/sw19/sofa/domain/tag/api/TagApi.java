@@ -1,4 +1,3 @@
-// /domain/tag/api/TagApi.java
 package com.sw19.sofa.domain.tag.api;
 
 import com.sw19.sofa.domain.tag.dto.request.CustomTagReq;
@@ -14,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import java.util.List;
 
@@ -59,4 +59,14 @@ public interface TagApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     ResponseEntity<String> deleteTag(String id);
+
+
+    @Operation(summary = "태그 검색", description = "키워드로 태그를 검색합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "태그 검색 결과 반환 성공")
+    })
+    ResponseEntity<List<TagRes>> searchTags(
+            @Parameter(description = "검색할 태그 키워드") String keyword
+    );
+
 }

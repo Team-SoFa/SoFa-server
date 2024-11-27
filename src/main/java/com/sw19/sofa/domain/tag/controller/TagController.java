@@ -8,8 +8,12 @@ import com.sw19.sofa.domain.tag.dto.response.CustomTagRes;
 import com.sw19.sofa.domain.tag.dto.response.TagRes;
 import com.sw19.sofa.domain.tag.entity.CustomTag;
 import com.sw19.sofa.domain.tag.entity.Tag;
+import com.sw19.sofa.domain.tag.error.TagErrorCode;
+import com.sw19.sofa.domain.tag.repository.TagRepository;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
+import com.sw19.sofa.global.common.dto.TagDto;
+import com.sw19.sofa.global.error.exception.BusinessException;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +27,7 @@ import java.util.List;
 public class TagController implements TagApi {
     private final TagService tagService;
     private final CustomTagService customTagService;
+    private final TagRepository tagRepository;
 
     @Override
     @GetMapping("/custom")
@@ -68,5 +73,15 @@ public class TagController implements TagApi {
     public ResponseEntity<String> deleteTag(@PathVariable String id) {
         tagService.deleteTag(EncryptionUtil.decrypt(id));
         return ResponseEntity.ok("Tag deleted successfully");
+    }
+
+    @Override
+    @GetMapping("/search")
+    public ResponseEntity<List<TagRes>> searchTags(@RequestParam String keyword) {
+        List<TagDto> tagDtos = tagService.searchTagsByKeyword(keyword);
+        return ResponseEntity.ok(tagDtos.stream()
+                .map(dto -> new TagRes(tagRepository.findById(dto.id())
+                        .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND))))
+                .toList());
     }
 }
