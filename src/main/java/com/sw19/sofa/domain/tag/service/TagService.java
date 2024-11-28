@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,6 +20,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TagService {
     private final TagRepository tagRepository;
+    private final CustomTagRepository customTagRepository;
 
     public List<Tag> getAllTags() {
         return tagRepository.findAll();
@@ -62,9 +64,23 @@ public class TagService {
     }
 
     public List<TagDto> searchTagsByKeyword(String keyword) {
-        return tagRepository.findAllByNameContainingIgnoreCase(keyword)
+
+        List<TagDto> tags = tagRepository.findAllByNameContainingIgnoreCase(keyword)
                 .stream()
                 .map(TagDto::new)
                 .toList();
+
+
+        List<TagDto> customTags = customTagRepository.findAllByNameContainingIgnoreCase(keyword)
+                .stream()
+                .map(customTag -> new TagDto(customTag.getId(), customTag.getName()))
+                .toList();
+
+
+        List<TagDto> allTags = new ArrayList<>();
+        allTags.addAll(tags);
+        allTags.addAll(customTags);
+
+        return allTags;
     }
 }
