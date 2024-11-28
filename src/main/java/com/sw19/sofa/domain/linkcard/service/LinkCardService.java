@@ -99,4 +99,12 @@ public class LinkCardService {
     public void deleteLinkCard(LinkCard linkCard){
         linkCardRepository.delete(linkCard);
     }
+
+    @Transactional(readOnly = true)
+    public List<LinkCard> getUnusedLinkCardList(){
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        LocalDateTime startOfThirtyDaysAgo = thirtyDaysAgo.toLocalDate().atStartOfDay();
+
+        return linkCardRepository.findUnusedLinkCardList(startOfThirtyDaysAgo);
+    }
 }
