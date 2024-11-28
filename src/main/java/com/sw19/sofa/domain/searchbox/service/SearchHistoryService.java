@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SearchHistoryService {
     private final RedisService redisService;
-    private static final int MAX_HISTORY_SIZE = 10;
+    private static final int MAX_HISTORY_SIZE = 100;
 
     @SuppressWarnings("unchecked")
     public List<String> addSearchKeywordHistory(Long memberId, String keyword) {

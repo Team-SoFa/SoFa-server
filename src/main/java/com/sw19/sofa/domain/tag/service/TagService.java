@@ -1,7 +1,7 @@
 package com.sw19.sofa.domain.tag.service;
 
 import com.sw19.sofa.domain.linkcard.enums.TagType;
-import com.sw19.sofa.domain.tag.dto.response.TagRes;
+import com.sw19.sofa.domain.tag.entity.CustomTag;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.error.TagErrorCode;
 import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
@@ -30,10 +30,43 @@ public class TagService {
         return tagRepository.findAllByNameIn(tagNameList);
     }
 
-    public List<TagDto> getTagDtoListByIdList(List<Long> tagIdList) {
-        return tagRepository.findAllByIdIn(tagIdList).stream()
+    public List<TagDto> getAllTagDtoList(List<String> tagNameList) {
+
+        List<TagDto> aiTags = tagRepository.findAllByNameIn(tagNameList)
+                .stream()
                 .map(TagDto::new)
                 .toList();
+
+        List<TagDto> customTags = customTagRepository.findAllByNameIn(tagNameList)
+                .stream()
+                .map(tag -> new TagDto(tag.getId(), tag.getName()))
+                .toList();
+
+        List<TagDto> allTags = new ArrayList<>();
+        allTags.addAll(aiTags);
+        allTags.addAll(customTags);
+
+        return allTags;
+    }
+
+    public List<TagDto> getTagDtoListByIdList(List<Long> tagIdList) {
+        if (tagIdList == null || tagIdList.isEmpty()) {
+            return List.of();
+        }
+
+        List<TagDto> aiTags = tagRepository.findAllByIdIn(tagIdList).stream()
+                .map(TagDto::new)
+                .toList();
+
+        List<TagDto> customTags = customTagRepository.findAllByIdIn(tagIdList).stream()
+                .map(customTag -> new TagDto(customTag.getId(), customTag.getName()))
+                .toList();
+
+        List<TagDto> allTags = new ArrayList<>();
+        allTags.addAll(aiTags);
+        allTags.addAll(customTags);
+
+        return allTags;
     }
 
     @Transactional
@@ -65,20 +98,18 @@ public class TagService {
 
     public List<TagDto> searchTagsByKeyword(String keyword) {
 
-        List<TagDto> tags = tagRepository.findAllByNameContainingIgnoreCase(keyword)
+        List<TagDto> aiTags = tagRepository.findAllByNameContainingIgnoreCase(keyword)
                 .stream()
                 .map(TagDto::new)
                 .toList();
-
 
         List<TagDto> customTags = customTagRepository.findAllByNameContainingIgnoreCase(keyword)
                 .stream()
                 .map(customTag -> new TagDto(customTag.getId(), customTag.getName()))
                 .toList();
 
-
         List<TagDto> allTags = new ArrayList<>();
-        allTags.addAll(tags);
+        allTags.addAll(aiTags);
         allTags.addAll(customTags);
 
         return allTags;

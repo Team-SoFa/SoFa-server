@@ -6,6 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomTagReq {
-    private Long memberId;
     private String name;
 }

@@ -34,7 +34,7 @@ public class Tag {
         this.type = type;
     }
 
-    public String getEncryptId() {
+    public String getEncryptedId() {
         return EncryptionUtil.encrypt(this.id);
     }
 }

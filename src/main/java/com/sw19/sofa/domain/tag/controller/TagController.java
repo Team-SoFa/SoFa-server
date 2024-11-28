@@ -9,6 +9,7 @@ import com.sw19.sofa.domain.tag.dto.response.TagRes;
 import com.sw19.sofa.domain.tag.entity.CustomTag;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.error.TagErrorCode;
+import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
 import com.sw19.sofa.domain.tag.repository.TagRepository;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
@@ -28,6 +29,7 @@ public class TagController implements TagApi {
     private final TagService tagService;
     private final CustomTagService customTagService;
     private final TagRepository tagRepository;
+    private final CustomTagRepository customTagRepository;
 
     @Override
     @GetMapping("/custom")
@@ -76,12 +78,21 @@ public class TagController implements TagApi {
     }
 
     @Override
-    @GetMapping("/search") //태그 검색
+    @GetMapping("/search")
     public ResponseEntity<List<TagRes>> searchTags(@RequestParam String keyword) {
         List<TagDto> tagDtos = tagService.searchTagsByKeyword(keyword);
         return ResponseEntity.ok(tagDtos.stream()
-                .map(dto -> new TagRes(tagRepository.findById(dto.id())
-                        .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND))))
+                .map(dto -> {
+                    try {
+                        Tag tag = tagRepository.findById(dto.id())
+                                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+                        return new TagRes(tag);
+                    } catch (BusinessException e) {
+                        CustomTag customTag = customTagRepository.findById(dto.id())
+                                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+                        return new TagRes(customTag);
+                    }
+                })
                 .toList());
     }
 }

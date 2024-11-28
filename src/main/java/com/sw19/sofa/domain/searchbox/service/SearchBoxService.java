@@ -7,7 +7,6 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
 import com.sw19.sofa.domain.searchbox.repository.SearchBoxRepository;
-import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.TagDto;
@@ -72,8 +71,8 @@ public class SearchBoxService {
                 .map(EncryptionUtil::decrypt)
                 .toList();
 
-        List<Tag> tags = tagService.getTagList(tagIds.stream().map(String::valueOf).toList());
-        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.getName()));
+        List<TagDto> tags = tagService.getTagDtoListByIdList(tagIds);
+        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.name()));
 
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
@@ -106,8 +105,8 @@ public class SearchBoxService {
                 .map(EncryptionUtil::decrypt)
                 .toList();
 
-        List<Tag> tags = tagService.getTagList(tagIds.stream().map(String::valueOf).toList());
-        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.getName()));
+        List<TagDto> tags = tagService.getAllTagDtoList(tagIds.stream().map(String::valueOf).toList());
+        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.name()));
 
         Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);

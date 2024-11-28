@@ -11,5 +11,6 @@ import java.util.List;
 public interface CustomTagRepository extends JpaRepository<CustomTag, Long> {
     List<CustomTag> findAllByIdIn(List<Long> id);
     List<CustomTag> findByMember(Member member);
+    List<CustomTag> findAllByNameIn(List<String> names);
     List<CustomTag> findAllByNameContainingIgnoreCase(String keyword);
 }
