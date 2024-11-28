@@ -1,5 +1,6 @@
 package com.sw19.sofa.global.scheduler.manager;
 
+import com.sw19.sofa.domain.recycleBin.job.DeleteExpiredLinkCardListInRecycleBinJob;
 import com.sw19.sofa.domain.remind.job.MoveUnusedLinkCardListToRemindJob;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class SchedulerManager {
         scheduler.clear();
         scheduler.start();
         scheduleMoveUnusedLinkListToRemindJob();
+        scheduleDeleteExpiredLinkCardListInRecycleBinJob();
     }
 
     private void scheduleMoveUnusedLinkListToRemindJob() throws SchedulerException {
@@ -26,6 +28,19 @@ public class SchedulerManager {
                 .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(0, 0))
                 .build();
 
+        scheduler.scheduleJob(job, trigger);
+    }
+
+
+
+    private void scheduleDeleteExpiredLinkCardListInRecycleBinJob() throws SchedulerException {
+        JobDetail job = JobBuilder.newJob(DeleteExpiredLinkCardListInRecycleBinJob.class)
+                .withIdentity("deleteExpiredLinkCardListInRecycleBinJob")
+                .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(0, 0))
+                .build();
         scheduler.scheduleJob(job, trigger);
     }
 }

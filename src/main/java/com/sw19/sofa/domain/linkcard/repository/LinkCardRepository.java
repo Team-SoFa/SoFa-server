@@ -21,4 +21,7 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long>, LinkC
 
     @Query("SELECT lc FROM LinkCard lc WHERE lc.visitedAt < :thresholdDate")
     List<LinkCard> findUnusedLinkCardList(@Param("thresholdDate") LocalDateTime thresholdDate);
+
+    @Query("SELECT lc FROM LinkCard lc WHERE lc.modifiedAt < :thresholdDate and lc.folder.name = :recycleBin")
+    List<LinkCard> findExpiredLinkCardListInRecycleBin(@Param("thresholdDate") LocalDateTime thresholdDate, @Param("recycleBin") String name);
 }

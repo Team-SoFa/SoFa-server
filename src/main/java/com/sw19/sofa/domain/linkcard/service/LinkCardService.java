@@ -7,6 +7,7 @@ import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
+import com.sw19.sofa.global.common.constants.Constants;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
@@ -99,12 +100,20 @@ public class LinkCardService {
     public void deleteLinkCard(LinkCard linkCard){
         linkCardRepository.delete(linkCard);
     }
+    @Transactional
+    public void deleteLinkCardList(List<LinkCard> linkCardList) {linkCardRepository.deleteAll(linkCardList);}
 
     @Transactional(readOnly = true)
     public List<LinkCard> getUnusedLinkCardList(){
-        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-        LocalDateTime startOfThirtyDaysAgo = thirtyDaysAgo.toLocalDate().atStartOfDay();
+        return linkCardRepository.findUnusedLinkCardList(getThirtyDaysAgoDateTime());
+    }
+    @Transactional(readOnly = true)
+    public List<LinkCard> getExpiredLinkCardsInRecycleBin(){
+        return linkCardRepository.findExpiredLinkCardListInRecycleBin(getThirtyDaysAgoDateTime(), Constants.recycleBinName);
+    }
 
-        return linkCardRepository.findUnusedLinkCardList(startOfThirtyDaysAgo);
+    private LocalDateTime getThirtyDaysAgoDateTime() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        return thirtyDaysAgo.toLocalDate().atStartOfDay();
     }
 }

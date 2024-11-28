@@ -22,6 +22,7 @@ import java.util.List;
 public class RecycleBinManageService {
     private final LinkCardService linkCardService;
     private final FolderService folderService;
+
     @Transactional
     public void permanentlyDelete(String encryptId) {
         Long id = EncryptionUtil.decrypt(encryptId);
@@ -51,5 +52,11 @@ public class RecycleBinManageService {
 
         Folder folder = folderService.getFolder(folderId);
         linkCardService.editLinkCardFolder(linkCardId, folder);
+    }
+
+    @Transactional
+    public void deleteExpiredLinkCardList() {
+        List<LinkCard> linkCardList = linkCardService.getExpiredLinkCardsInRecycleBin();
+        linkCardService.deleteLinkCardList(linkCardList);
     }
 }
