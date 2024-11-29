@@ -52,4 +52,9 @@ public class RecycleBinManageService {
         Folder folder = folderService.getFolder(folderId);
         linkCardService.editLinkCardFolder(linkCardId, folder);
     }
+
+    @Transactional
+    public void addRecycleBin(Member member){
+        folderService.addFolder(member, Constants.recycleBinName);
+    }
 }
