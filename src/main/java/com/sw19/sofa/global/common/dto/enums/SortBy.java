@@ -1,4 +1,4 @@
-package com.sw19.sofa.global.common.enums;
+package com.sw19.sofa.global.common.dto.enums;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.sw19.sofa.domain.linkcard.entity.QLinkCard;

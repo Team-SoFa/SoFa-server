@@ -1,11 +1,10 @@
 package com.sw19.sofa.domain.linkcard.repository;
 
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
-import com.sw19.sofa.global.common.enums.SortBy;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortBy;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

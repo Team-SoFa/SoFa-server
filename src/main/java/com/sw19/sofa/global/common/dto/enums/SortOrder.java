@@ -1,4 +1,4 @@
-package com.sw19.sofa.global.common.enums;
+package com.sw19.sofa.global.common.dto.enums;
 
 import com.querydsl.core.types.Order;
 import io.swagger.v3.oas.annotations.media.Schema;

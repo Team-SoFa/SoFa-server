@@ -21,9 +21,10 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
+import com.sw19.sofa.global.common.constants.Constants;
 import com.sw19.sofa.global.common.dto.*;
 import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,7 +99,9 @@ public class LinkCardMangeService {
 
     @Transactional
     public void addLinkCard(LinkCardReq req) {
-        Folder folder = folderService.findFolder(req.folderId());
+        Long folderId = EncryptionUtil.decrypt(req.folderId());
+
+        Folder folder = folderService.getFolder(folderId);
         Article article = articleService.getArticleByUrl(req.url());
 
         LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
@@ -111,8 +114,15 @@ public class LinkCardMangeService {
     public ListRes<LinkCardSimpleRes> getLinkCardList(String encryptFolderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long folderId = EncryptionUtil.decrypt(encryptFolderId);
         Long lastId = EncryptionUtil.decrypt(encryptLastId);
+        ListRes<LinkCard> linkCardListRes = linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, linkCardSortBy, sortOrder, limit, lastId);
+        List<LinkCardSimpleRes> linkCardSimpleResList = linkCardListRes.data().stream().map(LinkCardSimpleRes::new).toList();
 
-        return linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, linkCardSortBy, sortOrder, limit, lastId);
+        return new ListRes<>(
+                linkCardSimpleResList,
+                linkCardListRes.limit(),
+                linkCardListRes.size(),
+                linkCardListRes.hasNext()
+        );
     }
 
     @Transactional
@@ -149,8 +159,9 @@ public class LinkCardMangeService {
     @Transactional
     public LinkCardFolderRes editLinkCardFolder(String encryptLinkCardId, String encryptFolderId) {
         Long linkCardId = EncryptionUtil.decrypt(encryptLinkCardId);
+        Long folderId = EncryptionUtil.decrypt(encryptFolderId);
 
-        Folder folder = folderService.findFolder(encryptFolderId);
+        Folder folder = folderService.getFolder(folderId);
         linkCardService.editLinkCardFolder(linkCardId,folder);
         return new LinkCardFolderRes(folder);
     }
@@ -162,5 +173,14 @@ public class LinkCardMangeService {
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
         linkCardService.enterLinkCard(linkCard);
         articleService.enterArticle(linkCard.getArticle());
+    }
+
+    @Transactional
+    public void moveLinkCardToRecycleBin(Member member, String encryptId) {
+        Long linkCardId = EncryptionUtil.decrypt(encryptId);
+
+        LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
+        Folder recycleBinFolder = folderService.getFolderByNameAndMember(Constants.recycleBinName, member);
+        linkCard.editFolder(recycleBinFolder);
     }
 }

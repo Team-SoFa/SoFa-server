@@ -1,12 +1,13 @@
 package com.sw19.sofa.domain.linkcard.api;
 
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.domain.linkcard.dto.request.*;
 import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortBy;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -93,5 +94,14 @@ public interface LinkCardApi {
     })
     ResponseEntity<String> enterLinkCard(
             @Schema(description = "링크 카드 아이디") String id
+    );
+
+    @Operation(summary = "링크 카드 휴지통 이동", description = "링크 카드를 휴지동으로 이동합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "링크 카드 휴지통 이동 성공 메세지")
+    })
+    ResponseEntity<String> moveLinkCardToRecycleBin(
+            @Schema(description = "링크 카드 아이디") String id,
+            Member member
     );
 }
