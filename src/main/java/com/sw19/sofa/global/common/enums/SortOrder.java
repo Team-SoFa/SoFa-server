@@ -11,6 +11,6 @@ public enum SortOrder {
     @Schema(name = "오름차순")
     ASCENDING(Order.ASC),
     @Schema(name = "내림차순")
-    DESCENDING(Order.ASC);
+    DESCENDING(Order.DESC);
     private final Order order;
 }

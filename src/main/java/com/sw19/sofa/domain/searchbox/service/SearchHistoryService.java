@@ -52,6 +52,16 @@ public class SearchHistoryService {
         return history;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<String> addSearchTagHistory(Long memberId, List<String> tagNames) {
+        // 여러 태그 동시 추가 지원
+        return tagNames.stream()
+                .map(tagName -> addSearchTagHistory(memberId, tagName))
+                .flatMap(List::stream)
+                .distinct()
+                .toList();
+    }
+
     public List<String> getSearchKeywordHistory(Long memberId) {
         String key = "search:keywords:" + memberId;
         @SuppressWarnings("unchecked")

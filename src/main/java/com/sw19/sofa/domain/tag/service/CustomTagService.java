@@ -1,27 +1,36 @@
 package com.sw19.sofa.domain.tag.service;
 
 import com.sw19.sofa.domain.tag.entity.CustomTag;
+import com.sw19.sofa.domain.tag.error.TagErrorCode;
 import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
 import com.sw19.sofa.global.common.dto.CustomTagDto;
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CustomTagService {
     private final CustomTagRepository customTagRepository;
 
-    @Transactional(readOnly = true)
     public List<CustomTag> getAllCustomTagsByMember(Member member) {
         return customTagRepository.findByMember(member);
     }
 
+    public CustomTag getCustomTag(Long id) {
+        return customTagRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+    }
+
     @Transactional
     public CustomTag createCustomTag(Member member, String name) {
+        if (customTagRepository.existsByMemberAndName(member, name)) {
+            throw new BusinessException(TagErrorCode.TAG_ALREADY_EXISTS);
+        }
         CustomTag customTag = CustomTag.builder()
                 .member(member)
                 .name(name)
@@ -30,11 +39,34 @@ public class CustomTagService {
     }
 
     @Transactional
-    public void deleteCustomTag(Long id) {
+    public void updateCustomTag(Long id, String name, Member member) {
+        CustomTag customTag = customTagRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+
+        if (!customTag.getMember().getId().equals(member.getId())) {
+            throw new BusinessException(TagErrorCode.TAG_NOT_OWNED_BY_MEMBER);
+        }
+
+        if (!customTag.getName().equals(name) &&
+                customTagRepository.existsByMemberAndName(member, name)) {
+            throw new BusinessException(TagErrorCode.TAG_ALREADY_EXISTS);
+        }
+
+        customTag.updateName(name);
+    }
+
+    @Transactional
+    public void deleteCustomTag(Long id, Member member) {
+        CustomTag customTag = customTagRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+
+        if (!customTag.getMember().getId().equals(member.getId())) {
+            throw new BusinessException(TagErrorCode.TAG_NOT_OWNED_BY_MEMBER);
+        }
+
         customTagRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
     public List<CustomTagDto> getCustomTagDtoListByIdList(List<Long> tagIdList) {
         if (tagIdList == null || tagIdList.isEmpty()) {
             return List.of();
@@ -42,5 +74,9 @@ public class CustomTagService {
         return customTagRepository.findAllByIdIn(tagIdList).stream()
                 .map(CustomTagDto::new)
                 .toList();
+    }
+
+    public List<CustomTag> searchCustomTagsByKeyword(String keyword) {
+        return customTagRepository.findAllByNameContainingIgnoreCase(keyword);
     }
 }

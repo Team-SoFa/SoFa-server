@@ -10,7 +10,7 @@ public enum SearchBoxSortBy implements SortBy {
     ACCURACY {
         @Override
         public OrderSpecifier<?> getOrderSpecifier(SortOrder sortOrder) {
-            return new OrderSpecifier<>(sortOrder.getOrder(), linkCard.id);  // 기본 정렬
+            return new OrderSpecifier<>(sortOrder.getOrder(), linkCard.id);
         }
     },
     @Schema(name = "최근 수정순")

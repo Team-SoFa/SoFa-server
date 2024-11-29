@@ -5,13 +5,13 @@ import lombok.Getter;
 
 @Getter
 public class CustomTagRes {
-    private Long id;
-    private String name;
-    private String encryptedId;
+    private final String name;
+    private final String encryptedId;
+    private final Long memberId;
 
     public CustomTagRes(CustomTag customTag) {
-        this.id = customTag.getId();
         this.name = customTag.getName();
         this.encryptedId = customTag.getEncryptedId();
+        this.memberId = customTag.getMember().getId();
     }
 }

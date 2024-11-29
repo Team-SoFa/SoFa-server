@@ -1,5 +1,7 @@
 package com.sw19.sofa.domain.searchbox.service;
 
+import com.sw19.sofa.domain.folder.entity.Folder;
+import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.service.LinkCardTagService;
@@ -7,10 +9,15 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
 import com.sw19.sofa.domain.searchbox.repository.SearchBoxRepository;
-import com.sw19.sofa.domain.tag.service.TagService;
+import com.sw19.sofa.domain.tag.entity.CustomTag;
+import com.sw19.sofa.domain.tag.entity.Tag;
+import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
+import com.sw19.sofa.domain.tag.repository.TagRepository;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.TagDto;
 import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.error.code.CommonErrorCode;
+import com.sw19.sofa.global.error.exception.BusinessException;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,9 +31,44 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class SearchBoxService {
     private final SearchBoxRepository searchBoxRepository;
-    private final TagService tagService;
     private final LinkCardTagService linkCardTagService;
     private final SearchHistoryService searchHistoryService;
+    private final FolderService folderService;
+    private final TagRepository tagRepository;
+    private final CustomTagRepository customTagRepository;
+
+    private ListRes<SearchBoxRes> getSearchResult(List<LinkCard> linkCards, int limit) {
+        boolean hasNext = linkCards.size() > limit;
+        if (hasNext) {
+            linkCards = linkCards.subList(0, limit);
+        }
+
+        List<SearchBoxRes> searchResults = linkCards.stream()
+                .map(linkCard -> {
+                    List<LinkCardTagSimpleDto> cardTags = linkCardTagService
+                            .getLinkCardTagSimpleDtoListByLinkCardId(linkCard.getId());
+
+                    List<TagDto> tagDtoList = cardTags.stream()
+                            .map(cardTag -> new TagDto(
+                                    cardTag.id(),
+                                    getTagName(cardTag.id())
+                            ))
+                            .toList();
+
+                    return new SearchBoxRes(linkCard, tagDtoList);
+                })
+                .toList();
+
+        return new ListRes<>(searchResults, limit, searchResults.size(), hasNext);
+    }
+
+    private String getTagName(Long id) {
+        return tagRepository.findById(id)
+                .map(Tag::getName)
+                .orElseGet(() -> customTagRepository.findById(id)
+                        .map(CustomTag::getName)
+                        .orElseThrow(() -> new BusinessException(CommonErrorCode.NOT_FOUND)));
+    }
 
     public ListRes<SearchBoxRes> searchByFolder(
             String encryptedFolderId,
@@ -40,7 +82,14 @@ public class SearchBoxService {
         if (StringUtils.hasText(keyword)) {
             searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
         }
+
         Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
+        Folder folder = folderService.findFolder(encryptedFolderId);
+
+        if (!folder.getMember().getId().equals(member.getId())) {
+            throw new BusinessException(CommonErrorCode.FORBIDDEN);
+        }
+
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
         List<LinkCard> linkCards = searchBoxRepository.searchByFolder(
@@ -67,12 +116,10 @@ public class SearchBoxService {
         if (StringUtils.hasText(keyword)) {
             searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
         }
+
         List<Long> tagIds = encryptedTagIds.stream()
                 .map(EncryptionUtil::decrypt)
                 .toList();
-
-        List<TagDto> tags = tagService.getTagDtoListByIdList(tagIds);
-        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.name()));
 
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
@@ -101,14 +148,18 @@ public class SearchBoxService {
         if (StringUtils.hasText(keyword)) {
             searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
         }
+
         List<Long> tagIds = encryptedTagIds.stream()
                 .map(EncryptionUtil::decrypt)
                 .toList();
 
-        List<TagDto> tags = tagService.getAllTagDtoList(tagIds.stream().map(String::valueOf).toList());
-        tags.forEach(tag -> searchHistoryService.addSearchTagHistory(member.getId(), tag.name()));
-
         Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
+        Folder folder = folderService.findFolder(encryptedFolderId);
+
+        if (!folder.getMember().getId().equals(member.getId())) {
+            throw new BusinessException(CommonErrorCode.FORBIDDEN);
+        }
+
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
         List<LinkCard> linkCards = searchBoxRepository.searchByTagsAndFolder(
@@ -135,6 +186,7 @@ public class SearchBoxService {
         if (StringUtils.hasText(keyword)) {
             searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
         }
+
         Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
 
         List<LinkCard> linkCards = searchBoxRepository.searchAll(
@@ -146,28 +198,5 @@ public class SearchBoxService {
         );
 
         return getSearchResult(linkCards, limit);
-    }
-
-    private ListRes<SearchBoxRes> getSearchResult(List<LinkCard> linkCards, int limit) {
-        boolean hasNext = false;
-        if (linkCards.size() > limit) {
-            hasNext = true;
-            linkCards = linkCards.subList(0, limit);
-        }
-
-        List<SearchBoxRes> searchResults = linkCards.stream()
-                .map(linkCard -> {
-                    List<LinkCardTagSimpleDto> cardTags = linkCardTagService
-                            .getLinkCardTagSimpleDtoListByLinkCardId(linkCard.getId());
-                    List<TagDto> tags = tagService.getTagDtoListByIdList(
-                            cardTags.stream()
-                                    .map(LinkCardTagSimpleDto::id)
-                                    .toList()
-                    );
-                    return new SearchBoxRes(linkCard, tags);
-                })
-                .toList();
-
-        return new ListRes<>(searchResults, limit, searchResults.size(), hasNext);
     }
 }

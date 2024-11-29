@@ -2,11 +2,12 @@ package com.sw19.sofa.domain.searchbox.dto.response;
 
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.global.common.dto.TagDto;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record SearchBoxRes(
-        Long id,
+        String encryptedId,
         String title,
         String url,
         String summary,
@@ -17,7 +18,7 @@ public record SearchBoxRes(
 ) {
     public SearchBoxRes(LinkCard linkCard, List<TagDto> tags) {
         this(
-                linkCard.getId(),
+                EncryptionUtil.encrypt(linkCard.getId()),
                 linkCard.getTitle(),
                 linkCard.getArticle().getUrl(),
                 linkCard.getSummary(),

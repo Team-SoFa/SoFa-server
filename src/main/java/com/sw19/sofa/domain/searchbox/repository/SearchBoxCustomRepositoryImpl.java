@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
+import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
 import com.sw19.sofa.global.common.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
