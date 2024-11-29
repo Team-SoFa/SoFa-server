@@ -25,7 +25,7 @@ public class FolderMangeService {
 
     @Transactional
     public FolderListRes addFolder(Member member, FolderReq req) {
-        folderService.addFolder(req.name());
+        folderService.addFolder(member, req.name());
         return folderService.getFolderList(member);
     }
 
