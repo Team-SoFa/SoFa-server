@@ -3,6 +3,7 @@ package com.sw19.sofa.global.scheduler.manager;
 import com.sw19.sofa.domain.recycleBin.job.DeleteExpiredLinkCardListInRecycleBinJob;
 import com.sw19.sofa.domain.remind.job.MemberRemindNotifyJob;
 import com.sw19.sofa.domain.remind.job.MoveUnusedLinkCardListToRemindJob;
+import com.sw19.sofa.global.scheduler.constants.SchedulerConstants;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.quartz.*;
@@ -23,7 +24,7 @@ public class SchedulerManager {
 
     private void scheduleMoveUnusedLinkListToRemindJob() throws SchedulerException {
         JobDetail job = JobBuilder.newJob(MoveUnusedLinkCardListToRemindJob.class)
-                .withIdentity("moveUnusedLinkListToRemindJob")
+                .withIdentity(SchedulerConstants.moveRemindGroup)
                 .build();
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(0, 0))
@@ -36,7 +37,7 @@ public class SchedulerManager {
 
     private void scheduleDeleteExpiredLinkCardListInRecycleBinJob() throws SchedulerException {
         JobDetail job = JobBuilder.newJob(DeleteExpiredLinkCardListInRecycleBinJob.class)
-                .withIdentity("deleteExpiredLinkCardListInRecycleBinJob")
+                .withIdentity(SchedulerConstants.deleteRecycleGroup)
                 .build();
 
         Trigger trigger = TriggerBuilder.newTrigger()
@@ -46,7 +47,7 @@ public class SchedulerManager {
     }
 
     public void startMemberRemindNotifyScheduler(String encryptMemberId) throws SchedulerException {
-        JobKey jobKey = JobKey.jobKey(encryptMemberId, "RemindNotifyGroup");
+        JobKey jobKey = JobKey.jobKey(encryptMemberId, SchedulerConstants.remindNotifyGroup);
 
         // 기존 Job 중복 방지
         if (scheduler.checkExists(jobKey)) {
@@ -59,7 +60,7 @@ public class SchedulerManager {
                 .build();
 
         // Trigger 생성: 30일마다 실행
-        TriggerKey triggerKey = TriggerKey.triggerKey(encryptMemberId, "RemindNotifyGroup");
+        TriggerKey triggerKey = TriggerKey.triggerKey(encryptMemberId, SchedulerConstants.remindNotifyGroup);
         SimpleScheduleBuilder thirtyDaysScheduler = SimpleScheduleBuilder.simpleSchedule()
                 .withIntervalInMilliseconds(30L * 24 * 60 * 60 * 1000) // 30일
                 .repeatForever();
@@ -72,7 +73,7 @@ public class SchedulerManager {
     }
 
     public void stopMemberNotifyScheduler(String encryptMemberId) throws SchedulerException {
-        JobKey jobKey = JobKey.jobKey(encryptMemberId, "RemindNotifyGroup");
+        JobKey jobKey = JobKey.jobKey(encryptMemberId, SchedulerConstants.remindNotifyGroup);
 
         if (scheduler.checkExists(jobKey)) {
             scheduler.deleteJob(jobKey);
