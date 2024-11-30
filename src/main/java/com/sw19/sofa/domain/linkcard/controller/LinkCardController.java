@@ -10,6 +10,7 @@ import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -91,8 +92,22 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @PostMapping("/{id}/enter")
-    public ResponseEntity<String> enterLinkCard(@PathVariable String id) {
-        linkCardMangeService.enterLinkCard(id);
-        return  BaseResponse.ok("링크 카드 방문 정보 반영");
+    public ResponseEntity<String> enterLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    ) {
+        linkCardMangeService.enterLinkCard(id, member);
+        return BaseResponse.ok("링크 카드 방문 정보 반영");
     }
+
+    @Override
+    @PostMapping("/{id}/view")
+    public ResponseEntity<String> viewLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    ) {
+        linkCardMangeService.viewLinkCard(id, member);
+        return BaseResponse.ok("링크 카드 조회 완료");
+    }
+
 }

@@ -8,9 +8,13 @@ import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardSimpleRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
+import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.remind.service.RemindManageService;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.error.exception.BusinessException;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
+    private final RemindManageService remindManageService;
 
     @Transactional(readOnly = true)
     public LinkCardDto getLinkCardDto(Long id){
@@ -48,8 +53,6 @@ public class LinkCardService {
 
         return linkCardRepository.save(linkCard);
     }
-
-
 
     @Transactional(readOnly = true)
     public ListRes<LinkCardSimpleRes> getLinkCardSimpleResListByFolderIdAndSortCondition(Long folderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, int limit, Long lastId){
@@ -88,8 +91,16 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void enterLinkCard(LinkCard linkCard) {
+    public void enterLinkCard(LinkCard linkCard, Member member) {
         linkCard.enter();
         linkCardRepository.save(linkCard);
+        remindManageService.removeFromRemind(linkCard, member);
+    }
+
+    @Transactional
+    public void viewLinkCard(Long id, Member member) {
+        LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
+        linkCard.view();
+        remindManageService.removeFromRemind(linkCard, member);
     }
 }

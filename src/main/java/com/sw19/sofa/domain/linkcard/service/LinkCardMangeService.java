@@ -156,11 +156,18 @@ public class LinkCardMangeService {
     }
 
     @Transactional
-    public void enterLinkCard(String encryptId) {
+    public void enterLinkCard(String encryptId, Member member) {
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
-
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
-        linkCardService.enterLinkCard(linkCard);
+        linkCardService.enterLinkCard(linkCard, member);
         articleService.enterArticle(linkCard.getArticle());
     }
+
+    @Transactional
+    public void viewLinkCard(String id, Member member) {
+        Long linkCardId = EncryptionUtil.decrypt(id);
+        LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
+        linkCardService.viewLinkCard(linkCardId, member);
+    }
+
 }

@@ -8,6 +8,7 @@ import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.global.common.enums.SortOrder;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
+import com.sw19.sofa.security.jwt.AuthMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "\uD83D\uDD17 LinkCard")
 public interface LinkCardApi {
@@ -87,11 +89,17 @@ public interface LinkCardApi {
             @Schema(description = "링크 카드 아이디") String id, LinkCardFolderReq req
     );
 
-    @Operation(summary = "링크 카드 방문", description = "링크 카드 방문 정보 반영")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "방문 정보 반영 성공 메세지")
-    })
-    ResponseEntity<String> enterLinkCard(
-            @Schema(description = "링크 카드 아이디") String id
+    @Operation(summary = "링크 카드 조회", description = "링크 카드의 상세 정보를 조회합니다")
+    ResponseEntity<String> viewLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
     );
+
+    @Operation(summary = "링크 카드 방문", description = "링크 카드의 URL을 통해 실제 사이트를 방문합니다")
+    ResponseEntity<String> enterLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    );
+
+
 }
