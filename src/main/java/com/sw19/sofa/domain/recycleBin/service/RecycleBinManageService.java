@@ -59,4 +59,9 @@ public class RecycleBinManageService {
         List<LinkCard> linkCardList = linkCardService.getExpiredLinkCardsInRecycleBin();
         linkCardService.deleteLinkCardList(linkCardList);
     }
+
+    @Transactional
+    public void addRecycleBin(Member member){
+        folderService.addFolder(member, Constants.recycleBinName);
+    }
 }

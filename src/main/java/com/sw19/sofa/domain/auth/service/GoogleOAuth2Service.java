@@ -7,20 +7,17 @@ import com.sw19.sofa.domain.auth.dto.response.OAuth2Response;
 import com.sw19.sofa.domain.auth.exception.OAuth2AuthenticationProcessingException;
 import com.sw19.sofa.domain.auth.exception.OAuth2ErrorCode;
 import com.sw19.sofa.domain.member.entity.Member;
-import com.sw19.sofa.domain.member.entity.enums.Authority;
-import com.sw19.sofa.domain.member.repository.MemberRepository;
+import com.sw19.sofa.domain.member.service.MemberService;
+import com.sw19.sofa.domain.recycleBin.service.RecycleBinManageService;
+import com.sw19.sofa.domain.setting.service.SettingService;
 import com.sw19.sofa.security.jwt.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -32,7 +29,9 @@ public class GoogleOAuth2Service {
     private final GoogleOAuth2Config config;
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
+    private final SettingService settingService;
+    private final RecycleBinManageService recycleBinManageService;
 
 
     public String getGoogleLoginUrl() {
@@ -141,17 +140,17 @@ public class GoogleOAuth2Service {
     }
 
     private Member saveOrUpdate(GoogleUserResponse userInfo) {
+        Member member = memberService.getMemberByEmail(userInfo.getEmail());
 
-        Member member = memberRepository.findByEmail(userInfo.getEmail())
-                .orElse(Member.builder()
-                        .email(userInfo.getEmail())
-                        .name(userInfo.getName())
-                        .authority(Authority.USER) // 기본으로는 일반유저로 권한줌
-                        .build());
+        if(member == null){
+            member = memberService.addMember(userInfo.getEmail(), userInfo.getName());
+            settingService.setNewUser(member);
+            recycleBinManageService.addRecycleBin(member);
 
-        Member savedMember = memberRepository.save(member);
-        log.info("Saved member name: {}", savedMember.getName());
+            log.info("Saved member name: {}", member.getName());
+        }
 
-        return memberRepository.save(member);
+
+        return member;
     }
 }
