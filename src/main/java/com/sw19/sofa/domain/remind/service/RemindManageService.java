@@ -57,7 +57,7 @@ public class RemindManageService {
 
     @Transactional
     public void addToRemind(LinkCard linkCard, Member member) {
-        if (!remindService.existsRemind(linkCard, member)) {
+        if (linkCard.isInactiveForRemind() && !remindService.existsRemind(linkCard, member)) {
             remindService.createRemind(linkCard, member);
         }
     }
