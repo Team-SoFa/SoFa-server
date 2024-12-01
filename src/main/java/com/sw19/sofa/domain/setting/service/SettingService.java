@@ -34,7 +34,15 @@ public class SettingService {
 
     public Setting getMemberSetting(Member member) {
         return settingRepository.findByMember(member)
-                .orElseThrow(() -> new BusinessException(SettingErrorCode.SETTING_NOT_FOUND));
+                .orElseGet(() -> {
+                    Setting setting = Setting.builder()
+                            .member(member)
+                            .is_remind(true)
+                            .is_recommend(true)
+                            .is_notice(true)
+                            .build();
+                    return settingRepository.save(setting);
+                });
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import com.sw19.sofa.domain.setting.entity.Setting;
 import com.sw19.sofa.domain.setting.service.SettingService;
 import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.security.jwt.AuthMember;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class SettingController implements SettingApi {
     @PatchMapping("/alarm")
     public ResponseEntity<SettingResponse> toggleAlarm(
             @AuthMember Member member,
-            @RequestBody ToggleAlarmRequest request
+            @Valid @RequestBody ToggleAlarmRequest request
     ) {
         settingService.toggleAlarm(member, request.alarmType());
         Setting setting = settingService.getMemberSetting(member);
