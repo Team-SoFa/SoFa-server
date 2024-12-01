@@ -22,10 +22,10 @@ public class SearchBoxController implements SearchBoxApi {
     private final SearchBoxService searchBoxService;
     private final SearchHistoryService searchHistoryService;
 
-    @Override
-    @GetMapping("/folder/{folderId}")
-    public ResponseEntity<ListRes<SearchBoxRes>> searchByFolder(
-            @PathVariable String folderId,
+    @GetMapping
+    public ResponseEntity<ListRes<SearchBoxRes>> search(
+            @RequestParam(required = false) String folderId,
+            @RequestParam(required = false) List<String> tagIds,
             @RequestParam(required = false) String keyword,
             @AuthMember Member member,
             @RequestParam(defaultValue = "0") String lastId,
@@ -33,49 +33,7 @@ public class SearchBoxController implements SearchBoxApi {
             @RequestParam(defaultValue = "RECENTLY_MODIFIED") SearchBoxSortBy sortBy,
             @RequestParam(defaultValue = "DESCENDING") SortOrder sortOrder
     ) {
-        return ResponseEntity.ok(searchBoxService.searchByFolder(folderId, keyword, member, lastId, limit, sortBy, sortOrder));
-    }
-
-    @Override
-    @GetMapping("/tags")
-    public ResponseEntity<ListRes<SearchBoxRes>> searchByTags(
-            @RequestParam List<String> tagIds,
-            @RequestParam(required = false) String keyword,
-            @AuthMember Member member,
-            @RequestParam(defaultValue = "0") String lastId,
-            @RequestParam(defaultValue = "20") int limit,
-            @RequestParam(defaultValue = "RECENTLY_MODIFIED") SearchBoxSortBy sortBy,
-            @RequestParam(defaultValue = "DESCENDING") SortOrder sortOrder
-    ) {
-        return ResponseEntity.ok(searchBoxService.searchByTags(tagIds, keyword, member, lastId, limit, sortBy, sortOrder));
-    }
-
-    @Override
-    @GetMapping("/tags-folder")
-    public ResponseEntity<ListRes<SearchBoxRes>> searchByTagsAndFolder(
-            @RequestParam List<String> tagIds,
-            @RequestParam String folderId,
-            @RequestParam(required = false) String keyword,
-            @AuthMember Member member,
-            @RequestParam(defaultValue = "0") String lastId,
-            @RequestParam(defaultValue = "20") int limit,
-            @RequestParam(defaultValue = "RECENTLY_MODIFIED") SearchBoxSortBy sortBy,
-            @RequestParam(defaultValue = "DESCENDING") SortOrder sortOrder
-    ) {
-        return ResponseEntity.ok(searchBoxService.searchByTagsAndFolder(tagIds, folderId, keyword, member, lastId, limit, sortBy, sortOrder));
-    }
-
-    @Override
-    @GetMapping("/all")
-    public ResponseEntity<ListRes<SearchBoxRes>> searchAllLinkCards(
-            @RequestParam(required = false) String keyword,
-            @AuthMember Member member,
-            @RequestParam(defaultValue = "0") String lastId,
-            @RequestParam(defaultValue = "20") int limit,
-            @RequestParam(defaultValue = "RECENTLY_MODIFIED") SearchBoxSortBy sortBy,
-            @RequestParam(defaultValue = "DESCENDING") SortOrder sortOrder
-    ) {
-        return ResponseEntity.ok(searchBoxService.searchAllLinkCards(keyword, member, lastId, limit, sortBy, sortOrder));
+        return ResponseEntity.ok(searchBoxService.search(folderId, tagIds, keyword, member, lastId, limit, sortBy, sortOrder));
     }
 
     @Override

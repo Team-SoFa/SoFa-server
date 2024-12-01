@@ -37,7 +37,81 @@ public class SearchBoxService {
     private final TagRepository tagRepository;
     private final CustomTagRepository customTagRepository;
 
-    private ListRes<SearchBoxRes> getSearchResult(List<LinkCard> linkCards, int limit) {
+    public ListRes<SearchBoxRes> search(
+            String encryptedFolderId,
+            List<String> encryptedTagIds,
+            String keyword,
+            Member member,
+            String lastId,
+            int limit,
+            SearchBoxSortBy sortBy,
+            SortOrder sortOrder
+    ) {
+        if (StringUtils.hasText(keyword)) {
+            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
+        }
+
+        Long lastIdLong = lastId == null || "0".equals(lastId) ?
+                null : EncryptionUtil.decrypt(lastId);
+
+        List<LinkCard> linkCards;
+
+        if (encryptedFolderId != null && encryptedTagIds != null) {
+            Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
+            validateFolderAccess(folderService.findFolder(encryptedFolderId), member);
+
+            List<Long> tagIds = encryptedTagIds.stream()
+                    .map(EncryptionUtil::decrypt)
+                    .toList();
+
+            linkCards = searchBoxRepository.searchByTagsAndFolder(
+                    tagIds,
+                    folderId,
+                    keyword,
+                    lastIdLong,
+                    limit,
+                    sortBy,
+                    sortOrder
+            );
+        } else if (encryptedFolderId != null) {
+            Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
+            validateFolderAccess(folderService.findFolder(encryptedFolderId), member);
+
+            linkCards = searchBoxRepository.searchByFolder(
+                    folderId,
+                    keyword,
+                    lastIdLong,
+                    limit,
+                    sortBy,
+                    sortOrder
+            );
+        } else if (encryptedTagIds != null && !encryptedTagIds.isEmpty()) {
+            List<Long> tagIds = encryptedTagIds.stream()
+                    .map(EncryptionUtil::decrypt)
+                    .toList();
+
+            linkCards = searchBoxRepository.searchByTags(
+                    tagIds,
+                    keyword,
+                    lastIdLong,
+                    limit,
+                    sortBy,
+                    sortOrder
+            );
+        } else {
+            linkCards = searchBoxRepository.searchAll(
+                    keyword,
+                    lastIdLong,
+                    limit,
+                    sortBy,
+                    sortOrder
+            );
+        }
+
+        return processSearchResults(linkCards, limit);
+    }
+
+    private ListRes<SearchBoxRes> processSearchResults(List<LinkCard> linkCards, int limit) {
         boolean hasNext = linkCards.size() > limit;
         if (hasNext) {
             linkCards = linkCards.subList(0, limit);
@@ -62,146 +136,17 @@ public class SearchBoxService {
         return new ListRes<>(searchResults, limit, searchResults.size(), hasNext);
     }
 
+    private void validateFolderAccess(Folder folder, Member member) {
+        if (!folder.getMember().getId().equals(member.getId())) {
+            throw new BusinessException(CommonErrorCode.FORBIDDEN);
+        }
+    }
+
     private String getTagName(Long id) {
         return tagRepository.findById(id)
                 .map(Tag::getName)
                 .orElseGet(() -> customTagRepository.findById(id)
                         .map(CustomTag::getName)
-                        .orElseThrow(() -> new BusinessException(CommonErrorCode.NOT_FOUND)));
-    }
-
-    public ListRes<SearchBoxRes> searchByFolder(
-            String encryptedFolderId,
-            String keyword,
-            Member member,
-            String lastId,
-            int limit,
-            SearchBoxSortBy sortBy,
-            SortOrder sortOrder
-    ) {
-        if (StringUtils.hasText(keyword)) {
-            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
-        }
-
-        Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
-        Folder folder = folderService.findFolder(encryptedFolderId);
-
-        if (!folder.getMember().getId().equals(member.getId())) {
-            throw new BusinessException(CommonErrorCode.FORBIDDEN);
-        }
-
-        Long lastIdLong;
-        if (lastId == null || "0".equals(lastId)) {
-            throw new BusinessException(CommonErrorCode.INVALID_INPUT_VALUE);
-        } else {
-            lastIdLong = EncryptionUtil.decrypt(lastId);
-        }
-
-        List<LinkCard> linkCards = searchBoxRepository.searchByFolder(
-                folderId,
-                keyword,
-                lastIdLong,
-                limit,
-                sortBy,
-                sortOrder
-        );
-
-        return getSearchResult(linkCards, limit);
-    }
-
-    public ListRes<SearchBoxRes> searchByTags(
-            List<String> encryptedTagIds,
-            String keyword,
-            Member member,
-            String lastId,
-            int limit,
-            SearchBoxSortBy sortBy,
-            SortOrder sortOrder
-    ) {
-        if (StringUtils.hasText(keyword)) {
-            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
-        }
-
-        List<Long> tagIds = encryptedTagIds.stream()
-                .map(EncryptionUtil::decrypt)
-                .toList();
-
-        Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
-
-        List<LinkCard> linkCards = searchBoxRepository.searchByTags(
-                tagIds,
-                keyword,
-                lastIdLong,
-                limit,
-                sortBy,
-                sortOrder
-        );
-
-        return getSearchResult(linkCards, limit);
-    }
-
-    public ListRes<SearchBoxRes> searchByTagsAndFolder(
-            List<String> encryptedTagIds,
-            String encryptedFolderId,
-            String keyword,
-            Member member,
-            String lastId,
-            int limit,
-            SearchBoxSortBy sortBy,
-            SortOrder sortOrder
-    ) {
-        if (StringUtils.hasText(keyword)) {
-            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
-        }
-
-        List<Long> tagIds = encryptedTagIds.stream()
-                .map(EncryptionUtil::decrypt)
-                .toList();
-
-        Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
-        Folder folder = folderService.findFolder(encryptedFolderId);
-
-        if (!folder.getMember().getId().equals(member.getId())) {
-            throw new BusinessException(CommonErrorCode.FORBIDDEN);
-        }
-
-        Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
-
-        List<LinkCard> linkCards = searchBoxRepository.searchByTagsAndFolder(
-                tagIds,
-                folderId,
-                keyword,
-                lastIdLong,
-                limit,
-                sortBy,
-                sortOrder
-        );
-
-        return getSearchResult(linkCards, limit);
-    }
-
-    public ListRes<SearchBoxRes> searchAllLinkCards(
-            String keyword,
-            Member member,
-            String lastId,
-            int limit,
-            SearchBoxSortBy sortBy,
-            SortOrder sortOrder
-    ) {
-        if (StringUtils.hasText(keyword)) {
-            searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
-        }
-
-        Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
-
-        List<LinkCard> linkCards = searchBoxRepository.searchAll(
-                keyword,
-                lastIdLong,
-                limit,
-                sortBy,
-                sortOrder
-        );
-
-        return getSearchResult(linkCards, limit);
+                        .orElse(null));
     }
 }
