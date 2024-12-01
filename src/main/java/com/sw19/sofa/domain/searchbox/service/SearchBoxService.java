@@ -90,7 +90,12 @@ public class SearchBoxService {
             throw new BusinessException(CommonErrorCode.FORBIDDEN);
         }
 
-        Long lastIdLong = "0".equals(lastId) ? 0L : EncryptionUtil.decrypt(lastId);
+        Long lastIdLong;
+        if (lastId == null || "0".equals(lastId)) {
+            throw new BusinessException(CommonErrorCode.INVALID_INPUT_VALUE);
+        } else {
+            lastIdLong = EncryptionUtil.decrypt(lastId);
+        }
 
         List<LinkCard> linkCards = searchBoxRepository.searchByFolder(
                 folderId,
