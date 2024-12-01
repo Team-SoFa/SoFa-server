@@ -32,7 +32,7 @@ public class SecurityConfig {
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources", "/swagger-resources/**",
             "/health-check",
             "/oauth2/**",
-            "/login/oauth2/code/*",
+            "/login/oauth2/code/**",
             "/favicon.ico"
     };
 
