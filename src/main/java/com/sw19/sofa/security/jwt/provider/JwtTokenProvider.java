@@ -101,6 +101,10 @@ public class JwtTokenProvider {
         return getBody(token).getExpiration();
     }
 
+    public String getUserIdFromToken(String token) {
+        return getBody(token).getSubject();
+    }
+
     public void validateRefreshToken(String refreshToken, String userId) {
         validateToken(refreshToken);
         String tokenType = getBody(refreshToken).get(TOKEN_TYPE.getValue(), String.class);
