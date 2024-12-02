@@ -81,10 +81,6 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    public String getUserIdFromToken(String token) {
-        return getBody(token).getSubject();
-    }
-
     public Authentication getAuthentication(String token) {
         String userId = getBody(token)
                 .getSubject();
@@ -103,6 +99,10 @@ public class JwtTokenProvider {
     public Date getExpiration(String token) {
 
         return getBody(token).getExpiration();
+    }
+
+    public String getUserIdFromToken(String token) {
+        return getBody(token).getSubject();
     }
 
     public void validateRefreshToken(String refreshToken, String userId) {
