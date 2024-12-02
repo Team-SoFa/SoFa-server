@@ -23,31 +23,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;  // 추가
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private static final String[] PERMIT_URLS = {
-            /* swagger */
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources", "/swagger-resources/**",
-
-            /* health check */
             "/health-check",
-
-            /* oauth2 */
-            "/login/oauth2/**",
             "/oauth2/**",
-
-            /* favicon */
-            "/favicon.ico"
+            "/login/oauth2/code/**",
+            "/favicon.ico",
+            "/auth/**"
     };
-
-    private static final String[] SEMI_PERMIT_URLS = {
-            //GET만 허용해야 하는 URL
-    };
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,12 +48,16 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/login/**", "/oauth2/**").permitAll() //test용
+                                .requestMatchers(PERMIT_URLS).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService))
+                        .authorizationEndpoint(authorization ->
+                                authorization.baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(redirection ->
+                                redirection.baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService))
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                         .failureHandler(oAuth2AuthenticationFailureHandler)
                 )
