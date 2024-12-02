@@ -13,4 +13,8 @@ public interface AlarmApi {
     @ApiResponse(responseCode = "200", description = "알림 정보(id, 타입(REMIND:리마인드, RECOMMEND: 추천, UPDATE: 업데이트, NOTICE: 공지사항), 내용, 시간, 읽음 여부)")
     ResponseEntity<AlarmListRes> getAlarmList(Member member);
 
+    @Operation(summary = "알림 읽음 처리", description = "해당 알림을 읽음 처리합니다.")
+    @ApiResponse(responseCode = "200", description = "처리 성공")
+    ResponseEntity<String> readAlarm(String id);
+
 }

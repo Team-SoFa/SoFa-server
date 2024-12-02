@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -23,5 +25,12 @@ public class AlarmController implements AlarmApi {
     public ResponseEntity<AlarmListRes> getAlarmList(@AuthMember Member member) {
         AlarmListRes res = alarmService.getAlarmList(member);
         return BaseResponse.ok(res);
+    }
+
+    @Override
+    @PostMapping("/{id}")
+    public ResponseEntity<String> readAlarm(@PathVariable String id) {
+        alarmService.readAlarm(id);
+        return BaseResponse.ok("읽음 처리 성공");
     }
 }

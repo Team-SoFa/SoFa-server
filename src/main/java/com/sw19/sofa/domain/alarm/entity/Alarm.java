@@ -37,4 +37,7 @@ public class Alarm extends BaseTimeEntity {
         return EncryptionUtil.encrypt(this.id);
     }
 
+    public void setRead(){
+        this.isRead = true;
+    }
 }
