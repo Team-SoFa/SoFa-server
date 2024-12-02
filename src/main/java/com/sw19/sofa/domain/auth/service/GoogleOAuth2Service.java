@@ -1,6 +1,7 @@
 package com.sw19.sofa.domain.auth.service;
 
 import com.sw19.sofa.domain.auth.config.GoogleOAuth2Config;
+import com.sw19.sofa.domain.auth.dto.request.LoginAndSignUpReq;
 import com.sw19.sofa.domain.auth.dto.response.GoogleTokenResponse;
 import com.sw19.sofa.domain.auth.dto.response.GoogleUserResponse;
 import com.sw19.sofa.domain.auth.dto.response.OAuth2Response;
@@ -53,7 +54,7 @@ public class GoogleOAuth2Service {
         System.out.println("User Info from Google - email: " + userInfo.getEmail() + ", name: " + userInfo.getName());
 
         // 3. 사용자 정보로 회원가입 또는 로그인 처리
-        Member member = saveOrUpdate(userInfo);
+        Member member = saveOrUpdate(userInfo.getEmail(), userInfo.getName());
         System.out.println("Saved Member Info - email: " + member.getEmail() + ", name: " + member.getName());
 
         // 4. JWT 토큰 생성
@@ -139,11 +140,11 @@ public class GoogleOAuth2Service {
         }
     }
 
-    private Member saveOrUpdate(GoogleUserResponse userInfo) {
-        Member member = memberService.getMemberByEmail(userInfo.getEmail());
+    private Member saveOrUpdate(String email, String name) {
+        Member member = memberService.getMemberByEmail(email);
 
         if(member == null){
-            member = memberService.addMember(userInfo.getEmail(), userInfo.getName());
+            member = memberService.addMember(email, name);
             settingService.setNewUser(member);
             recycleBinManageService.addRecycleBin(member);
 
@@ -152,5 +153,18 @@ public class GoogleOAuth2Service {
 
 
         return member;
+    }
+
+    public OAuth2Response loginAndSignUp(LoginAndSignUpReq req) {
+        Member member = saveOrUpdate(req.email(), req.name());
+
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEncryptUserId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEncryptUserId());
+
+        return OAuth2Response.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .build();
     }
 }
