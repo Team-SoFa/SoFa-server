@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AlarmService {
@@ -23,5 +26,17 @@ public class AlarmService {
                 .build();
 
         alarmRepository.save(alarm);
+    }
+
+    @Transactional
+    public void deleteExpiredAlarm() {
+        List<Alarm> alarmList = alarmRepository.findAll();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime threeMonthsAgo = currentDateTime.minusMonths(3);
+
+        List<Alarm> deleteList = alarmList.stream().filter(
+                alarm -> alarm.getCreatedAt().isBefore(threeMonthsAgo)
+        ).toList();
+        alarmRepository.deleteAll(deleteList);
     }
 }

@@ -1,5 +1,6 @@
 package com.sw19.sofa.global.scheduler.manager;
 
+import com.sw19.sofa.domain.alarm.job.DeleteExpiredAlarmJob;
 import com.sw19.sofa.domain.recycleBin.job.DeleteExpiredLinkCardListInRecycleBinJob;
 import com.sw19.sofa.domain.remind.job.MemberRemindNotifyJob;
 import com.sw19.sofa.domain.remind.job.MoveUnusedLinkCardListToRemindJob;
@@ -78,6 +79,18 @@ public class SchedulerManager {
         if (scheduler.checkExists(jobKey)) {
             scheduler.deleteJob(jobKey);
         }
+    }
+
+    private void deleteExpiredLinkCardListJob() throws SchedulerException{
+        JobDetail job = JobBuilder.newJob(DeleteExpiredAlarmJob.class)
+                .withIdentity(SchedulerConstants.deleteExpiredAlarm)
+                .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(0, 0))
+                .build();
+
+        scheduler.scheduleJob(job, trigger);
     }
 }
 
