@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum AlarmType implements CodedEnum<Integer> {
-    REMIND(10),RECOMMEND(10),NOTICE(30);
+    REMIND(10),RECOMMEND(10),UPDATE(30),NOTICE(40);
     private final Integer code;
 
     @jakarta.persistence.Converter(autoApply = true)
