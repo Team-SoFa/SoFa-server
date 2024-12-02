@@ -4,7 +4,6 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.setting.api.SettingApi;
 import com.sw19.sofa.domain.setting.dto.request.ToggleAlarmRequest;
 import com.sw19.sofa.domain.setting.dto.response.SettingResponse;
-import com.sw19.sofa.domain.setting.entity.Setting;
 import com.sw19.sofa.domain.setting.service.SettingService;
 import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.security.jwt.AuthMember;
@@ -22,8 +21,8 @@ public class SettingController implements SettingApi {
     @Override
     @GetMapping
     public ResponseEntity<SettingResponse> getSetting(@AuthMember Member member) {
-        Setting setting = settingService.getMemberSetting(member);
-        return BaseResponse.ok(SettingResponse.from(setting));
+        SettingResponse res = settingService.getMemberSetting(member);
+        return BaseResponse.ok(res);
     }
 
     @Override
@@ -32,8 +31,7 @@ public class SettingController implements SettingApi {
             @AuthMember Member member,
             @Valid @RequestBody ToggleAlarmRequest request
     ) {
-        settingService.toggleAlarm(member, request.alarmType());
-        Setting setting = settingService.getMemberSetting(member);
-        return BaseResponse.ok(SettingResponse.from(setting));
+        SettingResponse res = settingService.toggleAlarm(member, request.alarmType());
+        return BaseResponse.ok(res);
     }
 }

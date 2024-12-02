@@ -1,6 +1,7 @@
 package com.sw19.sofa.domain.setting.service;
 
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.setting.dto.response.SettingResponse;
 import com.sw19.sofa.domain.setting.entity.Setting;
 import com.sw19.sofa.domain.setting.enums.AlarmType;
 import com.sw19.sofa.domain.setting.error.SettingErrorCode;
@@ -32,22 +33,14 @@ public class SettingService {
         settingRepository.save(setting);
     }
 
-    public Setting getMemberSetting(Member member) {
-        return settingRepository.findByMember(member)
-                .orElseGet(() -> {
-                    Setting setting = Setting.builder()
-                            .member(member)
-                            .is_remind(true)
-                            .is_recommend(true)
-                            .is_notice(true)
-                            .build();
-                    return settingRepository.save(setting);
-                });
+    public SettingResponse getMemberSetting(Member member) {
+        Setting setting = settingRepository.findByMemberOrThrow(member);
+        return SettingResponse.from(setting);
     }
 
     @Transactional
-    public void toggleAlarm(Member member, AlarmType alarmType) {
-        Setting setting = getMemberSetting(member);
+    public SettingResponse toggleAlarm(Member member, AlarmType alarmType) {
+        Setting setting = settingRepository.findByMemberOrThrow(member);
 
         switch (alarmType) {
             case REMIND -> setting.toggleRemindAlarm();
@@ -56,6 +49,8 @@ public class SettingService {
             default -> throw new BusinessException(SettingErrorCode.INVALID_ALARM_TYPE);
         }
 
-        settingRepository.save(setting);
+        Setting save = settingRepository.save(setting);
+
+        return SettingResponse.from(save);
     }
 }
