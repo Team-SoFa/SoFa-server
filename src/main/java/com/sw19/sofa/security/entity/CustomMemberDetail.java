@@ -40,7 +40,7 @@ public record CustomMemberDetail(Member member, Authority authority) implements 
     public boolean isCredentialsNonExpired() {
         return true;
     }
-    
+
     @Override
     public boolean isEnabled() {
         return true;
