@@ -58,19 +58,4 @@ public class SettingService {
 
         settingRepository.save(setting);
     }
-
-    public boolean isRemindAlarmEnabled(Member member) {
-        Setting setting = getMemberSetting(member);
-        return setting.getIs_remind();
-    }
-
-    public boolean isRecommendAlarmEnabled(Member member) {
-        Setting setting = getMemberSetting(member);
-        return setting.getIs_recommend();
-    }
-
-    public boolean isNoticeAlarmEnabled(Member member) {
-        Setting setting = getMemberSetting(member);
-        return setting.getIs_notice();
-    }
 }
