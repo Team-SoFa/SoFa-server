@@ -2,7 +2,7 @@ package com.sw19.sofa.domain.remind.service;
 
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.member.entity.Member;
-import com.sw19.sofa.domain.remind.dto.response.RemindResponse;
+import com.sw19.sofa.domain.remind.dto.response.RemindRes;
 import com.sw19.sofa.domain.remind.entity.Remind;
 import com.sw19.sofa.domain.remind.enums.RemindSortBy;
 import com.sw19.sofa.global.common.dto.ListRes;
@@ -19,7 +19,7 @@ import java.util.List;
 public class RemindManageService {
     private final RemindService remindService;
 
-    public ListRes<RemindResponse> getRemindList(
+    public ListRes<RemindRes> getRemindList(
             Member member,
             String lastId,
             int limit,
@@ -41,8 +41,8 @@ public class RemindManageService {
             reminds = reminds.subList(0, limit);
         }
 
-        List<RemindResponse> responses = reminds.stream()
-                .map(RemindResponse::from)
+        List<RemindRes> responses = reminds.stream()
+                .map(RemindRes::from)
                 .toList();
 
         return new ListRes<>(responses, limit, responses.size(), hasNext);
@@ -52,13 +52,6 @@ public class RemindManageService {
     public void removeFromRemind(LinkCard linkCard, Member member) {
         if (remindService.existsRemind(linkCard, member)) {
             remindService.deleteRemind(linkCard, member);
-        }
-    }
-
-    @Transactional
-    public void addToRemind(LinkCard linkCard, Member member) {
-        if (linkCard.isInactiveForRemind() && !remindService.existsRemind(linkCard, member)) {
-            remindService.createRemind(linkCard, member);
         }
     }
 }

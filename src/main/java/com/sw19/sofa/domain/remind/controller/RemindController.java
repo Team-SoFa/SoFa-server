@@ -2,7 +2,7 @@ package com.sw19.sofa.domain.remind.controller;
 
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.remind.api.RemindApi;
-import com.sw19.sofa.domain.remind.dto.response.RemindResponse;
+import com.sw19.sofa.domain.remind.dto.response.RemindRes;
 import com.sw19.sofa.domain.remind.enums.RemindSortBy;
 import com.sw19.sofa.domain.remind.service.RemindManageService;
 import com.sw19.sofa.global.common.dto.ListRes;
@@ -23,7 +23,7 @@ public class RemindController implements RemindApi {
 
     @Override
     @GetMapping
-    public ResponseEntity<ListRes<RemindResponse>> getRemindList(
+    public ResponseEntity<ListRes<RemindRes>> getRemindList(
             @AuthMember Member member,
             @RequestParam(required = false) String lastId,
             @RequestParam(defaultValue = "20") int limit,
