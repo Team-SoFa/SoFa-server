@@ -22,8 +22,8 @@ public record RemindRes(
     public static RemindRes from(Remind remind) {
         LinkCard linkCard = remind.getLinkCard();
         return new RemindRes(
-                EncryptionUtil.encrypt(remind.getId()),
-                EncryptionUtil.encrypt(linkCard.getId()),
+                remind.getEncryptId(),
+                linkCard.getEncryptId(),
                 linkCard.getTitle(),
                 linkCard.getArticle().getUrl(),
                 linkCard.getSummary(),
