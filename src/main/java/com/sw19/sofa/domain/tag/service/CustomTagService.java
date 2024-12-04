@@ -6,6 +6,7 @@ import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
 import com.sw19.sofa.global.common.dto.CustomTagDto;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.error.exception.BusinessException;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,8 @@ public class CustomTagService {
         return customTagRepository.findByMember(member);
     }
 
-    public CustomTag getCustomTag(Long id) {
+    public CustomTag getCustomTag(String encryptedId) {  // Long id -> String encryptedId로 변경
+        Long id = EncryptionUtil.decrypt(encryptedId);
         return customTagRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
     }
@@ -39,7 +41,8 @@ public class CustomTagService {
     }
 
     @Transactional
-    public void updateCustomTag(Long id, String name, Member member) {
+    public void updateCustomTag(String encryptedId, String name, Member member) {  // Long id -> String encryptedId로 변경
+        Long id = EncryptionUtil.decrypt(encryptedId);   // 서비스에서 복호화 처리
         CustomTag customTag = customTagRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
 
@@ -56,7 +59,8 @@ public class CustomTagService {
     }
 
     @Transactional
-    public void deleteCustomTag(Long id, Member member) {
+    public void deleteCustomTag(String encryptedId, Member member) {
+        Long id = EncryptionUtil.decrypt(encryptedId);
         CustomTag customTag = customTagRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
 

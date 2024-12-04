@@ -9,4 +9,6 @@ import lombok.Setter;
 public class CustomTagReq {
     @NotBlank(message = "태그 이름 추가 해주세요.")
     private String name;
+
+    private String id;
 }

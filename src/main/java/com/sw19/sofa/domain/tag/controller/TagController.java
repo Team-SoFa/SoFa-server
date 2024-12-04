@@ -18,14 +18,12 @@ public class TagController implements TagApi {
 
     @GetMapping("/search")
     public ResponseEntity<List<TagRes>> searchTags(@RequestParam String keyword) {
-        return ResponseEntity.ok(tagService.searchTagsByKeyword(keyword).stream()
-                .map(TagRes::new)
-                .toList());
+        return ResponseEntity.ok(tagService.searchTagsByKeyword(keyword));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTag(@PathVariable String id) {
-        tagService.deleteTag(EncryptionUtil.decrypt(id));
+        tagService.deleteTag(id);
         return ResponseEntity.ok().build();
     }
 }
