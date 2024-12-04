@@ -21,7 +21,8 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public ArticleDto getArticleDtoByUrlOrElseNull(String url){
-        return new ArticleDto(articleRepository.findByUrl(url).orElse(null));
+        Article article = articleRepository.findByUrl(url).orElse(null);
+        return article != null ? new ArticleDto(article) : null;
     }
     @Transactional
     public void enterArticle(Article article) {

@@ -33,7 +33,7 @@ public class RecycleBinManageService {
     public ListRes<RecycleBinLinkCardRes> getLinkCardListInRecycleBin(Member member, RecycleBinSortBy recycleBinSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long lastId = EncryptionUtil.decrypt(encryptLastId);
 
-        Folder recycleBin = folderService.getFolderByNameAndMember(Constants.recycleBinName, member);
+        Folder recycleBin = folderService.getFolderByNameAndMemberOrElseThrow(Constants.recycleBinName, member);
         ListRes<LinkCard> linkCardListRes = linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(recycleBin.getId(), recycleBinSortBy, sortOrder, limit, lastId);
         List<RecycleBinLinkCardRes> recycleBinLinkCardResList = linkCardListRes.data().stream().map(RecycleBinLinkCardRes::new).toList();
 

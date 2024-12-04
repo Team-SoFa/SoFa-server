@@ -6,7 +6,6 @@ import com.sw19.sofa.domain.article.service.ArticleService;
 import com.sw19.sofa.domain.article.service.ArticleTagService;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
-import com.sw19.sofa.domain.folder.service.FolderTagService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
@@ -41,7 +40,6 @@ public class LinkCardMangeService {
     private final AiService aiService;
     private final TagService tagService;
     private final CustomTagService customTagService;
-    private final FolderTagService folderTagService;
     private final LinkCardService linkCardService;
     private final FolderService folderService;
     private final ArticleService articleService;
@@ -54,6 +52,7 @@ public class LinkCardMangeService {
         List<TagDto> tagDtoList;
         TitleAndSummaryDto titleAndSummaryDto;
 
+        // 아티클 및 태그 생성
         if(articleDto != null){
             List<ArticleTagDto> articleTagDtoList = articleTagService.getArticleTagDtoListByArticleId(articleDto.id());
             titleAndSummaryDto = new TitleAndSummaryDto(articleDto.title(), articleDto.summary());
@@ -71,11 +70,16 @@ public class LinkCardMangeService {
             articleTagService.addArticleTagListByArticleAndTagListIn(article ,tagList);
         }
 
-        List<FolderWithTagListDto> folderWithTagList = folderTagService.getFolderListWithTagListByFolderIdList(member);
-        FolderDto folderDto = aiService.createFolder(req.url(), tagDtoList, folderWithTagList);
+        // 폴더 생성
+        String folderName = aiService.createFolder(req.url());
+        Folder folder = folderService.getFolderByNameAndMemberOrNull(folderName, member);
+        if(folder == null){
+            folder = folderService.addFolder(member, folderName);
+        }
 
+        //Dto 생성
         List<LinkCardTagDto> linkCardTagDtoList = tagDtoList.stream().map(LinkCardTagDto::new).toList();
-        LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(folderDto);
+        LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(folder);
 
         return new CreateLinkCardBasicInfoRes(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), linkCardTagDtoList, linkCardFolderDto);
     }
@@ -170,7 +174,7 @@ public class LinkCardMangeService {
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
 
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
-        Folder recycleBinFolder = folderService.getFolderByNameAndMember(Constants.recycleBinName, member);
+        Folder recycleBinFolder = folderService.getFolderByNameAndMemberOrElseThrow(Constants.recycleBinName, member);
         linkCard.editFolder(recycleBinFolder);
     }
 
