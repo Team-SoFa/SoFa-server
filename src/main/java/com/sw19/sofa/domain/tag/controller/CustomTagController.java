@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@RestController
 @RequestMapping("/custom^tags")
 @RequiredArgsConstructor
 public class CustomTagController implements CustomTagApi {
@@ -57,14 +57,4 @@ public class CustomTagController implements CustomTagApi {
         customTagService.deleteCustomTag(id, member);
         return ResponseEntity.ok().build();
     }
-
-
-    @GetMapping("/search")
-    public ResponseEntity<List<CustomTagRes>> searchCustomTags(
-            @RequestParam String keyword) {
-        return ResponseEntity.ok(customTagService.searchCustomTagsByKeyword(keyword).stream()
-                .map(CustomTagRes::new)
-                .toList());
-    }
-
 }

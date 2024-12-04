@@ -15,9 +15,6 @@ import java.util.List;
 
 @Tag(name = "📌 Custom Tag")
 public interface CustomTagApi {
-    @Operation(summary = "커스텀 태그 목록 조회", description = "사용자의 모든 커스텀 태그를 조회합니다")
-    ResponseEntity<List<CustomTagRes>> getAllCustomTags(@AuthMember Member member);
-
     @Operation(summary = "커스텀 태그 생성", description = "새로운 커스텀 태그를 생성합니다")
     ResponseEntity<CustomTagRes> createCustomTag(@AuthMember Member member, @RequestBody CustomTagReq req);
 

@@ -18,12 +18,6 @@ import java.util.List;
 public class TagService {
     private final TagRepository tagRepository;
 
-    public List<TagRes> searchTagsByKeyword(String keyword) {  // Entity 대신 DTO 반환
-        return tagRepository.findAllByNameContainingIgnoreCase(keyword).stream()
-                .map(TagRes::new)
-                .toList();
-    }
-
     public List<TagDto> getTagDtoListByIdList(List<Long> tagIdList) {
         if (tagIdList == null || tagIdList.isEmpty()) {
             return List.of();
@@ -31,6 +25,10 @@ public class TagService {
         return tagRepository.findAllByIdIn(tagIdList).stream()
                 .map(TagDto::new)
                 .toList();
+    }
+
+    public List<Tag> getAllTags() {
+        return tagRepository.findAll();
     }
 
     @Transactional

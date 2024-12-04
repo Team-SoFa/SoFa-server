@@ -22,7 +22,7 @@ public class CustomTagService {
         return customTagRepository.findByMember(member);
     }
 
-    public CustomTag getCustomTag(String encryptedId) {  // Long id -> String encryptedId로 변경
+    public CustomTag getCustomTag(String encryptedId) {
         Long id = EncryptionUtil.decrypt(encryptedId);
         return customTagRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
@@ -41,8 +41,8 @@ public class CustomTagService {
     }
 
     @Transactional
-    public void updateCustomTag(String encryptedId, String name, Member member) {  // Long id -> String encryptedId로 변경
-        Long id = EncryptionUtil.decrypt(encryptedId);   // 서비스에서 복호화 처리
+    public void updateCustomTag(String encryptedId, String name, Member member) {
+        Long id = EncryptionUtil.decrypt(encryptedId);
         CustomTag customTag = customTagRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
 
@@ -78,9 +78,5 @@ public class CustomTagService {
         return customTagRepository.findAllByIdIn(tagIdList).stream()
                 .map(CustomTagDto::new)
                 .toList();
-    }
-
-    public List<CustomTag> searchCustomTagsByKeyword(String keyword) {
-        return customTagRepository.findAllByNameContainingIgnoreCase(keyword);
     }
 }
