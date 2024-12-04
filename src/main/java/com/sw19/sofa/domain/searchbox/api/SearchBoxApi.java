@@ -3,6 +3,7 @@ package com.sw19.sofa.domain.searchbox.api;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
+import com.sw19.sofa.domain.tag.dto.response.TagSearchRes;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.enums.SortOrder;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
@@ -44,6 +45,11 @@ public interface SearchBoxApi {
 
     @Operation(summary = "최근 검색 키워드 조회", description = "사용자의 최근 검색 키워드 목록을 조회합니다")
     ResponseEntity<List<String>> getRecentSearchKeywords(@AuthMember Member member);
+
+    @Operation(summary = "태그 검색", description = "모든 태그를 검색합니다")
+    ResponseEntity<List<TagSearchRes>> searchTags(
+            @RequestParam String keyword
+    );
 
     @Operation(summary = "최근 검색 태그 조회", description = "사용자의 최근 검색 태그 목록을 조회합니다")
     ResponseEntity<List<String>> getRecentSearchTags(@AuthMember Member member);

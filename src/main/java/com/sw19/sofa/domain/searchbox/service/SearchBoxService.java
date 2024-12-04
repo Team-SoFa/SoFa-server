@@ -9,6 +9,7 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
 import com.sw19.sofa.domain.searchbox.repository.SearchBoxRepository;
+import com.sw19.sofa.domain.tag.dto.response.TagSearchRes;
 import com.sw19.sofa.domain.tag.entity.CustomTag;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -148,5 +150,19 @@ public class SearchBoxService {
                 .orElseGet(() -> customTagRepository.findById(id)
                         .map(CustomTag::getName)
                         .orElse(null));
+    }
+
+    public List<TagSearchRes> searchTags(String keyword) {
+        List<TagSearchRes> results = new ArrayList<>();
+
+        results.addAll(tagRepository.findAllByNameContainingIgnoreCase(keyword).stream()
+                .map(TagSearchRes::fromTag)
+                .toList());
+
+        results.addAll(customTagRepository.findAllByNameContainingIgnoreCase(keyword).stream()
+                .map(TagSearchRes::fromCustomTag)
+                .toList());
+
+        return results;
     }
 }

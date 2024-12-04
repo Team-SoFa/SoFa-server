@@ -6,6 +6,7 @@ import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
 import com.sw19.sofa.domain.searchbox.service.SearchBoxService;
 import com.sw19.sofa.domain.searchbox.service.SearchHistoryService;
+import com.sw19.sofa.domain.tag.dto.response.TagSearchRes;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
@@ -46,5 +47,11 @@ public class SearchBoxController implements SearchBoxApi {
     @GetMapping("/history/tags")
     public ResponseEntity<List<String>> getRecentSearchTags(@AuthMember Member member) {
         return ResponseEntity.ok(searchHistoryService.getSearchTagHistory(member.getId()));
+    }
+
+    @Override
+    @GetMapping("/tags")
+    public ResponseEntity<List<TagSearchRes>> searchTags(@RequestParam String keyword) {
+        return ResponseEntity.ok(searchBoxService.searchTags(keyword));
     }
 }
