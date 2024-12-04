@@ -1,6 +1,5 @@
 package com.sw19.sofa.domain.alarm.enums;
 
-import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.global.common.converter.AbstractCodedEnumConverter;
 import com.sw19.sofa.global.common.converter.CodedEnum;
 import lombok.Getter;
@@ -13,9 +12,9 @@ public enum AlarmType implements CodedEnum<Integer> {
     private final Integer code;
 
     @jakarta.persistence.Converter(autoApply = true)
-    static class Converter extends AbstractCodedEnumConverter<TagType, Integer> {
+    static class Converter extends AbstractCodedEnumConverter<AlarmType, Integer> {
         public Converter() {
-            super(TagType.class);
+            super(AlarmType.class);
         }
     }
 }
