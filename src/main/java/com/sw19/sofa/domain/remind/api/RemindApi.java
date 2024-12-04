@@ -4,7 +4,7 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.remind.dto.response.RemindRes;
 import com.sw19.sofa.domain.remind.enums.RemindSortBy;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
