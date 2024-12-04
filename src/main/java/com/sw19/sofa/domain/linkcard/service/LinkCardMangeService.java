@@ -66,7 +66,7 @@ public class LinkCardMangeService {
             List<Tag> tagList = tagService.getTagList(tagNameList);
             tagDtoList = tagList.stream().map(TagDto::new).toList();
 
-            Article article = articleService.addArticle(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), req.imageUrl());
+            Article article = articleService.addArticle(req.url(), titleAndSummaryDto.title(), titleAndSummaryDto.summary(), req.imageUrl());
             articleTagService.addArticleTagListByArticleAndTagListIn(article ,tagList);
         }
 

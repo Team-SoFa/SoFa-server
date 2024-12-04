@@ -31,8 +31,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public Article addArticle(String title, String summary, String imageUrl) {
+    public Article addArticle(String url, String title, String summary, String imageUrl) {
         Article article = Article.builder()
+                .url(url)
                 .title(title)
                 .summary(summary)
                 .imageUrl(imageUrl)
