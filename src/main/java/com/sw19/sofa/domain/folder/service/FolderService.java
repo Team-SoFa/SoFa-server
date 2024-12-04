@@ -27,12 +27,12 @@ public class FolderService {
     }
 
     @Transactional
-    public void addFolder(Member member, String name) {
+    public Folder addFolder(Member member, String name) {
         Folder folder = Folder.builder()
                 .member(member)
                 .name(name)
                 .build();
-        folderRepository.save(folder);
+        return folderRepository.save(folder);
     }
 
     @Transactional
@@ -53,7 +53,12 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public Folder getFolderByNameAndMember(String name, Member member){
+    public Folder getFolderByNameAndMemberOrElseThrow(String name, Member member){
         return folderRepository.findByNameAndMember(name, member).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
+    }
+
+    @Transactional(readOnly = true)
+    public Folder getFolderByNameAndMemberOrNull(String name, Member member){
+        return folderRepository.findByNameAndMember(name, member).orElse(null);
     }
 }
