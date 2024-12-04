@@ -9,8 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "🔐 OAuth2 인증")
 public interface OAuthApi {
@@ -34,4 +33,19 @@ public interface OAuthApi {
     })
     @GetMapping("/code/google")
     ResponseEntity<OAuth2Response> googleCallback(@RequestParam("code") String code);
+
+    @Operation(summary = "토큰 갱신", description = "리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받습니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "토큰 갱신 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "유효하지 않은 리프레시 토큰",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PostMapping("/refresh")
+    ResponseEntity<OAuth2Response> refreshToken(@RequestHeader("Authorization") String refreshToken);
 }
