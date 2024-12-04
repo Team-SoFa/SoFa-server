@@ -33,8 +33,11 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<LinkCardRes> getLinkCard(@PathVariable String id) {
-        LinkCardRes res = linkCardMangeService.getLinkCard(id);
+    public ResponseEntity<LinkCardRes> getLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    ) {
+        LinkCardRes res = linkCardMangeService.getLinkCard(id, member);
         return BaseResponse.ok(res);
     }
 
@@ -99,15 +102,4 @@ public class LinkCardController implements LinkCardApi {
         linkCardMangeService.enterLinkCard(id, member);
         return BaseResponse.ok("링크 카드 방문 정보 반영");
     }
-
-    @Override
-    @PostMapping("/{id}/view")
-    public ResponseEntity<String> viewLinkCard(
-            @PathVariable String id,
-            @AuthMember Member member
-    ) {
-        linkCardMangeService.viewLinkCard(id, member);
-        return BaseResponse.ok("링크 카드 조회 완료");
-    }
-
 }

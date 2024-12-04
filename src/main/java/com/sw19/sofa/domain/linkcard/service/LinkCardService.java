@@ -28,9 +28,11 @@ public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
     private final RemindManageService remindManageService;
 
-    @Transactional(readOnly = true)
-    public LinkCardDto getLinkCardDto(Long id){
+    @Transactional
+    public LinkCardDto getLinkCardDto(Long id, Member member){
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
+        linkCard.view();
+        remindManageService.removeFromRemind(linkCard, member);
         return new LinkCardDto(linkCard);
     }
 
@@ -94,13 +96,6 @@ public class LinkCardService {
     public void enterLinkCard(LinkCard linkCard, Member member) {
         linkCard.enter();
         linkCardRepository.save(linkCard);
-        remindManageService.removeFromRemind(linkCard, member);
-    }
-
-    @Transactional
-    public void viewLinkCard(Long id, Member member) {
-        LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
-        linkCard.view();
         remindManageService.removeFromRemind(linkCard, member);
     }
 }

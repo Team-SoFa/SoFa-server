@@ -31,7 +31,10 @@ public interface LinkCardApi {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "링크 카드 정보")
     })
-    ResponseEntity<LinkCardRes> getLinkCard(@Schema(description = "링크 카드 아이디") String id);
+    ResponseEntity<LinkCardRes> getLinkCard(
+            @Schema(description = "링크 카드 아이디") String id,
+            @AuthMember Member member
+    );
 
     @Operation(summary = "링크 카드 추가", description = "링크 카드를 추가합니다")
     @ApiResponses({
@@ -87,12 +90,6 @@ public interface LinkCardApi {
     })
     ResponseEntity<LinkCardFolderRes> editLinkCardFolder(
             @Schema(description = "링크 카드 아이디") String id, LinkCardFolderReq req
-    );
-
-    @Operation(summary = "링크 카드 조회", description = "링크 카드의 상세 정보를 조회합니다")
-    ResponseEntity<String> viewLinkCard(
-            @PathVariable String id,
-            @AuthMember Member member
     );
 
     @Operation(summary = "링크 카드 방문", description = "링크 카드의 URL을 통해 실제 사이트를 방문합니다")
