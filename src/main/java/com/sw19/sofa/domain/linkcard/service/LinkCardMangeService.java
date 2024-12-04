@@ -84,16 +84,18 @@ public class LinkCardMangeService {
         return new CreateLinkCardBasicInfoRes(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), linkCardTagDtoList, linkCardFolderDto);
     }
 
-    @Transactional(readOnly = true)
-    public LinkCardRes getLinkCard(String encryptId){
+    @Transactional
+    public LinkCardRes getLinkCard(String encryptId, Member member){
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
-        LinkCardDto linkCard = linkCardService.getLinkCardDto(linkCardId);
+
+        LinkCardDto linkCardDto = linkCardService.getLinkCardDto(linkCardId, member);
 
         List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.getLinkCardTagSimpleDtoListByLinkCardId(linkCardId);
 
         List<LinkCardTagDto> linkCardTagDtoList = getLinkCardTagDtoList(linkCardTagSimpleDtoList);
 
         return new LinkCardRes(linkCard, linkCardTagDtoList);
+
     }
 
     @Transactional
@@ -164,11 +166,10 @@ public class LinkCardMangeService {
     }
 
     @Transactional
-    public void enterLinkCard(String encryptId) {
+    public void enterLinkCard(String encryptId, Member member) {
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
-
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
-        linkCardService.enterLinkCard(linkCard);
+        linkCardService.enterLinkCard(linkCard, member);
         articleService.enterArticle(linkCard.getArticle());
     }
 

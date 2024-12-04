@@ -7,6 +7,8 @@ import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
+import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.remind.service.RemindManageService;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
@@ -21,10 +23,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
+    private final RemindManageService remindManageService;
 
-    @Transactional(readOnly = true)
-    public LinkCardDto getLinkCardDto(Long id){
+    @Transactional
+    public LinkCardDto getLinkCardDto(Long id, Member member){
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
+        linkCard.view();
+        remindManageService.removeFromRemind(linkCard, member);
         return new LinkCardDto(linkCard);
     }
 
@@ -32,7 +37,6 @@ public class LinkCardService {
     public LinkCard getLinkCard(Long id){
         return linkCardRepository.findByIdOrElseThrowException(id);
     }
-
     @Transactional(readOnly = true)
     public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(List<Long> folderIdList, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
         List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderIdList, sortBy, sortOrder, limit, lastId);
@@ -90,9 +94,10 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void enterLinkCard(LinkCard linkCard) {
+    public void enterLinkCard(LinkCard linkCard, Member member) {
         linkCard.enter();
         linkCardRepository.save(linkCard);
+        remindManageService.removeFromRemind(linkCard, member);
     }
 
     @Transactional

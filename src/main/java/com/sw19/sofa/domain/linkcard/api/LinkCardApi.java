@@ -8,6 +8,7 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
+import com.sw19.sofa.security.jwt.AuthMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "\uD83D\uDD17 LinkCard")
 public interface LinkCardApi {
@@ -29,7 +31,10 @@ public interface LinkCardApi {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "링크 카드 정보")
     })
-    ResponseEntity<LinkCardRes> getLinkCard(@Schema(description = "링크 카드 아이디") String id);
+    ResponseEntity<LinkCardRes> getLinkCard(
+            @Schema(description = "링크 카드 아이디") String id,
+            @AuthMember Member member
+    );
 
     @Operation(summary = "링크 카드 추가", description = "링크 카드를 추가합니다")
     @ApiResponses({
@@ -100,12 +105,10 @@ public interface LinkCardApi {
             @Schema(description = "링크 카드 아이디") String id, LinkCardFolderReq req
     );
 
-    @Operation(summary = "링크 카드 방문", description = "링크 카드 방문 정보 반영")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "방문 정보 반영 성공 메세지")
-    })
+    @Operation(summary = "링크 카드 방문", description = "링크 카드의 URL을 통해 실제 사이트를 방문합니다")
     ResponseEntity<String> enterLinkCard(
-            @Schema(description = "링크 카드 아이디") String id
+            @PathVariable String id,
+            @AuthMember Member member
     );
 
     @Operation(summary = "링크 카드 휴지통 이동", description = "링크 카드를 휴지동으로 이동합니다.")
@@ -116,4 +119,5 @@ public interface LinkCardApi {
             @Schema(description = "링크 카드 아이디") String id,
             Member member
     );
+
 }

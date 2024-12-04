@@ -9,6 +9,8 @@ import com.sw19.sofa.domain.linkcard.service.LinkCardMangeService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.global.common.dto.ListRes;
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +34,11 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<LinkCardRes> getLinkCard(@PathVariable String id) {
-        LinkCardRes res = linkCardMangeService.getLinkCard(id);
+    public ResponseEntity<LinkCardRes> getLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    ) {
+        LinkCardRes res = linkCardMangeService.getLinkCard(id, member);
         return BaseResponse.ok(res);
     }
 
@@ -100,9 +105,12 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @PostMapping("/{id}/enter")
-    public ResponseEntity<String> enterLinkCard(@PathVariable String id) {
-        linkCardMangeService.enterLinkCard(id);
-        return  BaseResponse.ok("링크 카드 방문 정보 반영");
+    public ResponseEntity<String> enterLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    ) {
+        linkCardMangeService.enterLinkCard(id, member);
+        return BaseResponse.ok("링크 카드 방문 정보 반영");
     }
 
     @Override

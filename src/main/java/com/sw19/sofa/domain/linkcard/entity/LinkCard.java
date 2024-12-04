@@ -55,8 +55,21 @@ public class LinkCard extends BaseTimeEntity {
         this.folder = folder;
     }
 
-    public void enter() {
-        this.views += 1;
-        this.visitedAt = LocalDateTime.now();
+
+    public boolean isInactiveForRemind() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        return (this.visitedAt == null || this.visitedAt.isBefore(thirtyDaysAgo))
+                && (this.modifiedAt == null || this.modifiedAt.isBefore(thirtyDaysAgo));
     }
+
+    public void view() {
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    public void enter() {
+        this.visitedAt = LocalDateTime.now();
+        this.views += 1;
+    }
+
+
 }
