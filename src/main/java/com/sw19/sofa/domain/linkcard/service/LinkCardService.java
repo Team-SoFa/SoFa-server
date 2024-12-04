@@ -7,7 +7,12 @@ import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
+import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.remind.service.RemindManageService;
 import com.sw19.sofa.global.common.dto.ListRes;
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
+import com.sw19.sofa.global.error.exception.BusinessException;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +26,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
+    private final RemindManageService remindManageService;
 
-    @Transactional(readOnly = true)
-    public LinkCardDto getLinkCardDto(Long id){
+    @Transactional
+    public LinkCardDto getLinkCardDto(Long id, Member member){
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
+        linkCard.view();
+        remindManageService.removeFromRemind(linkCard, member);
         return new LinkCardDto(linkCard);
     }
 
     @Transactional(readOnly = true)
     public LinkCard getLinkCard(Long id){
         return linkCardRepository.findByIdOrElseThrowException(id);
+    }
+
+    @Transactional
+    public LinkCard addLinkCard(LinkCardReq req, Folder folder, Article article) {
+        LinkCard linkCard = LinkCard.builder()
+                .article(article)
+                .folder(folder)
+                .title(req.title())
+                .memo(req.memo())
+                .summary(req.summary())
+                .views(0L)
+                .visitedAt(LocalDateTime.now())
+                .build();
+
+        return linkCardRepository.save(linkCard);
     }
 
     @Transactional(readOnly = true)
@@ -90,9 +113,10 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void enterLinkCard(LinkCard linkCard) {
+    public void enterLinkCard(LinkCard linkCard, Member member) {
         linkCard.enter();
         linkCardRepository.save(linkCard);
+        remindManageService.removeFromRemind(linkCard, member);
     }
 
     @Transactional
