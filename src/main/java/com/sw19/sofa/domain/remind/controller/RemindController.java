@@ -6,7 +6,7 @@ import com.sw19.sofa.domain.remind.dto.response.RemindRes;
 import com.sw19.sofa.domain.remind.enums.RemindSortBy;
 import com.sw19.sofa.domain.remind.service.RemindManageService;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

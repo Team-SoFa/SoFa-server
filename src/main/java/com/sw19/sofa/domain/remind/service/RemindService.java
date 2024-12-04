@@ -5,7 +5,7 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.remind.entity.Remind;
 import com.sw19.sofa.domain.remind.enums.RemindSortBy;
 import com.sw19.sofa.domain.remind.repository.RemindRepository;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,14 +35,5 @@ public class RemindService {
 
     public boolean existsRemind(LinkCard linkCard, Member member) {
         return remindRepository.existsByLinkCardAndMember(linkCard, member);
-    }
-
-    @Transactional
-    public Remind createRemind(LinkCard linkCard, Member member) {
-        Remind remind = Remind.builder()
-                .linkCard(linkCard)
-                .member(member)
-                .build();
-        return remindRepository.save(remind);
     }
 }

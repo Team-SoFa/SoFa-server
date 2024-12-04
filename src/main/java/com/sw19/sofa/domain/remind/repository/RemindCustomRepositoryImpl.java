@@ -3,7 +3,7 @@ package com.sw19.sofa.domain.remind.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sw19.sofa.domain.remind.entity.Remind;
 import com.sw19.sofa.domain.remind.enums.RemindSortBy;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
