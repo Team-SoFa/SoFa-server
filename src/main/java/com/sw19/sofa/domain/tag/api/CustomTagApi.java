@@ -30,7 +30,4 @@ public interface CustomTagApi {
 
     @Operation(summary = "커스텀 태그 삭제", description = "커스텀 태그를 삭제합니다")
     ResponseEntity<Void> deleteCustomTag(@AuthMember Member member, @PathVariable String id);
-
-    @Operation(summary = "커스텀 태그 검색", description = "키워드로 커스텀 태그를 검색합니다")
-    ResponseEntity<List<CustomTagRes>> searchCustomTags(@RequestParam String keyword);
 }

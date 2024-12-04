@@ -3,23 +3,24 @@ package com.sw19.sofa.domain.tag.dto.response;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.tag.entity.CustomTag;
 import com.sw19.sofa.domain.tag.entity.Tag;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.Getter;
 
 @Getter
 public class TagSearchRes {
-    private Long id;
+    private String id;
     private String name;
     private String encryptedId;
     private TagType type;
-    private Long memberId;
+    private String memberId;
 
 
     public TagSearchRes(Long id, String name, String encryptedId, TagType type, Long memberId) {
-        this.id = id;
+        this.id = id != null ? EncryptionUtil.encrypt(id) : null;
         this.name = name;
         this.encryptedId = encryptedId;
         this.type = type;
-        this.memberId = memberId;
+        this.memberId = memberId != null ? EncryptionUtil.encrypt(memberId) : null;
     }
 
 

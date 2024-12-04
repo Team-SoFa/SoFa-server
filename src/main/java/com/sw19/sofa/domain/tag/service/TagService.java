@@ -1,10 +1,12 @@
 package com.sw19.sofa.domain.tag.service;
 
+import com.sw19.sofa.domain.tag.dto.response.TagRes;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.error.TagErrorCode;
 import com.sw19.sofa.domain.tag.repository.TagRepository;
 import com.sw19.sofa.global.common.dto.TagDto;
 import com.sw19.sofa.global.error.exception.BusinessException;
+import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +18,10 @@ import java.util.List;
 public class TagService {
     private final TagRepository tagRepository;
 
-    public List<Tag> searchTagsByKeyword(String keyword) {
-        return tagRepository.findAllByNameContainingIgnoreCase(keyword);
+    public List<TagRes> searchTagsByKeyword(String keyword) {  // Entity 대신 DTO 반환
+        return tagRepository.findAllByNameContainingIgnoreCase(keyword).stream()
+                .map(TagRes::new)
+                .toList();
     }
 
     public List<TagDto> getTagDtoListByIdList(List<Long> tagIdList) {
@@ -30,7 +34,8 @@ public class TagService {
     }
 
     @Transactional
-    public void deleteTag(Long id) {
+    public void deleteTag(String encryptedId) {
+        Long id = EncryptionUtil.decrypt(encryptedId);
         if (!tagRepository.existsById(id)) {
             throw new BusinessException(TagErrorCode.TAG_NOT_FOUND);
         }
