@@ -34,8 +34,8 @@ public class LinkCardService {
     }
 
     @Transactional(readOnly = true)
-    public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(Long folderId, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
-        List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderId, sortBy, sortOrder, limit, lastId);
+    public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(List<Long> folderIdList, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
+        List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderIdList, sortBy, sortOrder, limit, lastId);
 
         boolean hasNext = false;
 

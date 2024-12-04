@@ -8,8 +8,9 @@ import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
+import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
@@ -22,7 +23,6 @@ import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.constants.Constants;
 import com.sw19.sofa.global.common.dto.*;
-import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
@@ -110,18 +110,21 @@ public class LinkCardMangeService {
     }
 
     @Transactional(readOnly = true)
-    public ListRes<LinkCardSimpleRes> getLinkCardList(String encryptFolderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
-        Long folderId = EncryptionUtil.decrypt(encryptFolderId);
-        Long lastId = EncryptionUtil.decrypt(encryptLastId);
-        ListRes<LinkCard> linkCardListRes = linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderId, linkCardSortBy, sortOrder, limit, lastId);
-        List<LinkCardSimpleRes> linkCardSimpleResList = linkCardListRes.data().stream().map(LinkCardSimpleRes::new).toList();
+    public ListRes<LinkCardSimpleRes> getLinkCardList(Member member, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
+        Long lastId = encryptLastId.equals("0") ? 0 : EncryptionUtil.decrypt(encryptLastId);
+        List<Long> folderIdList = folderService.getFolderList(member).floderList().stream()
+                .filter(folder -> !"휴지통".equals(folder.name()))
+                .map(folderRes -> EncryptionUtil.decrypt(folderRes.id()))
+                .toList();
+        return linkCardListInfiniteScroll(folderIdList, linkCardSortBy, sortOrder, limit, lastId);
+    }
 
-        return new ListRes<>(
-                linkCardSimpleResList,
-                linkCardListRes.limit(),
-                linkCardListRes.size(),
-                linkCardListRes.hasNext()
-        );
+    @Transactional(readOnly = true)
+    public ListRes<LinkCardSimpleRes> getLinkCardListByFolder(String encryptFolderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
+        Long folderId = EncryptionUtil.decrypt(encryptFolderId);
+        Long lastId = encryptLastId.equals("0") ? 0 : EncryptionUtil.decrypt(encryptLastId);
+
+        return linkCardListInfiniteScroll(List.of(folderId), linkCardSortBy, sortOrder, limit, lastId);
     }
 
     @Transactional
@@ -187,5 +190,18 @@ public class LinkCardMangeService {
         linkCardTagDtoList.addAll(tagService.getTagDtoListByIdList(tagIdList).stream().map(LinkCardTagDto::new).toList());
         linkCardTagDtoList.addAll(customTagService.getCustomTagDtoListByIdList(customIdList).stream().map(LinkCardTagDto::new).toList());
         return linkCardTagDtoList;
+    }
+
+
+    private ListRes<LinkCardSimpleRes> linkCardListInfiniteScroll(List<Long> folderIdList, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, int limit, Long lastId) {
+        ListRes<LinkCard> linkCardListRes = linkCardService.getLinkCardSimpleResListByFolderIdAndSortCondition(folderIdList, linkCardSortBy, sortOrder, limit, lastId);
+        List<LinkCardSimpleRes> linkCardSimpleResList = linkCardListRes.data().stream().map(LinkCardSimpleRes::new).toList();
+
+        return new ListRes<>(
+                linkCardSimpleResList,
+                linkCardListRes.limit(),
+                linkCardListRes.size(),
+                linkCardListRes.hasNext()
+        );
     }
 }
