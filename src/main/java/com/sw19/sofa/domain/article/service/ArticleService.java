@@ -21,7 +21,8 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public ArticleDto getArticleDtoByUrlOrElseNull(String url){
-        return new ArticleDto(articleRepository.findByUrl(url).orElse(null));
+        Article article = articleRepository.findByUrl(url).orElse(null);
+        return article != null ? new ArticleDto(article) : null;
     }
     @Transactional
     public void enterArticle(Article article) {
@@ -30,8 +31,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public Article addArticle(String title, String summary, String imageUrl) {
+    public Article addArticle(String url, String title, String summary, String imageUrl) {
         Article article = Article.builder()
+                .url(url)
                 .title(title)
                 .summary(summary)
                 .imageUrl(imageUrl)
