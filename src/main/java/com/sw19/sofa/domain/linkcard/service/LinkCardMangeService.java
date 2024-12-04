@@ -104,8 +104,8 @@ public class LinkCardMangeService {
         Article article = articleService.getArticleByUrl(req.url());
 
         LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
-
-        linkCardTagService.addLinkCardTagList(linkCard, req.tagList());
+        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = req.tagList().stream().map(LinkCardTagSimpleDto::new).toList();
+        linkCardTagService.addLinkCardTagList(linkCard, linkCardTagSimpleDtoList );
 
     }
 
