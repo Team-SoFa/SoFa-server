@@ -6,7 +6,7 @@ import com.sw19.sofa.global.util.EncryptionUtil;
 
 import java.time.LocalDateTime;
 
-public record RemindResponse(
+public record RemindRes(
         String encryptedId,
         String encryptedLinkCardId,
         String title,
@@ -19,9 +19,9 @@ public record RemindResponse(
         LocalDateTime modifiedAt,
         LocalDateTime visitedAt
 ) {
-    public static RemindResponse from(Remind remind) {
+    public static RemindRes from(Remind remind) {
         LinkCard linkCard = remind.getLinkCard();
-        return new RemindResponse(
+        return new RemindRes(
                 EncryptionUtil.encrypt(remind.getId()),
                 EncryptionUtil.encrypt(linkCard.getId()),
                 linkCard.getTitle(),
