@@ -4,8 +4,10 @@ import com.sw19.sofa.domain.auth.api.OAuthApi;
 import com.sw19.sofa.domain.auth.dto.response.OAuth2Response;
 import com.sw19.sofa.security.jwt.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequiredArgsConstructor
@@ -13,10 +15,16 @@ import org.springframework.web.bind.annotation.*;
 public class OAuthController implements OAuthApi {
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    private String redirect;
+
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String client;
+
     @Override
     @GetMapping("/google")
-    public ResponseEntity<String> getGoogleAuthUrl() {
-        return ResponseEntity.ok("/oauth2/authorization/google");
+    public RedirectView getGoogleAuthUrl() {
+        return new RedirectView("https://accounts.google.com/o/oauth2/v2/auth?client_id="+client+"&redirect_uri="+redirect+"&response_type=code&scope=email profile");
     }
 
     @Override

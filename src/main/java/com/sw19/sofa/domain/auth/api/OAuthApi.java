@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Tag(name = "🔐 OAuth2 인증")
 public interface OAuthApi {
@@ -17,7 +18,7 @@ public interface OAuthApi {
     @Operation(summary = "Google 로그인 URL 조회", description = "Google OAuth2 로그인을 위한 URL을 반환합니다.")
     @ApiResponse(responseCode = "200", description = "Google 로그인 URL 반환 성공")
     @GetMapping("/google")
-    ResponseEntity<String> getGoogleAuthUrl();
+    RedirectView getGoogleAuthUrl();
 
     @Operation(summary = "Google OAuth2 콜백 처리", description = "Google OAuth2 로그인 후 콜백을 처리합니다.")
     @ApiResponses({
