@@ -1,5 +1,7 @@
 package com.sw19.sofa.domain.article.service;
 
+import com.sw19.sofa.domain.ai.service.AiSummaryService;
+import com.sw19.sofa.domain.ai.service.WebScrapingService;
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.article.error.ArticleErrorCode;
 import com.sw19.sofa.domain.article.repository.ArticleRepository;
@@ -13,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
+    private final AiSummaryService aiSummaryService;
+
 
     @Transactional(readOnly = true)
     public Article getArticleByUrl(String url){
@@ -39,5 +43,14 @@ public class ArticleService {
                 .build();
 
         return articleRepository.save(article);
+    }
+
+    @Transactional
+    public void updateArticleSummary(Article article) {
+        // URL의 내용을 AI로 요약
+        String summary = aiSummaryService.summarizeUrl(article.getUrl());
+        // 요약 내용 업데이트
+        article.updateSummary(summary);
+        articleRepository.save(article);
     }
 }

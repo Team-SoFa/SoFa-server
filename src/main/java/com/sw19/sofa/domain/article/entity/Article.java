@@ -36,4 +36,8 @@ public class Article {
     public void enter() {
         this.views += 1;
     }
+
+    public void updateSummary(String summary) {
+        this.summary = summary;
+    }
 }
