@@ -64,7 +64,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	//open-ai
-
+	implementation 'org.jsoup:jsoup:1.16.1'
 }
 
 test {

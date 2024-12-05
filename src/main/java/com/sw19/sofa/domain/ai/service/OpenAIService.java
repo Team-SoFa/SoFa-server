@@ -1,7 +1,7 @@
-package com.sw19.sofa.global.common.service;
+package com.sw19.sofa.domain.ai.service;
 
-import com.sw19.sofa.global.common.dto.ChatGPTRequest;
-import com.sw19.sofa.global.common.dto.ChatGPTResponse;
+import com.sw19.sofa.domain.ai.dto.request.ChatGPTRequest;
+import com.sw19.sofa.domain.ai.dto.response.ChatGPTResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +33,7 @@ public class OpenAIService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
-        // 요청 엔티티 생성
+
         HttpEntity<ChatGPTRequest> entity = new HttpEntity<>(request, headers);
 
         ChatGPTResponse response = restTemplate.postForObject(apiUrl, entity, ChatGPTResponse.class);

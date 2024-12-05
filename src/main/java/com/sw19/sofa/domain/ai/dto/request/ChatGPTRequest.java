@@ -1,5 +1,6 @@
-package com.sw19.sofa.global.common.dto;
+package com.sw19.sofa.domain.ai.dto.request;
 
+import com.sw19.sofa.global.common.dto.AiMessageDto;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
