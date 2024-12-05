@@ -1,13 +1,14 @@
 package com.sw19.sofa.domain.linkcard.api;
 
+import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.domain.linkcard.dto.request.*;
 import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
+import com.sw19.sofa.security.jwt.AuthMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "\uD83D\uDD17 LinkCard")
 public interface LinkCardApi {
@@ -29,7 +31,10 @@ public interface LinkCardApi {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "링크 카드 정보")
     })
-    ResponseEntity<LinkCardRes> getLinkCard(@Schema(description = "링크 카드 아이디") String id);
+    ResponseEntity<LinkCardRes> getLinkCard(
+            @Schema(description = "링크 카드 아이디") String id,
+            @AuthMember Member member
+    );
 
     @Operation(summary = "링크 카드 추가", description = "링크 카드를 추가합니다")
     @ApiResponses({
@@ -40,12 +45,25 @@ public interface LinkCardApi {
     })
     ResponseEntity<String> addLinkCard(LinkCardReq req);
 
-    @Operation(summary = "링크 카드 리스트 조회", description = "링크 카드 리스트를 조회합니다 <br>" +
+    @Operation(summary = "전체 링크 카드 리스트 조회", description = "링크 카드 리스트를 조회합니다 <br>" +
             "정렬 순서 및 정렬 방식 변경 시 새로운 조회 필요")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "링크 카드 간소화(아이디, 제목, 이미지, url) 리스트")
     })
     ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
+            @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 방문순)/MOST_VIEWED(최다 방문순)/RECENTLY_MODIFIED(최근 수정순)/NAME(이름순)") LinkCardSortBy linkCardSortBy,
+            @Schema(description = "정렬 순서", example = "ASCENDING(오름차순)/DESCENDING(내림차순)") SortOrder sortOrder,
+            @Schema(description = "마지막 링크카드 아이디", example = "처음 조회시에는 0 입력") String lastId,
+            @Schema(description = "요청 갯수") int limit,
+            Member member
+    );
+
+    @Operation(summary = "폴더 내 링크 카드 리스트 조회", description = "링크 카드 리스트를 조회합니다 <br>" +
+            "정렬 순서 및 정렬 방식 변경 시 새로운 조회 필요")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "링크 카드 간소화(아이디, 제목, 이미지, url) 리스트")
+    })
+    ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardListByFolder(
             @Schema(description = "폴더 아이디") String folderId,
             @Schema(description = "정렬 방식", example = "RECENTLY_SAVED(최근 저장순)/RECENTLY_VIEWED(최근 방문순)/MOST_VIEWED(최다 방문순)/RECENTLY_MODIFIED(최근 수정순)/NAME(이름순)") LinkCardSortBy linkCardSortBy,
             @Schema(description = "정렬 순서", example = "ASCENDING(오름차순)/DESCENDING(내림차순)") SortOrder sortOrder,
@@ -87,11 +105,19 @@ public interface LinkCardApi {
             @Schema(description = "링크 카드 아이디") String id, LinkCardFolderReq req
     );
 
-    @Operation(summary = "링크 카드 방문", description = "링크 카드 방문 정보 반영")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "방문 정보 반영 성공 메세지")
-    })
+    @Operation(summary = "링크 카드 방문", description = "링크 카드의 URL을 통해 실제 사이트를 방문합니다")
     ResponseEntity<String> enterLinkCard(
-            @Schema(description = "링크 카드 아이디") String id
+            @PathVariable String id,
+            @AuthMember Member member
     );
+
+    @Operation(summary = "링크 카드 휴지통 이동", description = "링크 카드를 휴지동으로 이동합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "링크 카드 휴지통 이동 성공 메세지")
+    })
+    ResponseEntity<String> moveLinkCardToRecycleBin(
+            @Schema(description = "링크 카드 아이디") String id,
+            Member member
+    );
+
 }

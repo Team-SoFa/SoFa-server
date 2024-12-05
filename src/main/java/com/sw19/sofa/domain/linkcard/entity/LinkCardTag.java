@@ -34,5 +34,6 @@ public class LinkCardTag extends BaseTimeEntity {
     public String getEncryptId() {
         return EncryptionUtil.encrypt(this.id);
     }
+    public String getEncryptTagId(){return EncryptionUtil.encrypt(this.tagId); }
 
 }

@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FolderRepository extends JpaRepository<Folder,Long> {
     List<Folder> findAllByMember(Member member);
-
+    Optional<Folder> findByNameAndMember(String name, Member member);
 }

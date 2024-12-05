@@ -8,7 +8,7 @@ import com.sw19.sofa.domain.searchbox.service.SearchBoxService;
 import com.sw19.sofa.domain.searchbox.service.SearchHistoryService;
 import com.sw19.sofa.domain.tag.dto.response.TagSearchRes;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

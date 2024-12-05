@@ -5,7 +5,7 @@ import com.sw19.sofa.domain.searchbox.dto.response.SearchBoxRes;
 import com.sw19.sofa.domain.searchbox.enums.SearchBoxSortBy;
 import com.sw19.sofa.domain.tag.dto.response.TagSearchRes;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
 import com.sw19.sofa.security.jwt.AuthMember;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;

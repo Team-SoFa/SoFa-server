@@ -1,8 +1,8 @@
 package com.sw19.sofa.domain.searchbox.enums;
 
 import com.querydsl.core.types.OrderSpecifier;
-import com.sw19.sofa.global.common.enums.SortBy;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortBy;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public enum SearchBoxSortBy implements SortBy {

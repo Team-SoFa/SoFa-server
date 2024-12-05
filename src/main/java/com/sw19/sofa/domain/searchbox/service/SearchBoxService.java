@@ -16,7 +16,7 @@ import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
 import com.sw19.sofa.domain.tag.repository.TagRepository;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.TagDto;
-import com.sw19.sofa.global.common.enums.SortOrder;
+import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.global.error.code.CommonErrorCode;
 import com.sw19.sofa.global.error.exception.BusinessException;
 import com.sw19.sofa.global.util.EncryptionUtil;
