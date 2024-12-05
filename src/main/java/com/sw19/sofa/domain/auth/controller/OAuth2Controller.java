@@ -18,13 +18,17 @@ public class OAuth2Controller implements OAuthApi {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
+    @GetMapping("/google")
     public ResponseEntity<String> getGoogleAuthUrl() {
-        return ResponseEntity.ok(googleOAuth2Service.getGoogleLoginUrl());
+        String res = googleOAuth2Service.getGoogleLoginUrl();
+        return ResponseEntity.ok(res);
     }
 
     @Override
-    public ResponseEntity<OAuth2Response> googleCallback(String code) {
-        return ResponseEntity.ok(googleOAuth2Service.socialLogin(code));
+    @GetMapping("/code/google")
+    public ResponseEntity<OAuth2Response> googleCallback(@RequestParam String code) {
+        OAuth2Response res = googleOAuth2Service.socialLogin(code);
+        return ResponseEntity.ok(res);
     }
 
     @Override
