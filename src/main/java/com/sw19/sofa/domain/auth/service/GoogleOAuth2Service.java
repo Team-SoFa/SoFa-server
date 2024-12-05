@@ -1,6 +1,5 @@
 package com.sw19.sofa.domain.auth.service;
 
-import com.sw19.sofa.domain.auth.config.GoogleOAuth2Config;
 import com.sw19.sofa.domain.auth.dto.request.LoginAndSignUpReq;
 import com.sw19.sofa.domain.auth.dto.response.GoogleTokenResponse;
 import com.sw19.sofa.domain.auth.dto.response.GoogleUserResponse;
@@ -14,6 +13,7 @@ import com.sw19.sofa.domain.setting.service.SettingService;
 import com.sw19.sofa.security.jwt.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -27,18 +27,28 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class GoogleOAuth2Service {
 
-    private final GoogleOAuth2Config config;
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final SettingService settingService;
     private final RecycleBinManageService recycleBinManageService;
 
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String clientId;
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    private String clientSecret;
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    private String redirectUri;
+    @Value("${spring.security.oauth2.provider.google.token-uri}")
+    private String tokenUri;
+    @Value("${spring.security.oauth2.provider.google.user-info-uri}")
+    private String resourceUri;
+
 
     public String getGoogleLoginUrl() {
         return "https://accounts.google.com/o/oauth2/v2/auth?" +
-                "client_id=" + config.getClientId() +
-                "&redirect_uri=" + config.getRedirectUri() +
+                "client_id=" + clientId +
+                "&redirect_uri=" + redirectUri +
                 "&response_type=code" +
                 "&scope=email profile";
     }
@@ -75,10 +85,11 @@ public class GoogleOAuth2Service {
 
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "authorization_code");
-            params.add("client_id", config.getClientId());
-            params.add("client_secret", config.getClientSecret());
-            params.add("redirect_uri", config.getRedirectUri());
+            params.add("client_id", clientId);
+            params.add("client_secret", clientSecret);
+            params.add("redirect_uri", redirectUri);
             params.add("code", code);
+
 
             log.debug("Access Token Request Params: {}", params); // 요청 파라미터 확인
 
@@ -86,7 +97,7 @@ public class GoogleOAuth2Service {
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
             ResponseEntity<GoogleTokenResponse> response = restTemplate.postForEntity(
-                    config.getTokenUri(),
+                    tokenUri,
                     request,
                     GoogleTokenResponse.class
             );
@@ -116,7 +127,7 @@ public class GoogleOAuth2Service {
             HttpEntity<?> entity = new HttpEntity<>(headers);
 
             ResponseEntity<GoogleUserResponse> response = restTemplate.exchange(
-                    config.getResourceUri(),
+                    resourceUri,
                     HttpMethod.GET,
                     entity,
                     GoogleUserResponse.class
@@ -140,6 +151,19 @@ public class GoogleOAuth2Service {
         }
     }
 
+    public OAuth2Response loginAndSignUp(LoginAndSignUpReq req) {
+        Member member = saveOrUpdate(req.email(), req.name());
+
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEncryptUserId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEncryptUserId());
+
+        return OAuth2Response.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .build();
+    }
+
     private Member saveOrUpdate(String email, String name) {
         Member member = memberService.getMemberByEmail(email);
 
@@ -153,18 +177,5 @@ public class GoogleOAuth2Service {
 
 
         return member;
-    }
-
-    public OAuth2Response loginAndSignUp(LoginAndSignUpReq req) {
-        Member member = saveOrUpdate(req.email(), req.name());
-
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEncryptUserId());
-        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEncryptUserId());
-
-        return OAuth2Response.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .build();
     }
 }

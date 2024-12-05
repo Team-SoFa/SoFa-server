@@ -6,6 +6,7 @@ import com.sw19.sofa.security.jwt.error.code.JwtErrorCode;
 import com.sw19.sofa.security.service.CustomMemberService;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,9 +88,21 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
     }
 
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
     public Date getExpiration(String token) {
 
         return getBody(token).getExpiration();
+    }
+
+    public String getUserIdFromToken(String token) {
+        return getBody(token).getSubject();
     }
 
     public void validateRefreshToken(String refreshToken, String userId) {
