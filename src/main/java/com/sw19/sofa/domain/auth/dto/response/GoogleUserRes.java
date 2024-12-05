@@ -1,6 +1,6 @@
 package com.sw19.sofa.domain.auth.dto.response;
 
-public record GoogleUserResponse (
+public record GoogleUserRes(
     String id,
     String email,
     Boolean verified_email,
