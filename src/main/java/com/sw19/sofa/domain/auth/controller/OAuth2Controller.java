@@ -2,6 +2,7 @@ package com.sw19.sofa.domain.auth.controller;
 
 import com.sw19.sofa.domain.auth.api.OAuthApi;
 import com.sw19.sofa.domain.auth.dto.request.LoginAndSignUpReq;
+import com.sw19.sofa.domain.auth.dto.response.OAuth2Res;
 import com.sw19.sofa.domain.auth.dto.response.TokenRes;
 import com.sw19.sofa.domain.auth.service.GoogleOAuth2Service;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +25,15 @@ public class OAuth2Controller implements OAuthApi {
 
     @Override
     @GetMapping("/code/google")
-    public ResponseEntity<TokenRes> googleCallback(@RequestParam String code) {
-        TokenRes res = googleOAuth2Service.socialLogin(code);
+    public ResponseEntity<OAuth2Res> googleCallback(@RequestParam String code) {
+        OAuth2Res res = googleOAuth2Service.socialLogin(code);
         return ResponseEntity.ok(res);
     }
 
     @Override
     @PostMapping("/signUpOrLogin")
-    public ResponseEntity<TokenRes> loginAndSignUp(@RequestBody LoginAndSignUpReq req) {
-        TokenRes res = googleOAuth2Service.loginAndSignUp(req);
+    public ResponseEntity<OAuth2Res> loginAndSignUp(@RequestBody LoginAndSignUpReq req) {
+        OAuth2Res res = googleOAuth2Service.loginAndSignUp(req);
         return ResponseEntity.ok(res);
     }
 
