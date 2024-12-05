@@ -133,7 +133,6 @@ public class GoogleOAuth2Service {
             if (response.getBody() != null) {
 
                 return response.getBody();
-                // return response.getBody();
             }
             throw new OAuth2AuthenticationProcessingException(
                     "사용자 정보를 가져오는데 실패했습니다.",
