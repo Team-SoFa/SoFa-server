@@ -1,5 +1,6 @@
 package com.sw19.sofa.domain.tag.service;
 
+import com.sw19.sofa.domain.tag.dto.response.CustomTagRes;
 import com.sw19.sofa.domain.tag.entity.CustomTag;
 import com.sw19.sofa.domain.tag.error.TagErrorCode;
 import com.sw19.sofa.domain.tag.repository.CustomTagRepository;
@@ -18,8 +19,10 @@ import java.util.List;
 public class CustomTagService {
     private final CustomTagRepository customTagRepository;
 
-    public List<CustomTag> getAllCustomTagsByMember(Member member) {
-        return customTagRepository.findByMember(member);
+    public List<CustomTagRes> getAllCustomTagsByMember(Member member) {
+        return customTagRepository.findByMember(member).stream()
+                .map(CustomTagRes::new)
+                .toList();
     }
 
     public CustomTag getCustomTag(String encryptedId) {
@@ -29,7 +32,7 @@ public class CustomTagService {
     }
 
     @Transactional
-    public CustomTag createCustomTag(Member member, String name) {
+    public CustomTagRes createCustomTag(Member member, String name) {
         if (customTagRepository.existsByMemberAndName(member, name)) {
             throw new BusinessException(TagErrorCode.TAG_ALREADY_EXISTS);
         }
@@ -37,11 +40,12 @@ public class CustomTagService {
                 .member(member)
                 .name(name)
                 .build();
-        return customTagRepository.save(customTag);
+        CustomTag save = customTagRepository.save(customTag);
+        return new CustomTagRes(save);
     }
 
     @Transactional
-    public void updateCustomTag(String encryptedId, String name, Member member) {
+    public CustomTagRes updateCustomTag(String encryptedId, String name, Member member) {
         Long id = EncryptionUtil.decrypt(encryptedId);
         CustomTag customTag = customTagRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
@@ -56,6 +60,9 @@ public class CustomTagService {
         }
 
         customTag.updateName(name);
+        CustomTag save = customTagRepository.save(customTag);
+
+        return new CustomTagRes(save);
     }
 
     @Transactional

@@ -24,7 +24,7 @@ public class ManageTagService {
                 .toList());
 
         results.addAll(customTagService.getAllCustomTagsByMember(member).stream()
-                .map(TagSearchRes::fromCustomTag)
+                .map(TagSearchRes::fromCustomTagRes)
                 .toList());
 
         return results;

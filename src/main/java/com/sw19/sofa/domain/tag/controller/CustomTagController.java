@@ -4,15 +4,10 @@ import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.tag.api.CustomTagApi;
 import com.sw19.sofa.domain.tag.dto.request.CustomTagReq;
 import com.sw19.sofa.domain.tag.dto.response.CustomTagRes;
-import com.sw19.sofa.domain.tag.entity.CustomTag;
-import com.sw19.sofa.domain.tag.error.TagErrorCode;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
-import com.sw19.sofa.global.error.exception.BusinessException;
-import com.sw19.sofa.global.util.EncryptionUtil;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,17 +20,16 @@ public class CustomTagController implements CustomTagApi {
 
     @GetMapping
     public ResponseEntity<List<CustomTagRes>> getAllCustomTags(@AuthMember Member member) {
-        return ResponseEntity.ok(customTagService.getAllCustomTagsByMember(member).stream()
-                .map(CustomTagRes::new)
-                .toList());
+        List<CustomTagRes> res = customTagService.getAllCustomTagsByMember(member);
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping
     public ResponseEntity<CustomTagRes> createCustomTag(
             @AuthMember Member member,
             @RequestBody CustomTagReq req) {
-        return ResponseEntity.ok(new CustomTagRes(
-                customTagService.createCustomTag(member, req.getName())));
+        CustomTagRes res = customTagService.createCustomTag(member, req.getName());
+        return ResponseEntity.ok(res);
     }
 
     @PutMapping("/{id}")
@@ -44,9 +38,8 @@ public class CustomTagController implements CustomTagApi {
             @PathVariable String id,
             @RequestBody CustomTagReq req
     ) {
-        customTagService.updateCustomTag(id, req.getName(), member);
-        CustomTag updatedTag = customTagService.getCustomTag(id);  // id 암호화된 상태로 전달
-        return ResponseEntity.ok(new CustomTagRes(updatedTag));
+        CustomTagRes res = customTagService.updateCustomTag(id, req.getName(), member);
+        return ResponseEntity.ok(res);
     }
 
     @Override
