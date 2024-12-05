@@ -1,7 +1,8 @@
 package com.sw19.sofa.domain.auth.api;
 
 import com.sw19.sofa.domain.auth.dto.request.LoginAndSignUpReq;
-import com.sw19.sofa.domain.auth.dto.response.OAuth2Response;
+import com.sw19.sofa.domain.auth.dto.response.OAuth2Res;
+import com.sw19.sofa.domain.auth.dto.response.TokenRes;
 import com.sw19.sofa.global.error.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +31,7 @@ public interface OAuthApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
-    ResponseEntity<OAuth2Response> googleCallback(String code);
+    ResponseEntity<OAuth2Res> googleCallback(String code);
 
     @Operation(summary = "임시 로그인 및 회원가입", description = "임시 로그인 및 회원가입 API입니다")
     @ApiResponses({
@@ -44,7 +45,7 @@ public interface OAuthApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
-    ResponseEntity<OAuth2Response> loginAndSignUp(LoginAndSignUpReq req);
+    ResponseEntity<OAuth2Res> loginAndSignUp(LoginAndSignUpReq req);
 
     @Operation(summary = "토큰 갱신", description = "리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받습니다.")
     @ApiResponses({
@@ -58,5 +59,5 @@ public interface OAuthApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
-    ResponseEntity<OAuth2Response> refreshToken(String refreshToken);
+    ResponseEntity<TokenRes> refreshToken(String refreshToken);
 }
