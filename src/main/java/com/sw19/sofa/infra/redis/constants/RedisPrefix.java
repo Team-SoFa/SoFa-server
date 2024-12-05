@@ -10,8 +10,10 @@ import java.time.Duration;
 public enum RedisPrefix {
     REFRESH_TOKEN(Duration.ofDays(180)),
     SING_UP(Duration.ofMinutes(10)),
-    PROFILE(Duration.ofDays(1))
-    ;
+    PROFILE(Duration.ofDays(1)),
+    SEARCH_KEYWORD_HISTORY(null),
+    SEARCH_TAG_HISTORY(null)
+            ;
 
     final Duration duration;
 }

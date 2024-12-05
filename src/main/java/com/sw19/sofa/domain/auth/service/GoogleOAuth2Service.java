@@ -1,5 +1,6 @@
 package com.sw19.sofa.domain.auth.service;
 
+import com.sw19.sofa.domain.auth.config.GoogleOAuth2Config;
 import com.sw19.sofa.domain.auth.dto.request.LoginAndSignUpReq;
 import com.sw19.sofa.domain.auth.dto.response.GoogleTokenResponse;
 import com.sw19.sofa.domain.auth.dto.response.GoogleUserResponse;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 @Slf4j
 public class GoogleOAuth2Service {
+
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
@@ -147,21 +149,6 @@ public class GoogleOAuth2Service {
         }
     }
 
-    private Member saveOrUpdate(String email, String name) {
-        Member member = memberService.getMemberByEmail(email);
-
-        if(member == null){
-            member = memberService.addMember(email, name);
-            settingService.setNewUser(member);
-            recycleBinManageService.addRecycleBin(member);
-
-            log.info("Saved member name: {}", member.getName());
-        }
-
-
-        return member;
-    }
-
     public OAuth2Response loginAndSignUp(LoginAndSignUpReq req) {
         Member member = saveOrUpdate(req.email(), req.name());
 
@@ -188,5 +175,20 @@ public class GoogleOAuth2Service {
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .build();
+    }
+
+    private Member saveOrUpdate(String email, String name) {
+        Member member = memberService.getMemberByEmail(email);
+
+        if(member == null){
+            member = memberService.addMember(email, name);
+            settingService.setNewUser(member);
+            recycleBinManageService.addRecycleBin(member);
+
+            log.info("Saved member name: {}", member.getName());
+        }
+
+
+        return member;
     }
 }
