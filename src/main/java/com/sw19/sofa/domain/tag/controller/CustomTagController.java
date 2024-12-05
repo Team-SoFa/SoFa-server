@@ -28,7 +28,7 @@ public class CustomTagController implements CustomTagApi {
     public ResponseEntity<CustomTagRes> createCustomTag(
             @AuthMember Member member,
             @RequestBody CustomTagReq req) {
-        CustomTagRes res = customTagService.createCustomTag(member, req.getName());
+        CustomTagRes res = customTagService.createCustomTag(member, req.name());
         return ResponseEntity.ok(res);
     }
 
@@ -38,7 +38,7 @@ public class CustomTagController implements CustomTagApi {
             @PathVariable String id,
             @RequestBody CustomTagReq req
     ) {
-        CustomTagRes res = customTagService.updateCustomTag(id, req.getName(), member);
+        CustomTagRes res = customTagService.updateCustomTag(id, req.name(), member);
         return ResponseEntity.ok(res);
     }
 

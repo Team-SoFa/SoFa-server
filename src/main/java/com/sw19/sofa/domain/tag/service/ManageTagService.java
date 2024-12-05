@@ -20,11 +20,11 @@ public class ManageTagService {
         List<TagSearchRes> results = new ArrayList<>();
 
         results.addAll(tagService.getAllTags().stream()
-                .map(TagSearchRes::fromTag)
+                .map(TagSearchRes::new)
                 .toList());
 
         results.addAll(customTagService.getAllCustomTagsByMember(member).stream()
-                .map(TagSearchRes::fromCustomTagRes)
+                .map(TagSearchRes::new)
                 .toList());
 
         return results;

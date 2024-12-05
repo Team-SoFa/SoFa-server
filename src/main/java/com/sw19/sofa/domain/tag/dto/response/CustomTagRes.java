@@ -1,18 +1,17 @@
 package com.sw19.sofa.domain.tag.dto.response;
 
 import com.sw19.sofa.domain.tag.entity.CustomTag;
-import lombok.Getter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@Getter
-public class CustomTagRes {
-    private final String name;
-    private final String id;
-    private final String memberId;  // Long -> String으로 변경
-
+public record CustomTagRes (
+        @Schema(description = "태그 아이디")
+        String id,
+        @Schema(description = "태그 이름")
+        String name,
+        @Schema(description = "맴버 아이디")
+        String memberId
+){
     public CustomTagRes(CustomTag customTag) {
-        this.name = customTag.getName();
-        this.id = customTag.getEncryptedId();
-        this.memberId = customTag.getMember().getId() != null ?
-                customTag.getMember().getEncryptUserId() : null;
+        this(customTag.getName(), customTag.getEncryptedId(), customTag.getMember().getEncryptUserId());
     }
 }

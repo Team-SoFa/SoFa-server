@@ -156,11 +156,11 @@ public class SearchBoxService {
         List<TagSearchRes> results = new ArrayList<>();
 
         results.addAll(tagRepository.findAllByNameContainingIgnoreCase(keyword).stream()
-                .map(TagSearchRes::fromTag)
+                .map(TagSearchRes::new)
                 .toList());
 
         results.addAll(customTagRepository.findAllByNameContainingIgnoreCase(keyword).stream()
-                .map(TagSearchRes::fromCustomTag)
+                .map(TagSearchRes::new)
                 .toList());
 
         return results;
