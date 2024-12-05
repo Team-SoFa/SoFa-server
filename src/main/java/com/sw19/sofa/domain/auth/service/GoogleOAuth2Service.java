@@ -174,4 +174,19 @@ public class GoogleOAuth2Service {
                 .tokenType("Bearer")
                 .build();
     }
+
+
+    public OAuth2Response refreshToken(String refreshToken) {
+
+        refreshToken = refreshToken.substring(7);
+        String encryptUserId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+        jwtTokenProvider.validateRefreshToken(refreshToken, encryptUserId);
+        String newAccessToken = jwtTokenProvider.createAccessToken(encryptUserId);
+
+        return OAuth2Response.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .build();
+    }
 }
