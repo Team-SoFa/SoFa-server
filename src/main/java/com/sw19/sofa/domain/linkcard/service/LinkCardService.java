@@ -2,14 +2,11 @@ package com.sw19.sofa.domain.linkcard.service;
 
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.folder.entity.Folder;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
-import com.sw19.sofa.domain.remind.service.RemindService;
 import com.sw19.sofa.global.common.constants.Constants;
-import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
@@ -25,13 +22,11 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
-    private final RemindService remindService;
 
-    public LinkCardDto getLinkCardDto(Long id, Member member){
+    public LinkCard getLinkCardDto(Long id){
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
         linkCard.view();
-        remindService.removeFromRemind(linkCard, member);
-        return new LinkCardDto(linkCard);
+        return linkCard;
     }
 
     public LinkCard getLinkCard(Long id){
@@ -95,10 +90,9 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void enterLinkCard(LinkCard linkCard, Member member) {
+    public void enterLinkCard(LinkCard linkCard) {
         linkCard.enter();
         linkCardRepository.save(linkCard);
-        remindService.removeFromRemind(linkCard, member);
     }
 
     @Transactional

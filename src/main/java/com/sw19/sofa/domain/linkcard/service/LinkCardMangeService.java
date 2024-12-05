@@ -6,7 +6,6 @@ import com.sw19.sofa.domain.article.service.ArticleService;
 import com.sw19.sofa.domain.article.service.ArticleTagService;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
@@ -18,6 +17,7 @@ import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.remind.service.RemindService;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
@@ -45,6 +45,8 @@ public class LinkCardMangeService {
     private final ArticleService articleService;
     private final LinkCardTagService linkCardTagService;
     private final ArticleTagService articleTagService;
+    private final RemindService remindService;
+
 
     @Transactional
     public CreateLinkCardBasicInfoRes createLinkCardBasicInfo(Member member, CreateLinkCardBasicInfoReq req) {
@@ -88,13 +90,14 @@ public class LinkCardMangeService {
     public LinkCardRes getLinkCard(String encryptId, Member member){
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
 
-        LinkCardDto linkCardDto = linkCardService.getLinkCardDto(linkCardId, member);
+        LinkCard linkCard = linkCardService.getLinkCardDto(linkCardId);
+        remindService.removeFromRemind(linkCard, member);
 
         List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.getLinkCardTagSimpleDtoListByLinkCardId(linkCardId);
 
         List<LinkCardTagDto> linkCardTagDtoList = getLinkCardTagDtoList(linkCardTagSimpleDtoList);
 
-        return new LinkCardRes(linkCardDto, linkCardTagDtoList);
+        return new LinkCardRes(linkCard, linkCardTagDtoList);
     }
 
     @Transactional
@@ -168,7 +171,8 @@ public class LinkCardMangeService {
     public void enterLinkCard(String encryptId, Member member) {
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
-        linkCardService.enterLinkCard(linkCard, member);
+        linkCardService.enterLinkCard(linkCard);
+        remindService.removeFromRemind(linkCard, member);
         articleService.enterArticle(linkCard.getArticle());
     }
 
