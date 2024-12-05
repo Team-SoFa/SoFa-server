@@ -23,6 +23,7 @@ public class SchedulerManager {
         scheduler.start();
         scheduleMoveUnusedLinkListToRemindJob();
         scheduleDeleteExpiredLinkCardListInRecycleBinJob();
+        deleteExpiredAlarmJob();
     }
 
     private void scheduleMoveUnusedLinkListToRemindJob() throws SchedulerException {
@@ -88,7 +89,7 @@ public class SchedulerManager {
 
     }
 
-    private void deleteExpiredLinkCardListJob() throws SchedulerException{
+    private void deleteExpiredAlarmJob() throws SchedulerException{
         JobDetail job = JobBuilder.newJob(DeleteExpiredAlarmJob.class)
                 .withIdentity(SchedulerConstants.deleteExpiredAlarm)
                 .build();
