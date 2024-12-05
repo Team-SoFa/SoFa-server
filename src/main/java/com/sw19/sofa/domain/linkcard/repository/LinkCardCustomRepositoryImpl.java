@@ -19,18 +19,22 @@ public class LinkCardCustomRepositoryImpl implements LinkCardCustomRepository{
 
 
     @Override
-    public List<LinkCard> findAllByFolderIdAndSortCondition(Long folderId, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId) {
+    public List<LinkCard> findAllByFolderIdAndSortCondition(List<Long> folderIdList, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId) {
 
         return jpaQueryFactory.selectFrom(linkCard)
                 .leftJoin(linkCard.article).fetchJoin()
                 .leftJoin(linkCard.folder).fetchJoin()
                 .where(
                         lastIdLt(lastId),
-                        linkCard.folder.id.eq(folderId)
+                        folderIdListIn(folderIdList)
                 )
                 .orderBy(sortBy.getOrderSpecifier(sortOrder))
                 .limit(limit + 1)
                 .fetch();
+    }
+
+    private static BooleanExpression folderIdListIn(List<Long> folderIdList) {
+        return folderIdList == null || folderIdList.isEmpty() ? null : linkCard.folder.id.in(folderIdList);
     }
 
     private BooleanExpression lastIdLt(Long lastId) {

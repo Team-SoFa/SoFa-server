@@ -7,7 +7,9 @@ import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
+import com.sw19.sofa.domain.remind.service.RemindService;
 import com.sw19.sofa.global.common.constants.Constants;
+import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
@@ -20,23 +22,24 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
+    private final RemindService remindService;
 
-    @Transactional(readOnly = true)
-    public LinkCardDto getLinkCardDto(Long id){
+    public LinkCardDto getLinkCardDto(Long id, Member member){
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
+        linkCard.view();
+        remindService.removeFromRemind(linkCard, member);
         return new LinkCardDto(linkCard);
     }
 
-    @Transactional(readOnly = true)
     public LinkCard getLinkCard(Long id){
         return linkCardRepository.findByIdOrElseThrowException(id);
     }
 
-    @Transactional(readOnly = true)
-    public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(Long folderId, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
-        List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderId, sortBy, sortOrder, limit, lastId);
+    public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(List<Long> folderIdList, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
+        List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderIdList, sortBy, sortOrder, limit, lastId);
 
         boolean hasNext = false;
 
@@ -53,6 +56,7 @@ public class LinkCardService {
         );
 
     }
+
     @Transactional
     public LinkCard addLinkCard(LinkCardReq req, Folder folder, Article article) {
         LinkCard linkCard = LinkCard.builder()
@@ -91,15 +95,17 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void enterLinkCard(LinkCard linkCard) {
+    public void enterLinkCard(LinkCard linkCard, Member member) {
         linkCard.enter();
         linkCardRepository.save(linkCard);
+        remindService.removeFromRemind(linkCard, member);
     }
 
     @Transactional
     public void deleteLinkCard(LinkCard linkCard){
         linkCardRepository.delete(linkCard);
     }
+
     @Transactional
     public void deleteLinkCardList(List<LinkCard> linkCardList) {linkCardRepository.deleteAll(linkCardList);}
 
@@ -107,6 +113,7 @@ public class LinkCardService {
     public List<LinkCard> getUnusedLinkCardList(){
         return linkCardRepository.findUnusedLinkCardList(getThirtyDaysAgoDateTime());
     }
+
     @Transactional(readOnly = true)
     public List<LinkCard> getExpiredLinkCardsInRecycleBin(){
         return linkCardRepository.findExpiredLinkCardListInRecycleBin(getThirtyDaysAgoDateTime(), Constants.recycleBinName);

@@ -1,7 +1,6 @@
 package com.sw19.sofa.security.jwt.filter;
 
 import com.sw19.sofa.security.jwt.provider.JwtTokenProvider;
-import com.sw19.sofa.security.jwt.utils.RequestUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,22 +21,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        String token = jwtTokenProvider.resolveToken(request);
 
-
-        if (!RequestUtils.isContainsAccessToken(request)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = RequestUtils.getAuthorizationAccessToken(request);
-
-
-        if (jwtTokenProvider.validateToken(token)) {
+        if (token != null && jwtTokenProvider.validateToken(token)) {
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }

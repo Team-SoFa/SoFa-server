@@ -32,8 +32,11 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<LinkCardRes> getLinkCard(@PathVariable String id) {
-        LinkCardRes res = linkCardMangeService.getLinkCard(id);
+    public ResponseEntity<LinkCardRes> getLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    ) {
+        LinkCardRes res = linkCardMangeService.getLinkCard(id, member);
         return BaseResponse.ok(res);
     }
 
@@ -45,11 +48,20 @@ public class LinkCardController implements LinkCardApi {
     }
 
     @Override
-    @GetMapping("/list/{folderId}")
+    @GetMapping("/list")
     public ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardList(
+            @RequestParam(name = "sortBy") LinkCardSortBy linkCardSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit, @AuthMember Member member
+    ) {
+        ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardList(member,linkCardSortBy, sortOrder, lastId, limit);
+        return BaseResponse.ok(res);
+    }
+
+    @Override
+    @GetMapping("/list/{folderId}")
+    public ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardListByFolder(
             @PathVariable String folderId, @RequestParam(name = "sortBy") LinkCardSortBy linkCardSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit
     ) {
-        ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardList(folderId, linkCardSortBy, sortOrder, lastId, limit);
+        ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardListByFolder(folderId, linkCardSortBy, sortOrder, lastId, limit);
         return BaseResponse.ok(res);
     }
 
@@ -91,9 +103,12 @@ public class LinkCardController implements LinkCardApi {
 
     @Override
     @PostMapping("/{id}/enter")
-    public ResponseEntity<String> enterLinkCard(@PathVariable String id) {
-        linkCardMangeService.enterLinkCard(id);
-        return  BaseResponse.ok("링크 카드 방문 정보 반영");
+    public ResponseEntity<String> enterLinkCard(
+            @PathVariable String id,
+            @AuthMember Member member
+    ) {
+        linkCardMangeService.enterLinkCard(id, member);
+        return BaseResponse.ok("링크 카드 방문 정보 반영");
     }
 
     @Override

@@ -36,4 +36,16 @@ public class Setting {
         return EncryptionUtil.encrypt(this.id);
     }
 
+    public void toggleRemindAlarm() {
+        this.is_remind = !this.is_remind;
+    }
+
+    public void toggleRecommendAlarm() {
+        this.is_recommend = !this.is_recommend;
+    }
+
+    public void toggleNoticeAlarm() {
+        this.is_notice = !this.is_notice;
+    }
+
 }
