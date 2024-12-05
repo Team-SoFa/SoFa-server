@@ -1,5 +1,6 @@
 package com.sw19.sofa.domain.auth.service;
 
+import com.sw19.sofa.domain.auth.config.GoogleOAuth2Config;
 import com.sw19.sofa.domain.auth.dto.request.LoginAndSignUpReq;
 import com.sw19.sofa.domain.auth.dto.response.GoogleTokenResponse;
 import com.sw19.sofa.domain.auth.dto.response.GoogleUserResponse;
@@ -90,7 +91,6 @@ public class GoogleOAuth2Service {
             params.add("redirect_uri", redirectUri);
             params.add("code", code);
 
-
             log.debug("Access Token Request Params: {}", params); // 요청 파라미터 확인
 
 
@@ -134,9 +134,7 @@ public class GoogleOAuth2Service {
             );
             if (response.getBody() != null) {
 
-                GoogleUserResponse userInfo = response.getBody();
-                return userInfo;
-                // return response.getBody();
+                return response.getBody();
             }
             throw new OAuth2AuthenticationProcessingException(
                     "사용자 정보를 가져오는데 실패했습니다.",
@@ -159,6 +157,21 @@ public class GoogleOAuth2Service {
 
         return OAuth2Response.builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .build();
+    }
+
+
+    public OAuth2Response refreshToken(String refreshToken) {
+
+        refreshToken = refreshToken.substring(7);
+        String encryptUserId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+        jwtTokenProvider.validateRefreshToken(refreshToken, encryptUserId);
+        String newAccessToken = jwtTokenProvider.createAccessToken(encryptUserId);
+
+        return OAuth2Response.builder()
+                .accessToken(newAccessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .build();

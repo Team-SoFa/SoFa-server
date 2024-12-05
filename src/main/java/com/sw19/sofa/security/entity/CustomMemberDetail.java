@@ -46,4 +46,3 @@ public record CustomMemberDetail(Member member, Authority authority) implements 
         return true;
     }
 }
-//현재 구현은 모든 계정 상태 체크 메서드가 false를 반환하고 있는데, 이는 실제 인증 과정에서 문제가 될 수 있습니다. 이러한 메서드들이 false를 반환하면 Spring Security는 해당 계정으로 인증을 허용하지 않습니다.
