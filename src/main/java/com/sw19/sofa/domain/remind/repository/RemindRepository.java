@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface RemindRepository extends JpaRepository<Remind, Long>, RemindCustomRepository {
     List<Remind> findAllByMember(Member member);
+    boolean existsByMember(Member member);
     boolean existsByLinkCardAndMember(LinkCard linkCard, Member member);
     void deleteByLinkCardAndMember(LinkCard linkCard, Member member);
 }

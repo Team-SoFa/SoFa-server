@@ -7,10 +7,12 @@ import com.sw19.sofa.domain.remind.job.MoveUnusedLinkCardListToRemindJob;
 import com.sw19.sofa.global.scheduler.constants.SchedulerConstants;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Slf4j
 @RequiredArgsConstructor
 public class SchedulerManager {
     private final Scheduler scheduler;
@@ -73,12 +75,17 @@ public class SchedulerManager {
         scheduler.scheduleJob(job, trigger);
     }
 
-    public void stopMemberNotifyScheduler(String encryptMemberId) throws SchedulerException {
-        JobKey jobKey = JobKey.jobKey(encryptMemberId, SchedulerConstants.remindNotifyGroup);
+    public void stopMemberNotifyScheduler(String encryptMemberId){
+        try {
+            JobKey jobKey = JobKey.jobKey(encryptMemberId, SchedulerConstants.remindNotifyGroup);
 
-        if (scheduler.checkExists(jobKey)) {
-            scheduler.deleteJob(jobKey);
+            if (scheduler.checkExists(jobKey)) {
+                scheduler.deleteJob(jobKey);
+            }
+        }catch (SchedulerException e){
+            log.error("Scheduler Error ",e);
         }
+
     }
 
     private void deleteExpiredLinkCardListJob() throws SchedulerException{
