@@ -1,20 +1,18 @@
 package com.sw19.sofa.domain.folder.service;
 
-import com.sw19.sofa.domain.folder.dto.request.FolderReq;
 import com.sw19.sofa.domain.folder.dto.response.FolderListRes;
 import com.sw19.sofa.domain.folder.dto.response.FolderRes;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.repository.FolderRepository;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.error.exception.BusinessException;
-import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.sw19.sofa.domain.folder.error.FolderErrorCode.*;
+import static com.sw19.sofa.domain.folder.error.FolderErrorCode.NOT_FOUND_FOLDER;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +27,12 @@ public class FolderService {
     }
 
     @Transactional
-    public void addFolder(String name) {
+    public Folder addFolder(Member member, String name) {
         Folder folder = Folder.builder()
+                .member(member)
                 .name(name)
                 .build();
-        folderRepository.save(folder);
+        return folderRepository.save(folder);
     }
 
     @Transactional
@@ -54,7 +53,12 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public Folder getFolderByNameAndMember(String name, Member member){
+    public Folder getFolderByNameAndMemberOrElseThrow(String name, Member member){
         return folderRepository.findByNameAndMember(name, member).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
+    }
+
+    @Transactional(readOnly = true)
+    public Folder getFolderByNameAndMemberOrNull(String name, Member member){
+        return folderRepository.findByNameAndMember(name, member).orElse(null);
     }
 }

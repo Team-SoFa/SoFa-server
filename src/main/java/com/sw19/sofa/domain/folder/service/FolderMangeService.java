@@ -25,7 +25,7 @@ public class FolderMangeService {
 
     @Transactional
     public FolderListRes addFolder(Member member, FolderReq req) {
-        folderService.addFolder(req.name());
+        folderService.addFolder(member, req.name());
         return folderService.getFolderList(member);
     }
 
@@ -33,7 +33,7 @@ public class FolderMangeService {
     public void delFolder(String encryptId, Member member) {
         Long id = EncryptionUtil.decrypt(encryptId);
         Folder folder = folderService.getFolder(id);
-        Folder recycleBinFolder = folderService.getFolderByNameAndMember(Constants.recycleBinName, member);
+        Folder recycleBinFolder = folderService.getFolderByNameAndMemberOrElseThrow(Constants.recycleBinName, member);
         linkCardService.editLinkCardListInSrcFolderByDstFolder(folder,recycleBinFolder);
 
         folderService.delFolder(folder);
