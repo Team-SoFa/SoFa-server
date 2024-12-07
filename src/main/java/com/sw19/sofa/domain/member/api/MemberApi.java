@@ -13,5 +13,4 @@ public interface MemberApi {
     @Operation(summary = "현재 로그인한 사용자 정보 조회")
     @ApiResponse(responseCode = "200", description = "사용자 정보(이메일, 이름)")
     ResponseEntity<MemberRes> getCurrentUser(@AuthMember Member member);
-
 }
