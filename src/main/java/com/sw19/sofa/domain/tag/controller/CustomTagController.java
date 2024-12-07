@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/custom^tags")
+@RequestMapping("/custom-tag")
 @RequiredArgsConstructor
 public class CustomTagController implements CustomTagApi {
     private final CustomTagService customTagService;
