@@ -4,6 +4,7 @@ import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.service.LinkCardService;
+import com.sw19.sofa.domain.linkcard.service.LinkCardTagService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.recycleBin.dto.enums.RecycleBinSortBy;
 import com.sw19.sofa.domain.recycleBin.dto.response.RecycleBinLinkCardRes;
@@ -22,10 +23,14 @@ import java.util.List;
 public class RecycleBinManageService {
     private final LinkCardService linkCardService;
     private final FolderService folderService;
+    private final LinkCardTagService linkCardTagService;
+
     @Transactional
     public void permanentlyDelete(String encryptId) {
         Long id = EncryptionUtil.decrypt(encryptId);
         LinkCard linkCard = linkCardService.getLinkCard(id);
+
+        linkCardTagService.deleteAllByLinkCard(linkCard);
         linkCardService.deleteLinkCard(linkCard);
     }
 

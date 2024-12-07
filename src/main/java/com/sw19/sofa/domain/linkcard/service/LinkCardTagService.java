@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LinkCardTagService {
     private final LinkCardTagRepository linkCardTagRepository;
 
@@ -33,7 +34,13 @@ public class LinkCardTagService {
         return linkCardTagRepository.findAllByLinkCardId(linkCardId).stream().map(LinkCardTagSimpleDto::new).toList();
     }
 
+    @Transactional
     public void deleteLinkCardTag(Long linkCardId, Long tagId, TagType tagType) {
         linkCardTagRepository.deleteByLinkCard_IdAndTagIdAndTagType(linkCardId, tagId, tagType);
+    }
+
+    @Transactional
+    public void deleteAllByLinkCard(LinkCard linkCard){
+        linkCardTagRepository.deleteAllByLinkCard(linkCard);
     }
 }
