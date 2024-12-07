@@ -1,5 +1,8 @@
 package com.sw19.sofa.domain.ai.service;
 
+import com.sw19.sofa.global.common.dto.FolderDto;
+import com.sw19.sofa.global.common.dto.FolderWithTagListDto;
+import com.sw19.sofa.global.common.dto.TagDto;
 import com.sw19.sofa.global.common.dto.TitleAndSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AiService {
 
-    // TODO : ai 코드 추가하기
     public List<String> createTagList(String url){
         List<String> testTagList = new ArrayList<>();
         testTagList.add("test1");
@@ -21,9 +23,13 @@ public class AiService {
         return testTagList;
     }
 
-    public String createFolder(String url){
+    public FolderDto createFolder(String url, List<TagDto> tagList, List<FolderWithTagListDto> folderListWithTagList){
         String folderName = "test";
-        return folderName;
+        return folderListWithTagList.stream()
+                .filter(folderWithTagListDto -> folderWithTagListDto.FolderName().equals(folderName))
+                .findFirst()
+                .map(folderWithTagListDto -> new FolderDto(folderWithTagListDto.folderId(), folderWithTagListDto.FolderName()))
+                .orElse(null);
     }
 
     public TitleAndSummaryDto createTitleAndStummaryDto(String url){
