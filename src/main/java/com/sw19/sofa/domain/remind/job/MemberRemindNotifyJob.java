@@ -8,9 +8,9 @@ import com.sw19.sofa.domain.remind.service.RemindService;
 import com.sw19.sofa.global.common.dto.MailRequestDto;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import com.sw19.sofa.infra.mail.service.MailService;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class MemberRemindNotifyJob implements Job {
+public class MemberRemindNotifyJob extends QuartzJobBean {
     private MailService mailService;
     private RemindService remindService;
     private MemberService memberService;
@@ -42,7 +42,7 @@ public class MemberRemindNotifyJob implements Job {
     }
 
     @Override
-    public void execute(JobExecutionContext context) {
+    protected void executeInternal(JobExecutionContext context) {
         String encryptMemberId = context.getJobDetail().getKey().getName();
         Long memberId = EncryptionUtil.decrypt(encryptMemberId);
 

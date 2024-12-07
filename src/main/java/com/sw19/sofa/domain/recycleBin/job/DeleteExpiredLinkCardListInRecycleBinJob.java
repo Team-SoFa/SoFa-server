@@ -1,13 +1,13 @@
 package com.sw19.sofa.domain.recycleBin.job;
 
 import com.sw19.sofa.domain.recycleBin.service.RecycleBinManageService;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DeleteExpiredLinkCardListInRecycleBinJob implements Job {
+public class DeleteExpiredLinkCardListInRecycleBinJob extends QuartzJobBean {
     private RecycleBinManageService recycleBinManageService;
 
     @Autowired
@@ -15,9 +15,8 @@ public class DeleteExpiredLinkCardListInRecycleBinJob implements Job {
         this.recycleBinManageService = recycleBinManageService;
     }
 
-
     @Override
-    public void execute(JobExecutionContext context) {
+    protected void executeInternal(JobExecutionContext context) {
         recycleBinManageService.deleteExpiredLinkCardList();
     }
 }

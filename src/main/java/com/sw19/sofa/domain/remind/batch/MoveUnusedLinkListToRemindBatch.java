@@ -12,6 +12,8 @@ import org.quartz.SchedulerException;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.sw19.sofa.global.common.constants.Constants.batchChunkSize;
 import static com.sw19.sofa.global.common.constants.Constants.moveRemind;
 
 @Configuration
@@ -39,6 +42,7 @@ public class MoveUnusedLinkListToRemindBatch {
     private final RemindService remindService;
 
     @Bean(name = moveRemind + "Reader")
+    @StepScope
     public ItemReader<MemberUnUsedLinkCardListDto> reader() {
         List<LinkCard> unusedLinkCardList = linkCardService.getUnusedLinkCardList();
 
@@ -57,6 +61,7 @@ public class MoveUnusedLinkListToRemindBatch {
 
 
     @Bean(name = moveRemind + "Processor")
+    @StepScope
     public ItemProcessor<MemberUnUsedLinkCardListDto, MemberUnUsedLinkCardListDto> processor() {
         return memberLinkCardList -> {
             Member member = memberLinkCardList.member();
@@ -77,6 +82,7 @@ public class MoveUnusedLinkListToRemindBatch {
     }
 
     @Bean(name = moveRemind + "Writer")
+    @StepScope
     public ItemWriter<MemberUnUsedLinkCardListDto> writer() {
         return memberLinkCardsList -> {
             for (MemberUnUsedLinkCardListDto memberLinkCards : memberLinkCardsList) {
@@ -89,6 +95,7 @@ public class MoveUnusedLinkListToRemindBatch {
     }
 
     @Bean(name = moveRemind + "Step")
+    @JobScope
     public Step step(JobRepository jobRepository,
                      PlatformTransactionManager transactionManager,
                      ItemReader<MemberUnUsedLinkCardListDto> reader,
@@ -97,7 +104,7 @@ public class MoveUnusedLinkListToRemindBatch {
     ) {
 
         return new StepBuilder("remindStep", jobRepository)
-                .<MemberUnUsedLinkCardListDto, MemberUnUsedLinkCardListDto>chunk(10, transactionManager)
+                .<MemberUnUsedLinkCardListDto, MemberUnUsedLinkCardListDto>chunk(batchChunkSize, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
