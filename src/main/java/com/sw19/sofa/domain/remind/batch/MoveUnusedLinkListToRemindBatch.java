@@ -5,6 +5,8 @@ import com.sw19.sofa.domain.linkcard.service.LinkCardService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.remind.dto.MemberUnUsedLinkCardListDto;
 import com.sw19.sofa.domain.remind.service.RemindService;
+import com.sw19.sofa.global.batch.listener.JobLoggingListener;
+import com.sw19.sofa.global.batch.listener.StepLoggingListener;
 import com.sw19.sofa.global.scheduler.manager.SchedulerManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,8 @@ import static com.sw19.sofa.global.common.constants.Constants.moveRemind;
 @RequiredArgsConstructor
 @Slf4j
 public class MoveUnusedLinkListToRemindBatch {
+    private final JobLoggingListener jobLoggingListener;
+    private final StepLoggingListener stepLoggingListener;
     private final SchedulerManager schedulerManager;
     private final LinkCardService linkCardService;
     private final RemindService remindService;
@@ -104,6 +108,7 @@ public class MoveUnusedLinkListToRemindBatch {
     ) {
 
         return new StepBuilder("remindStep", jobRepository)
+                .listener(stepLoggingListener)
                 .<MemberUnUsedLinkCardListDto, MemberUnUsedLinkCardListDto>chunk(batchChunkSize, transactionManager)
                 .reader(reader)
                 .processor(processor)
@@ -115,6 +120,7 @@ public class MoveUnusedLinkListToRemindBatch {
     public Job job(JobRepository jobRepository, Step step
     ) {
         return new JobBuilder(moveRemind + "job", jobRepository)
+                .listener(jobLoggingListener)
                 .start(step)
                 .build();
     }

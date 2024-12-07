@@ -1,4 +1,4 @@
-package com.sw19.sofa.global.config;
+package com.sw19.sofa.global.batch.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
