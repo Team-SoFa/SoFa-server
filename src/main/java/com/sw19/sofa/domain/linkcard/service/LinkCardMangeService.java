@@ -1,9 +1,11 @@
 package com.sw19.sofa.domain.linkcard.service;
 
 import com.sw19.sofa.domain.ai.service.AiService;
+import com.sw19.sofa.domain.ai.service.ManageAiService;
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.article.service.ArticleService;
 import com.sw19.sofa.domain.article.service.ArticleTagService;
+import com.sw19.sofa.domain.folder.dto.response.FolderRes;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
@@ -30,6 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +50,7 @@ public class LinkCardMangeService {
     private final ArticleService articleService;
     private final LinkCardTagService linkCardTagService;
     private final ArticleTagService articleTagService;
+    private final ManageAiService manageAiService;
 
     @Transactional
     public CreateLinkCardBasicInfoRes createLinkCardBasicInfo(Member member, CreateLinkCardBasicInfoReq req) {
@@ -52,7 +58,6 @@ public class LinkCardMangeService {
         List<TagDto> tagDtoList;
         TitleAndSummaryDto titleAndSummaryDto;
 
-        // 아티클 및 태그 생성
         if(articleDto != null){
             List<ArticleTagDto> articleTagDtoList = articleTagService.getArticleTagDtoListByArticleId(articleDto.id());
             titleAndSummaryDto = new TitleAndSummaryDto(articleDto.title(), articleDto.summary());
@@ -60,24 +65,33 @@ public class LinkCardMangeService {
             List<Long> tagIdList = articleTagDtoList.stream().map(ArticleTagDto::tagId).toList();
             tagDtoList = tagService.getTagDtoListByIdList(tagIdList);
         }else{
-            titleAndSummaryDto = aiService.createTitleAndStummaryDto(req.url());
-
-            List<String> tagNameList = aiService.createTagList(req.url());
-            List<Tag> tagList = tagService.getTagList(tagNameList);
+            titleAndSummaryDto = manageAiService.createTitleAndSummary(req.url());
+            List<String> tagNameList = manageAiService.createTagList(req.url());
+            List<Tag> tagList = tagService.createAiTags(tagNameList);
             tagDtoList = tagList.stream().map(TagDto::new).toList();
 
-            Article article = articleService.addArticle(req.url(), titleAndSummaryDto.title(), titleAndSummaryDto.summary(), req.imageUrl());
-            articleTagService.addArticleTagListByArticleAndTagListIn(article ,tagList);
+            Article article = articleService.addArticle(
+                    req.url(),
+                    titleAndSummaryDto.title(),
+                    titleAndSummaryDto.summary(),
+                    req.imageUrl()
+            );
+            articleTagService.addArticleTagListByArticleAndTagListIn(article, tagList);
         }
 
-        // 폴더 생성
-        String folderName = aiService.createFolder(req.url());
-        Folder folder = folderService.getFolderByNameAndMemberOrNull(folderName, member);
-        if(folder == null){
-            folder = folderService.addFolder(member, folderName);
+        List<String> existingFolders = folderService.getFolderList(member).floderList().stream()
+                .map(FolderRes::name)
+                .filter(name -> !name.equals("휴지통"))
+                .toList();
+
+        String recommendedFolderName = manageAiService.recommendFolder(titleAndSummaryDto.summary(), existingFolders);
+        Folder folder = folderService.getFolderByNameAndMemberOrNull(recommendedFolderName, member);
+
+        if (folder == null) {
+            folder = folderService.addFolder(member, recommendedFolderName);
+            log.info("Created new folder: {} for user: {}", recommendedFolderName, member.getId());
         }
 
-        //Dto 생성
         List<LinkCardTagDto> linkCardTagDtoList = tagDtoList.stream().map(LinkCardTagDto::new).toList();
         LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(folder);
 
@@ -105,9 +119,9 @@ public class LinkCardMangeService {
         Article article = articleService.getArticleByUrl(req.url());
 
         LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
-        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = req.tagList().stream().map(LinkCardTagSimpleDto::new).toList();
-        linkCardTagService.addLinkCardTagList(linkCard, linkCardTagSimpleDtoList );
-
+        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = req.tagList().stream()
+                .map(LinkCardTagSimpleDto::new).toList();
+        linkCardTagService.addLinkCardTagList(linkCard, linkCardTagSimpleDtoList);
     }
 
     @Transactional(readOnly = true)
