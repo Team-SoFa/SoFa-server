@@ -16,7 +16,6 @@ public class AiFolderService {
     private final OpenAIService openAIService;
 
     public String recommendFolderName(String content, List<String> userFolders) {
-        // 사용자의 폴더가 비어있으면 기본 카테고리 사용
         List<String> folderOptions = userFolders.isEmpty() ?
                 DEFAULT_FOLDER_CATEGORIES :
                 Stream.concat(userFolders.stream(), DEFAULT_FOLDER_CATEGORIES.stream())
