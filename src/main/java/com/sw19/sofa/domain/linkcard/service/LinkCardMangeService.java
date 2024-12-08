@@ -1,6 +1,5 @@
 package com.sw19.sofa.domain.linkcard.service;
 
-import com.sw19.sofa.domain.ai.service.AiService;
 import com.sw19.sofa.domain.ai.service.ManageAiService;
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.article.service.ArticleService;
@@ -26,9 +25,13 @@ import com.sw19.sofa.domain.tag.service.TagService;
 import com.sw19.sofa.global.common.constants.Constants;
 import com.sw19.sofa.global.common.dto.*;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
+import com.sw19.sofa.global.error.code.CommonErrorCode;
+import com.sw19.sofa.global.error.exception.BusinessException;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.DataException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +45,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class LinkCardMangeService {
-    private final AiService aiService;
     private final TagService tagService;
     private final CustomTagService customTagService;
     private final LinkCardService linkCardService;
@@ -52,19 +54,45 @@ public class LinkCardMangeService {
     private final ArticleTagService articleTagService;
     private final ManageAiService manageAiService;
 
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_DELAY = 1000;
+
     @Transactional
     public CreateLinkCardBasicInfoRes createLinkCardBasicInfo(Member member, CreateLinkCardBasicInfoReq req) {
+        int attempts = 0;
+        while (attempts < MAX_RETRIES) {
+            try {
+                return tryCreateLinkCardBasicInfo(member, req);
+            } catch (DataIntegrityViolationException | DataException e) {
+                attempts++;
+                if (attempts == MAX_RETRIES) {
+                    log.error("Failed to create LinkCard after {} attempts", MAX_RETRIES, e);
+                    throw e;
+                }
+                log.warn("Attempt {} failed, retrying after delay...", attempts);
+                try {
+                    Thread.sleep(RETRY_DELAY);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+        throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    private CreateLinkCardBasicInfoRes tryCreateLinkCardBasicInfo(Member member, CreateLinkCardBasicInfoReq req) {
         ArticleDto articleDto = articleService.getArticleDtoByUrlOrElseNull(req.url());
         List<TagDto> tagDtoList;
         TitleAndSummaryDto titleAndSummaryDto;
 
-        if(articleDto != null){
+        if(articleDto != null) {
             List<ArticleTagDto> articleTagDtoList = articleTagService.getArticleTagDtoListByArticleId(articleDto.id());
             titleAndSummaryDto = new TitleAndSummaryDto(articleDto.title(), articleDto.summary());
 
             List<Long> tagIdList = articleTagDtoList.stream().map(ArticleTagDto::tagId).toList();
             tagDtoList = tagService.getTagDtoListByIdList(tagIdList);
-        }else{
+        } else {
             titleAndSummaryDto = manageAiService.createTitleAndSummary(req.url());
             List<String> tagNameList = manageAiService.createTagList(req.url());
             List<Tag> tagList = tagService.createAiTags(tagNameList);
@@ -78,24 +106,42 @@ public class LinkCardMangeService {
             );
             articleTagService.addArticleTagListByArticleAndTagListIn(article, tagList);
         }
-
-        List<String> existingFolders = folderService.getFolderList(member).floderList().stream()
-                .map(FolderRes::name)
-                .filter(name -> !name.equals("휴지통"))
+        List<FolderRes> userFolders = folderService.getFolderList(member).floderList().stream()
+                .filter(folder -> !folder.name().equals(Constants.recycleBinName))
                 .toList();
 
-        String recommendedFolderName = manageAiService.recommendFolder(titleAndSummaryDto.summary(), existingFolders);
-        Folder folder = folderService.getFolderByNameAndMemberOrNull(recommendedFolderName, member);
+        Folder selectedFolder = null;
 
-        if (folder == null) {
-            folder = folderService.addFolder(member, recommendedFolderName);
-            log.info("Created new folder: {} for user: {}", recommendedFolderName, member.getId());
+        if (!userFolders.isEmpty()) {
+            String recommendedFolderName = manageAiService.recommendFolder(
+                    titleAndSummaryDto.summary(),
+                    userFolders.stream().map(FolderRes::name).toList()
+            );
+            selectedFolder = folderService.getFolderByNameAndMemberOrNull(recommendedFolderName, member);
+        }
+
+        if (selectedFolder == null) {
+            String defaultFolderName = manageAiService.recommendFolder(
+                    titleAndSummaryDto.summary(),
+                    Constants.DEFAULT_FOLDER_CATEGORIES
+            );
+            selectedFolder = folderService.getFolderByNameAndMemberOrNull(defaultFolderName, member);
+
+            if (selectedFolder == null) {
+                selectedFolder = folderService.addFolder(member, defaultFolderName);
+                log.info("Created default category folder: {} for user: {}", defaultFolderName, member.getId());
+            }
         }
 
         List<LinkCardTagDto> linkCardTagDtoList = tagDtoList.stream().map(LinkCardTagDto::new).toList();
-        LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(folder);
+        LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(selectedFolder);
 
-        return new CreateLinkCardBasicInfoRes(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), linkCardTagDtoList, linkCardFolderDto);
+        return new CreateLinkCardBasicInfoRes(
+                titleAndSummaryDto.title(),
+                titleAndSummaryDto.summary(),
+                linkCardTagDtoList,
+                linkCardFolderDto
+        );
     }
 
     @Transactional

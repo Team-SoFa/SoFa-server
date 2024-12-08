@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class WebScrapingService {
+    private static final int MAX_CONTENT_LENGTH = 10000; // 적절한 길이로 조정
 
     public String extractContent(String url) {
         try {
@@ -19,7 +20,13 @@ public class WebScrapingService {
             String description = doc.select("meta[name=description]").attr("content");
             String bodyText = doc.select("article, main, .content, .article, .post, p").text();
 
-            return description.isEmpty() ? bodyText : description + "\n" + bodyText;
+            String content = description.isEmpty() ? bodyText : description + "\n" + bodyText;
+            // 최대 길이 제한
+            if (content.length() > MAX_CONTENT_LENGTH) {
+                content = content.substring(0, MAX_CONTENT_LENGTH);
+            }
+
+            return content;
 
         } catch (Exception e) {
             log.error("URL 콘텐츠 추출 실패: {}", url, e);

@@ -13,7 +13,7 @@ public class AiSummaryService {
 
     public String generateSummary(String content) {
         String prompt = String.format("""
-            다음 웹 페이지의 내용을 500자 이내로 간단명료하게 요약해주세요:
+            무조건 다음 웹 페이지의 내용을 300자 이하로 간단명료하게 요약해주세요. 요약은 주요 내용을 중심으로 작성하고, 150자 이상이어야 합니다 :
             
             %s
             """, content);
