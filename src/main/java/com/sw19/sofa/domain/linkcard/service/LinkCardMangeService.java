@@ -7,7 +7,6 @@ import com.sw19.sofa.domain.article.service.ArticleTagService;
 import com.sw19.sofa.domain.folder.dto.response.FolderRes;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
@@ -106,7 +105,7 @@ public class LinkCardMangeService {
             );
             articleTagService.addArticleTagListByArticleAndTagListIn(article, tagList);
         }
-        List<FolderRes> userFolders = folderService.getFolderList(member).floderList().stream()
+        List<FolderRes> userFolders = folderService.getFolderList(member).folderList().stream()
                 .filter(folder -> !folder.name().equals(Constants.recycleBinName))
                 .toList();
 
@@ -174,7 +173,7 @@ public class LinkCardMangeService {
     @Transactional(readOnly = true)
     public ListRes<LinkCardSimpleRes> getLinkCardList(Member member, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long lastId = encryptLastId.equals("0") ? 0 : EncryptionUtil.decrypt(encryptLastId);
-        List<Long> folderIdList = folderService.getFolderList(member).floderList().stream()
+        List<Long> folderIdList = folderService.getFolderList(member).folderList().stream()
                 .filter(folder -> !"휴지통".equals(folder.name()))
                 .map(folderRes -> EncryptionUtil.decrypt(folderRes.id()))
                 .toList();

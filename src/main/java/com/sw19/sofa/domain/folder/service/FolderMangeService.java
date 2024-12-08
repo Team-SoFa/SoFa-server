@@ -12,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class FolderMangeService {
@@ -20,7 +24,19 @@ public class FolderMangeService {
 
     @Transactional(readOnly = true)
     public FolderListRes getFolderList(Member member) {
-        return folderService.getFolderList(member);
+
+
+        List<FolderRes> folderRes = folderService.getFolderList(member).folderList();
+
+        Optional<FolderRes> minEncryptedIdFolder = folderRes.stream()
+                .filter(f -> "휴지통".equals(f.name()))
+                .min(Comparator.comparingLong(FolderRes::encryptionId));
+
+        List<FolderRes> ret = folderRes.stream()
+                .filter(f -> minEncryptedIdFolder.isEmpty() || !minEncryptedIdFolder.get().id().equals(f.id()))
+                .toList();
+
+        return new FolderListRes(ret);
     }
 
     @Transactional
