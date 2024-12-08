@@ -113,7 +113,7 @@ public class LinkCardMangeService {
     @Transactional(readOnly = true)
     public ListRes<LinkCardSimpleRes> getLinkCardList(Member member, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long lastId = encryptLastId.equals("0") ? 0 : EncryptionUtil.decrypt(encryptLastId);
-        List<Long> folderIdList = folderService.getFolderList(member).floderList().stream()
+        List<Long> folderIdList = folderService.getFolderList(member).folderList().stream()
                 .filter(folder -> !"휴지통".equals(folder.name()))
                 .map(folderRes -> EncryptionUtil.decrypt(folderRes.id()))
                 .toList();
