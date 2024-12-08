@@ -6,10 +6,7 @@ import com.sw19.sofa.domain.article.service.ArticleService;
 import com.sw19.sofa.domain.article.service.ArticleTagService;
 import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.service.FolderService;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
+import com.sw19.sofa.domain.linkcard.dto.*;
 import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
@@ -51,11 +48,13 @@ public class LinkCardMangeService {
         ArticleDto articleDto = articleService.getArticleDtoByUrlOrElseNull(req.url());
         List<TagDto> tagDtoList;
         TitleAndSummaryDto titleAndSummaryDto;
+        String imageUrl = null;
 
         // 아티클 및 태그 생성
         if(articleDto != null){
             List<ArticleTagDto> articleTagDtoList = articleTagService.getArticleTagDtoListByArticleId(articleDto.id());
             titleAndSummaryDto = new TitleAndSummaryDto(articleDto.title(), articleDto.summary());
+            imageUrl = articleDto.imageUrl();
 
             List<Long> tagIdList = articleTagDtoList.stream().map(ArticleTagDto::tagId).toList();
             tagDtoList = tagService.getTagDtoListByIdList(tagIdList);
@@ -66,8 +65,13 @@ public class LinkCardMangeService {
             List<Tag> tagList = tagService.getTagList(tagNameList);
             tagDtoList = tagList.stream().map(TagDto::new).toList();
 
-            Article article = articleService.addArticle(req.url(), titleAndSummaryDto.title(), titleAndSummaryDto.summary(), req.imageUrl());
+            Article article = articleService.addArticle(
+                    req.url(),
+                    titleAndSummaryDto.title(),
+                    titleAndSummaryDto.summary()
+            );
             articleTagService.addArticleTagListByArticleAndTagListIn(article ,tagList);
+            imageUrl = article.getImageUrl();
         }
 
         // 폴더 생성
@@ -81,7 +85,7 @@ public class LinkCardMangeService {
         List<LinkCardTagDto> linkCardTagDtoList = tagDtoList.stream().map(LinkCardTagDto::new).toList();
         LinkCardFolderDto linkCardFolderDto = new LinkCardFolderDto(folder);
 
-        return new CreateLinkCardBasicInfoRes(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), linkCardTagDtoList, linkCardFolderDto);
+        return new CreateLinkCardBasicInfoRes(titleAndSummaryDto.title(), titleAndSummaryDto.summary(), linkCardTagDtoList, linkCardFolderDto, imageUrl);
     }
 
     @Transactional

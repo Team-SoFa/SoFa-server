@@ -3,6 +3,7 @@ package com.sw19.sofa.domain.article.service;
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.article.error.ArticleErrorCode;
 import com.sw19.sofa.domain.article.repository.ArticleRepository;
+import com.sw19.sofa.global.util.ImageExtractor;
 import com.sw19.sofa.global.common.dto.ArticleDto;
 import com.sw19.sofa.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
+    private final ImageExtractor imageExtractor;
 
     @Transactional(readOnly = true)
     public Article getArticleByUrl(String url){
@@ -31,7 +33,8 @@ public class ArticleService {
     }
 
     @Transactional
-    public Article addArticle(String url, String title, String summary, String imageUrl) {
+    public Article addArticle(String url, String title, String summary) {
+        String imageUrl = imageExtractor.extractMainImage(url);
         Article article = Article.builder()
                 .url(url)
                 .title(title)
