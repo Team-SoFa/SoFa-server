@@ -1,5 +1,6 @@
 package com.sw19.sofa.domain.linkcard.repository;
 
+import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.entity.LinkCardTag;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ import java.util.List;
 public interface LinkCardTagRepository extends JpaRepository<LinkCardTag, Long> {
     List<LinkCardTag> findAllByLinkCardId(Long linkCardId);
     void deleteByLinkCard_IdAndTagIdAndTagType(Long linkCardId, Long tagId, TagType tagType);
+    void deleteAllByLinkCard(LinkCard linkCard);
 }

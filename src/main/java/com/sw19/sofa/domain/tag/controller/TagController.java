@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tags")
+@RequestMapping("/tag")
 @RequiredArgsConstructor
 public class TagController implements TagApi {
     private final TagService tagService;

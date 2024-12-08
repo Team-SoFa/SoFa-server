@@ -19,6 +19,7 @@ public class Article {
     private Long views;
     @Column(name = "image_url")
     private String imageUrl;
+    @Column(columnDefinition = "TEXT", length = 10000)
     private String summary;
 
     @Builder
