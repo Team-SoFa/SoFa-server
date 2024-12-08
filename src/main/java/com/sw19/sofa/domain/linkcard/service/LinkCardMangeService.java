@@ -1,6 +1,6 @@
 package com.sw19.sofa.domain.linkcard.service;
 
-import com.sw19.sofa.domain.ai.service.ManageAiService;
+import com.sw19.sofa.domain.ai.service.AiManageService;
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.article.service.ArticleService;
 import com.sw19.sofa.domain.article.service.ArticleTagService;
@@ -35,9 +35,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +49,7 @@ public class LinkCardMangeService {
     private final ArticleService articleService;
     private final LinkCardTagService linkCardTagService;
     private final ArticleTagService articleTagService;
-    private final ManageAiService manageAiService;
+    private final AiManageService manageAiService;
 
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY = 1000;

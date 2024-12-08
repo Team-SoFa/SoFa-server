@@ -12,14 +12,14 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
-public class OpenAIService {
+public class OpenAiService {
 
     private final RestTemplate restTemplate;
     private final String apiUrl;
     private final String apiKey;
     private final String model;
 
-    public OpenAIService(RestTemplate restTemplate,
+    public OpenAiService(RestTemplate restTemplate,
                          @Value("${openai.api.url}") String apiUrl,
                          @Value("${openai.api.key}") String apiKey,
                          @Value("${openai.model}") String model) {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class AiTitleService {
-    private final OpenAIService openAIService;
+    private final OpenAiService openAIService;
 
     public String generateTitle(String content) {
         String prompt = String.format("""

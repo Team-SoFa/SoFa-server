@@ -13,7 +13,7 @@ import static com.sw19.sofa.global.common.constants.Constants.DEFAULT_FOLDER_CAT
 @RequiredArgsConstructor
 @Slf4j
 public class AiFolderService {
-    private final OpenAIService openAIService;
+    private final OpenAiService openAIService;
 
     public String recommendFolderName(String content, List<String> userFolders) {
         List<String> folderOptions = userFolders.isEmpty() ?

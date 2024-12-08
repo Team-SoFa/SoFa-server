@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class AiSummaryService {
-    private final OpenAIService openAIService;
+    private final OpenAiService openAIService;
     private final WebScrapingService webScrapingService;
     private final AiTitleService aiTitleService;
 

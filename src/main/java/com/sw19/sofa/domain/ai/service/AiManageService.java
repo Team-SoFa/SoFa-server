@@ -10,7 +10,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ManageAiService {
+public class AiManageService {
     private final AiSummaryService aiSummaryService;
     private final AiTagService aiTagService;
     private final WebScrapingService webScrapingService;

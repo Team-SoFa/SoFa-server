@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AiTagService {
-    private final OpenAIService openAIService;
+    private final OpenAiService openAIService;
 
     public List<String> generateTags(String content) {
         String prompt = String.format("""
