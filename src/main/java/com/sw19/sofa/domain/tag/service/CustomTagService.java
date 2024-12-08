@@ -25,12 +25,6 @@ public class CustomTagService {
                 .toList();
     }
 
-    public CustomTag getCustomTag(String encryptedId) {
-        Long id = EncryptionUtil.decrypt(encryptedId);
-        return customTagRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
-    }
-
     @Transactional
     public CustomTagRes createCustomTag(Member member, String name) {
         if (customTagRepository.existsByMemberAndName(member, name)) {

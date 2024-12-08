@@ -19,6 +19,7 @@ import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
+import com.sw19.sofa.domain.remind.service.RemindService;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.service.CustomTagService;
 import com.sw19.sofa.domain.tag.service.TagService;
@@ -50,9 +51,11 @@ public class LinkCardMangeService {
     private final LinkCardTagService linkCardTagService;
     private final ArticleTagService articleTagService;
     private final AiManageService manageAiService;
+    private final RemindService remindService;
 
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY = 1000;
+
 
     @Transactional
     public CreateLinkCardBasicInfoRes createLinkCardBasicInfo(Member member, CreateLinkCardBasicInfoReq req) {
@@ -145,13 +148,14 @@ public class LinkCardMangeService {
     public LinkCardRes getLinkCard(String encryptId, Member member){
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
 
-        LinkCardDto linkCardDto = linkCardService.getLinkCardDto(linkCardId, member);
+        LinkCard linkCard = linkCardService.getLinkCardDto(linkCardId);
+        remindService.removeFromRemind(linkCard, member);
 
         List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.getLinkCardTagSimpleDtoListByLinkCardId(linkCardId);
 
         List<LinkCardTagDto> linkCardTagDtoList = getLinkCardTagDtoList(linkCardTagSimpleDtoList);
 
-        return new LinkCardRes(linkCardDto, linkCardTagDtoList);
+        return new LinkCardRes(linkCard, linkCardTagDtoList);
     }
 
     @Transactional
@@ -162,15 +166,15 @@ public class LinkCardMangeService {
         Article article = articleService.getArticleByUrl(req.url());
 
         LinkCard linkCard = linkCardService.addLinkCard(req, folder, article);
-        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = req.tagList().stream()
-                .map(LinkCardTagSimpleDto::new).toList();
-        linkCardTagService.addLinkCardTagList(linkCard, linkCardTagSimpleDtoList);
+        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = req.tagList().stream().map(LinkCardTagSimpleDto::new).toList();
+        linkCardTagService.addLinkCardTagList(linkCard, linkCardTagSimpleDtoList );
+
     }
 
     @Transactional(readOnly = true)
     public ListRes<LinkCardSimpleRes> getLinkCardList(Member member, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long lastId = encryptLastId.equals("0") ? 0 : EncryptionUtil.decrypt(encryptLastId);
-        List<Long> folderIdList = folderService.getFolderList(member).folderList().stream()
+        List<Long> folderIdList = folderService.getFolderList(member).floderList().stream()
                 .filter(folder -> !"휴지통".equals(folder.name()))
                 .map(folderRes -> EncryptionUtil.decrypt(folderRes.id()))
                 .toList();
@@ -225,7 +229,8 @@ public class LinkCardMangeService {
     public void enterLinkCard(String encryptId, Member member) {
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
-        linkCardService.enterLinkCard(linkCard, member);
+        linkCardService.enterLinkCard(linkCard);
+        remindService.removeFromRemind(linkCard, member);
         articleService.enterArticle(linkCard.getArticle());
     }
 

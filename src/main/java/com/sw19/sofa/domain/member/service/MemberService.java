@@ -16,6 +16,7 @@ public class MemberService {
     public Member getMemberByEmail(String email){
         return memberRepository.findByEmail(email).orElse(null);
     }
+    public Member getMemberById(Long id){return memberRepository.findByIdOrElseThrow(id);}
 
     @Transactional
     public Member addMember(String email, String name){

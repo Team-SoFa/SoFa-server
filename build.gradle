@@ -65,6 +65,12 @@ dependencies {
 
 	//openai
 	implementation 'org.jsoup:jsoup:1.16.1'
+
+	//Quartz
+	implementation "org.springframework.boot:spring-boot-starter-quartz"
+
+	//Batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
 }
 
 test {

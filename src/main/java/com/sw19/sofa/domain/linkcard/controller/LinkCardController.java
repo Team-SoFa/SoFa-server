@@ -9,8 +9,6 @@ import com.sw19.sofa.domain.linkcard.service.LinkCardMangeService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
-import com.sw19.sofa.global.util.EncryptionUtil;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;

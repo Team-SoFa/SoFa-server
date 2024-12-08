@@ -3,8 +3,18 @@ package com.sw19.sofa.global.common.constants;
 import java.util.List;
 
 public class Constants {
+    //RecycleBin
     public static final String recycleBinName="휴지통";
 
+    //Scheduler & Batch
+    public static final String moveRemind = "moveUnusedLinkListToRemindJob";
+    public static final String deleteRecycleBin = "deleteExpiredLinkCardListInRecycleBinJob";
+    public static final String remindNotify = "RemindNotifyGroup";
+    public static final String deleteExpiredAlarm = "DeleteAlarmGroup";
+    public static final int batchConcurrencyLimit = 5;
+    public static final int batchChunkSize = 10;
+
+    //AI
     public static final List<String> DEFAULT_FOLDER_CATEGORIES = List.of(
             "CS",
             "AI & 머신러닝",

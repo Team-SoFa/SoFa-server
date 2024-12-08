@@ -1,7 +1,6 @@
 package com.sw19.sofa.domain.tag.api;
 
 import com.sw19.sofa.domain.member.entity.Member;
-import com.sw19.sofa.domain.tag.dto.response.TagRes;
 import com.sw19.sofa.domain.tag.dto.response.TagSearchRes;
 import com.sw19.sofa.security.jwt.AuthMember;
 import io.swagger.v3.oas.annotations.Operation;

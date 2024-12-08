@@ -13,9 +13,6 @@ import java.util.Optional;
 public interface TagRepository extends JpaRepository<Tag, Long> {
     List<Tag> findAllByNameIn(List<String> nameList);
     List<Tag> findAllByIdIn(List<Long> ids);
-    Optional<Tag> findByName(String name);
-    boolean existsByName(String name);
-
     @Query("SELECT t FROM Tag t WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Tag> findAllByNameContainingIgnoreCase(@Param("keyword") String keyword);
 }

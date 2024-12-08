@@ -1,7 +1,6 @@
 package com.sw19.sofa.security.jwt.filter;
 
 import com.sw19.sofa.security.jwt.provider.JwtTokenProvider;
-import com.sw19.sofa.security.jwt.utils.RequestUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

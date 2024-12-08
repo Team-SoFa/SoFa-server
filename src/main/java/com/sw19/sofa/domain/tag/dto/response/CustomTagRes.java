@@ -7,11 +7,9 @@ public record CustomTagRes (
         @Schema(description = "태그 아이디")
         String id,
         @Schema(description = "태그 이름")
-        String name,
-        @Schema(description = "맴버 아이디")
-        String memberId
+        String name
 ){
     public CustomTagRes(CustomTag customTag) {
-        this(customTag.getName(), customTag.getEncryptedId(), customTag.getMember().getEncryptUserId());
+        this(customTag.getName(), customTag.getEncryptedId());
     }
 }
