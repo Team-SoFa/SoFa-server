@@ -8,7 +8,7 @@ public record LinkCardTagSimpleEncryptDto(
         @Schema(description = "태그 아이디") String id,
         @Schema(description = "태그 속성", example = "AI/CUSTOM") TagType tagType
 ) {
-    public Long getDecryptionId(){
+    public Long decryptionId(){
         return EncryptionUtil.decrypt(id);
     }
 }
