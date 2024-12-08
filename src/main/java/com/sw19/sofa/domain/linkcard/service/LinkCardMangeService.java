@@ -16,6 +16,7 @@ import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.*;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
+import com.sw19.sofa.domain.linkcard.entity.LinkCardTag;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.remind.service.RemindService;
@@ -178,6 +179,26 @@ public class LinkCardMangeService {
                 .map(folderRes -> EncryptionUtil.decrypt(folderRes.id()))
                 .toList();
         return linkCardListInfiniteScroll(folderIdList, linkCardSortBy, sortOrder, limit, lastId);
+    }
+
+    @Transactional(readOnly = true)
+    public MostTagLinkCardListRes getMostTagLinkCardList(Member member, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
+        Long lsatId = EncryptionUtil.decrypt(encryptLastId);
+
+        LinkCardTag linkCardTag = linkCardTagService.getMostTagIdByMember(member);
+        Long tagId = linkCardTag.getTagId();
+
+        LinkCardTagDto tagDto;
+        if(linkCardTag.getTagType().equals(TagType.AI)){
+            tagDto = new LinkCardTagDto(tagService.getTagDto(tagId));
+        }else{
+            tagDto = new LinkCardTagDto(customTagService.getCustomTagDto(tagId));
+        }
+
+        ListRes<LinkCard> linkCardListRes = linkCardService.getLinkCardSimpleResListByLinkCardTagAndSortCondition(linkCardTag, linkCardSortBy, sortOrder, limit, lsatId);
+        List<LinkCardSimpleRes> data = linkCardListRes.data().stream().map(LinkCardSimpleRes::new).toList();
+
+        return new MostTagLinkCardListRes(tagDto, data, limit, linkCardListRes.size(), linkCardListRes.hasNext());
     }
 
     @Transactional(readOnly = true)

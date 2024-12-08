@@ -57,6 +57,14 @@ public class LinkCardController implements LinkCardApi {
     }
 
     @Override
+    @GetMapping("/most-tag")
+    public ResponseEntity<MostTagLinkCardListRes> getMostTagLinkCardList(
+            @RequestParam(name = "sortBy") LinkCardSortBy linkCardSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit, @AuthMember Member member) {
+        MostTagLinkCardListRes res = linkCardMangeService.getMostTagLinkCardList(member, linkCardSortBy, sortOrder, lastId, limit);
+        return BaseResponse.ok(res);
+    }
+
+    @Override
     @GetMapping("/list/{folderId}")
     public ResponseEntity<ListRes<LinkCardSimpleRes>> getLinkCardListByFolder(
             @PathVariable String folderId, @RequestParam(name = "sortBy") LinkCardSortBy linkCardSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit

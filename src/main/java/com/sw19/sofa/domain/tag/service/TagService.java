@@ -29,6 +29,13 @@ public class TagService {
                 .toList();
     }
 
+    public TagDto getTagDto(Long tagId) {
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+
+        return new TagDto(tag);
+    }
+
     public List<TagDto> getTagDtoListByIdList(List<Long> tagIdList) {
         if (tagIdList == null || tagIdList.isEmpty()) {
             return List.of();

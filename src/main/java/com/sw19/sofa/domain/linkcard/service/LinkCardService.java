@@ -5,6 +5,7 @@ import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
+import com.sw19.sofa.domain.linkcard.entity.LinkCardTag;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
 import com.sw19.sofa.global.common.constants.Constants;
 import com.sw19.sofa.global.common.dto.ListRes;
@@ -35,6 +36,25 @@ public class LinkCardService {
 
     public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(List<Long> folderIdList, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
         List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderIdList, sortBy, sortOrder, limit, lastId);
+
+        boolean hasNext = false;
+
+        if(linkCardList.size() > limit){
+            hasNext = true;
+            linkCardList.remove(limit);
+        }
+
+        return new ListRes<>(
+                linkCardList,
+                limit,
+                linkCardList.size(),
+                hasNext
+        );
+
+    }
+
+    public ListRes<LinkCard> getLinkCardSimpleResListByLinkCardTagAndSortCondition(LinkCardTag linkCardTag, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
+        List<LinkCard> linkCardList = linkCardRepository.findAllByLinkCardTagAndSortCondition(linkCardTag, sortBy, sortOrder, limit, lastId);
 
         boolean hasNext = false;
 
@@ -103,12 +123,10 @@ public class LinkCardService {
     @Transactional
     public void deleteLinkCardList(List<LinkCard> linkCardList) {linkCardRepository.deleteAll(linkCardList);}
 
-    @Transactional(readOnly = true)
     public List<LinkCard> getUnusedLinkCardList(){
         return linkCardRepository.findUnusedLinkCardList(getThirtyDaysAgoDateTime());
     }
 
-    @Transactional(readOnly = true)
     public List<LinkCard> getExpiredLinkCardsInRecycleBin(){
         return linkCardRepository.findExpiredLinkCardListInRecycleBin(getThirtyDaysAgoDateTime(), Constants.recycleBinName);
     }

@@ -9,14 +9,13 @@ import com.sw19.sofa.global.error.exception.BusinessException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.DataException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final EntityManager entityManager;
@@ -24,13 +23,11 @@ public class ArticleService {
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY = 1000;
 
-    @Transactional(readOnly = true)
-    public Article getArticleByUrl(String url) {
+    public Article getArticleByUrl(String url){
         return articleRepository.findByUrl(url).orElseThrow(() -> new BusinessException(ArticleErrorCode.NOT_FOUND_ARTICLE));
     }
 
-    @Transactional(readOnly = true)
-    public ArticleDto getArticleDtoByUrlOrElseNull(String url) {
+    public ArticleDto getArticleDtoByUrlOrElseNull(String url){
         Article article = articleRepository.findByUrl(url).orElse(null);
         return article != null ? new ArticleDto(article) : null;
     }

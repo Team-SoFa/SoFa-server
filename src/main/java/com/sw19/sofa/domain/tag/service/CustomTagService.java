@@ -25,6 +25,12 @@ public class CustomTagService {
                 .toList();
     }
 
+    public CustomTagDto getCustomTagDto(Long id) {
+        CustomTag customTag = customTagRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+        return new CustomTagDto(customTag);
+    }
+
     @Transactional
     public CustomTagRes createCustomTag(Member member, String name) {
         if (customTagRepository.existsByMemberAndName(member, name)) {
