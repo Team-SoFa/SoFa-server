@@ -5,6 +5,7 @@ import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.entity.LinkCardTag;
 import com.sw19.sofa.domain.linkcard.enums.TagType;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardTagRepository;
+import com.sw19.sofa.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,10 @@ public class LinkCardTagService {
         return linkCardTagRepository.saveAll(linkCardTagList);
     }
 
+    public LinkCardTag getMostTagIdByMember(Member member){
+        return linkCardTagRepository.findMostTagIdByMember(member);
+    }
+
     public List<LinkCardTagSimpleDto> getLinkCardTagSimpleDtoListByLinkCardId(Long linkCardId){
         return linkCardTagRepository.findAllByLinkCardId(linkCardId).stream().map(LinkCardTagSimpleDto::new).toList();
     }
@@ -43,4 +48,5 @@ public class LinkCardTagService {
     public void deleteAllByLinkCard(LinkCard linkCard){
         linkCardTagRepository.deleteAllByLinkCard(linkCard);
     }
+
 }

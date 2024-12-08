@@ -25,10 +25,10 @@ public class CustomTagService {
                 .toList();
     }
 
-    public CustomTag getCustomTag(String encryptedId) {
-        Long id = EncryptionUtil.decrypt(encryptedId);
-        return customTagRepository.findById(id)
+    public CustomTagDto getCustomTagDto(Long id) {
+        CustomTag customTag = customTagRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+        return new CustomTagDto(customTag);
     }
 
     @Transactional

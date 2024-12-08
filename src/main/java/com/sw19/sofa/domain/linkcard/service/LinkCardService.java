@@ -6,6 +6,7 @@ import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
+import com.sw19.sofa.domain.linkcard.entity.LinkCardTag;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.remind.service.RemindManageService;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
     private final RemindManageService remindManageService;
@@ -33,10 +35,10 @@ public class LinkCardService {
         return new LinkCardDto(linkCard);
     }
 
-    @Transactional(readOnly = true)
     public LinkCard getLinkCard(Long id){
         return linkCardRepository.findByIdOrElseThrowException(id);
     }
+
     @Transactional(readOnly = true)
     public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(List<Long> folderIdList, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
         List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderIdList, sortBy, sortOrder, limit, lastId);
@@ -56,6 +58,26 @@ public class LinkCardService {
         );
 
     }
+
+    public ListRes<LinkCard> getLinkCardSimpleResListByLinkCardTagAndSortCondition(LinkCardTag linkCardTag, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
+        List<LinkCard> linkCardList = linkCardRepository.findAllByLinkCardTagAndSortCondition(linkCardTag, sortBy, sortOrder, limit, lastId);
+
+        boolean hasNext = false;
+
+        if(linkCardList.size() > limit){
+            hasNext = true;
+            linkCardList.remove(limit);
+        }
+
+        return new ListRes<>(
+                linkCardList,
+                limit,
+                linkCardList.size(),
+                hasNext
+        );
+
+    }
+
     @Transactional
     public LinkCard addLinkCard(LinkCardReq req, Folder folder, Article article) {
         LinkCard linkCard = LinkCard.builder()

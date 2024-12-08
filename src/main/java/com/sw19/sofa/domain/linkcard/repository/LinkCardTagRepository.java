@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LinkCardTagRepository extends JpaRepository<LinkCardTag, Long> {
+public interface LinkCardTagRepository extends JpaRepository<LinkCardTag, Long>, LinkCardTagCustomRepository {
     List<LinkCardTag> findAllByLinkCardId(Long linkCardId);
     void deleteByLinkCard_IdAndTagIdAndTagType(Long linkCardId, Long tagId, TagType tagType);
     void deleteAllByLinkCard(LinkCard linkCard);
