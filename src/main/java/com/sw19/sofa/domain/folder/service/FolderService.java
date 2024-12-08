@@ -6,7 +6,6 @@ import com.sw19.sofa.domain.folder.entity.Folder;
 import com.sw19.sofa.domain.folder.repository.FolderRepository;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.error.exception.BusinessException;
-import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +16,7 @@ import static com.sw19.sofa.domain.folder.error.FolderErrorCode.NOT_FOUND_FOLDER
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FolderService {
 
     private final FolderRepository folderRepository;
@@ -48,24 +48,19 @@ public class FolderService {
         return new FolderRes(save);
     }
 
-    @Transactional(readOnly = true)
     public Folder getFolder(Long id){
         return folderRepository.findById(id).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
     }
 
-    @Transactional(readOnly = true)
     public Folder getFolderByNameAndMemberOrElseThrow(String name, Member member){
         return folderRepository.findByNameAndMember(name, member).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
     }
 
-    @Transactional(readOnly = true)
     public Folder getFolderByNameAndMemberOrNull(String name, Member member){
         return folderRepository.findByNameAndMember(name, member).orElse(null);
     }
 
-    @Transactional(readOnly = true)
-    public Folder findFolder(String decryptId){
-        Long id = EncryptionUtil.decrypt(decryptId);
+    public Folder findFolder(Long id){
         return folderRepository.findById(id).orElseThrow(() -> new BusinessException(NOT_FOUND_FOLDER));
     }
 }

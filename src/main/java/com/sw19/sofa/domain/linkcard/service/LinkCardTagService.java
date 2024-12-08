@@ -20,14 +20,14 @@ public class LinkCardTagService {
     private final LinkCardTagRepository linkCardTagRepository;
 
     @Transactional
-    public List<LinkCardTag> addLinkCardTagList(LinkCard linkCard, List<LinkCardTagSimpleDto> tagDtoList){
-        List<LinkCardTag> linkCardTagList = tagDtoList.stream().map(
-                tagDto -> LinkCardTag.builder()
+    public List<LinkCardTag> addLinkCardTagList(LinkCard linkCard, List<LinkCardTagSimpleDto> tagDtoList) {
+        List<LinkCardTag> linkCardTagList = tagDtoList.stream()
+                .map(tagDto -> LinkCardTag.builder()
                         .linkCard(linkCard)
                         .tagId(tagDto.id())
                         .tagType(tagDto.tagType())
                         .build()
-        ).toList();
+                ).toList();
 
         return linkCardTagRepository.saveAll(linkCardTagList);
     }
@@ -53,5 +53,4 @@ public class LinkCardTagService {
     public void deleteAllByLinkCard(LinkCard linkCard){
         linkCardTagRepository.deleteAllByLinkCard(linkCard);
     }
-
 }

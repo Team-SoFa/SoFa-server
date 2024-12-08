@@ -21,6 +21,7 @@ import com.sw19.sofa.global.error.code.CommonErrorCode;
 import com.sw19.sofa.global.error.exception.BusinessException;
 import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class SearchBoxService {
     private final SearchBoxRepository searchBoxRepository;
     private final LinkCardTagService linkCardTagService;
@@ -53,21 +55,18 @@ public class SearchBoxService {
             searchHistoryService.addSearchKeywordHistory(member.getId(), keyword);
         }
 
-        Long lastIdLong = lastId == null || "0".equals(lastId) ?
-                null : EncryptionUtil.decrypt(lastId);
+        Long lastIdLong = lastId == null || "0".equals(lastId) ? null : EncryptionUtil.decrypt(lastId);
+        Long folderId = encryptedFolderId == null || encryptedFolderId.equals("null") ? null : EncryptionUtil.decrypt(encryptedFolderId);
+        keyword = keyword == null || keyword.equals("null") ? null : keyword;
+        List<Long> tagIdList  = encryptedTagIds == null || encryptedTagIds.isEmpty() || encryptedTagIds.contains("null") ? null :encryptedTagIds.stream().map(EncryptionUtil::decrypt).toList();
 
         List<LinkCard> linkCards;
 
-        if (encryptedFolderId != null && encryptedTagIds != null) {
-            Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
-            validateFolderAccess(folderService.findFolder(encryptedFolderId), member);
-
-            List<Long> tagIds = encryptedTagIds.stream()
-                    .map(EncryptionUtil::decrypt)
-                    .toList();
+        if (folderId != null && tagIdList != null) {
+            validateFolderAccess(folderService.findFolder(folderId), member);
 
             linkCards = searchBoxRepository.searchByTagsAndFolder(
-                    tagIds,
+                    tagIdList,
                     folderId,
                     keyword,
                     lastIdLong,
@@ -75,9 +74,8 @@ public class SearchBoxService {
                     sortBy,
                     sortOrder
             );
-        } else if (encryptedFolderId != null) {
-            Long folderId = EncryptionUtil.decrypt(encryptedFolderId);
-            validateFolderAccess(folderService.findFolder(encryptedFolderId), member);
+        } else if (folderId != null) {
+            validateFolderAccess(folderService.findFolder(folderId), member);
 
             linkCards = searchBoxRepository.searchByFolder(
                     folderId,
@@ -87,13 +85,9 @@ public class SearchBoxService {
                     sortBy,
                     sortOrder
             );
-        } else if (encryptedTagIds != null && !encryptedTagIds.isEmpty()) {
-            List<Long> tagIds = encryptedTagIds.stream()
-                    .map(EncryptionUtil::decrypt)
-                    .toList();
-
+        } else if (tagIdList != null && !tagIdList.isEmpty()) {
             linkCards = searchBoxRepository.searchByTags(
-                    tagIds,
+                    tagIdList,
                     keyword,
                     lastIdLong,
                     limit,

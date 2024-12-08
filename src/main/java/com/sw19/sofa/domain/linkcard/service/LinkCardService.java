@@ -2,14 +2,12 @@ package com.sw19.sofa.domain.linkcard.service;
 
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.folder.entity.Folder;
-import com.sw19.sofa.domain.linkcard.dto.LinkCardDto;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardReq;
 import com.sw19.sofa.domain.linkcard.dto.response.LinkCardInfoRes;
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.linkcard.entity.LinkCardTag;
 import com.sw19.sofa.domain.linkcard.repository.LinkCardRepository;
-import com.sw19.sofa.domain.member.entity.Member;
-import com.sw19.sofa.domain.remind.service.RemindManageService;
+import com.sw19.sofa.global.common.constants.Constants;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortBy;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
@@ -25,21 +23,17 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class LinkCardService {
     private final LinkCardRepository linkCardRepository;
-    private final RemindManageService remindManageService;
 
-    @Transactional
-    public LinkCardDto getLinkCardDto(Long id, Member member){
+    public LinkCard getLinkCardDto(Long id){
         LinkCard linkCard = linkCardRepository.findByIdOrElseThrowException(id);
         linkCard.view();
-        remindManageService.removeFromRemind(linkCard, member);
-        return new LinkCardDto(linkCard);
+        return linkCard;
     }
 
     public LinkCard getLinkCard(Long id){
         return linkCardRepository.findByIdOrElseThrowException(id);
     }
 
-    @Transactional(readOnly = true)
     public ListRes<LinkCard> getLinkCardSimpleResListByFolderIdAndSortCondition(List<Long> folderIdList, SortBy sortBy, SortOrder sortOrder, int limit, Long lastId){
         List<LinkCard> linkCardList = linkCardRepository.findAllByFolderIdAndSortCondition(folderIdList, sortBy, sortOrder, limit, lastId);
 
@@ -116,14 +110,29 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void enterLinkCard(LinkCard linkCard, Member member) {
+    public void enterLinkCard(LinkCard linkCard) {
         linkCard.enter();
         linkCardRepository.save(linkCard);
-        remindManageService.removeFromRemind(linkCard, member);
     }
 
     @Transactional
     public void deleteLinkCard(LinkCard linkCard){
         linkCardRepository.delete(linkCard);
+    }
+
+    @Transactional
+    public void deleteLinkCardList(List<LinkCard> linkCardList) {linkCardRepository.deleteAll(linkCardList);}
+
+    public List<LinkCard> getUnusedLinkCardList(){
+        return linkCardRepository.findUnusedLinkCardList(getThirtyDaysAgoDateTime());
+    }
+
+    public List<LinkCard> getExpiredLinkCardsInRecycleBin(){
+        return linkCardRepository.findExpiredLinkCardListInRecycleBin(getThirtyDaysAgoDateTime(), Constants.recycleBinName);
+    }
+
+    private LocalDateTime getThirtyDaysAgoDateTime() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        return thirtyDaysAgo.toLocalDate().atStartOfDay();
     }
 }

@@ -18,6 +18,17 @@ import java.util.List;
 public class TagService {
     private final TagRepository tagRepository;
 
+    @Transactional
+    public List<Tag> createAiTags(List<String> tagNames) {
+        // AI가 생성한 태그명들로 태그 생성
+        return tagNames.stream()
+                .map(name -> Tag.builder()
+                        .name(name)
+                        .build())
+                .map(tagRepository::save)
+                .toList();
+    }
+
     public TagDto getTagDto(Long tagId) {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));

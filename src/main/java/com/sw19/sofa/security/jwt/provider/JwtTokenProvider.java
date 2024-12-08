@@ -97,7 +97,6 @@ public class JwtTokenProvider {
     }
 
     public Date getExpiration(String token) {
-
         return getBody(token).getExpiration();
     }
 
