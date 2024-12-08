@@ -25,12 +25,12 @@ public class AiFolderService {
         String folderNames = String.join(", ", folderOptions);
 
         String prompt = String.format("""
-                다음 내용을 분석하여 가장 적합한 폴더를 선택해주세요.
+                다음 내용을 분석하여 가장 적합한 폴더 하나만 선택해주세요.
                 주어진 폴더 목록에서만 선택해야 하며, 폴더 이름만 정확히 답변해주세요.
                 
                 내용: %s
                 
-                폴더 목록: %s
+                폴더 이름: %s
                 """, content, folderNames);
 
         return openAIService.sendPrompt(prompt, 50)
