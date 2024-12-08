@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,13 +45,16 @@ public class ArticleMangeService {
         }
 
         //코사인 점수에 따른 아티클 정렬 후 상위 6개 선택
-        List<Article> resultArticleSortList = articleScoreList.entrySet().stream()
+        List<Article> resultArticleSortList = new ArrayList<>(articleScoreList.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(6)
+                .limit(20)
                 .map(Map.Entry::getKey)
-                .toList();
+                .toList());
+        Collections.shuffle(resultArticleSortList, new Random());
 
-        List<ArticleRes> data = resultArticleSortList.stream().map(ArticleRes::new).toList();
+        List<Article> randomArticles = resultArticleSortList.stream().limit(6).toList();
+
+        List<ArticleRes> data = randomArticles.stream().map(ArticleRes::new).toList();
         return new ListRes<>(data,6,data.size(),false);
     }
 
