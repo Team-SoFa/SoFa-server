@@ -15,11 +15,12 @@ public class ManageAiService {
     private final AiTagService aiTagService;
     private final WebScrapingService webScrapingService;
     private final AiFolderService aiFolderService;
+    private final AiTitleService aiTitleService;
 
     public TitleAndSummaryDto createTitleAndSummary(String url) {
         log.info("Extracting title and content from URL: {}", url);
         String content = webScrapingService.extractContent(url);
-        String title = webScrapingService.extractTitle(url);
+        String title = aiTitleService.generateTitle(content);
         String summary = aiSummaryService.generateSummary(content);
 
         return new TitleAndSummaryDto(title, summary);

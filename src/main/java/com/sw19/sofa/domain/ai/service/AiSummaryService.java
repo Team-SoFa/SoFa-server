@@ -1,5 +1,6 @@
 package com.sw19.sofa.domain.ai.service;
 
+import com.sw19.sofa.global.common.dto.TitleAndSummaryDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class AiSummaryService {
     private final OpenAIService openAIService;
     private final WebScrapingService webScrapingService;
+    private final AiTitleService aiTitleService;
 
     public String generateSummary(String content) {
         String prompt = String.format("""
@@ -21,8 +23,11 @@ public class AiSummaryService {
         return openAIService.sendPrompt(prompt, 500);
     }
 
-    public String generateSummaryFromUrl(String url) {
+    public TitleAndSummaryDto generateTitleAndSummary(String url) {
         String content = webScrapingService.extractContent(url);
-        return generateSummary(content);
+        String title = aiTitleService.generateTitle(content);
+        String summary = generateSummary(content);
+
+        return new TitleAndSummaryDto(title, summary);
     }
 }
