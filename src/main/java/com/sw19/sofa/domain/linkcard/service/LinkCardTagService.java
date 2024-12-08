@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,10 @@ public class LinkCardTagService {
         ).toList();
 
         return linkCardTagRepository.saveAll(linkCardTagList);
+    }
+
+    public Map<LinkCardTag ,Long> getTagStatisticsByMember(Member member){
+        return linkCardTagRepository.findTagStatisticsByMember(member);
     }
 
     public LinkCardTag getMostTagIdByMember(Member member){
