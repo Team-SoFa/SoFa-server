@@ -11,5 +11,5 @@ public record LinkCardTagSimpleDto(
     public LinkCardTagSimpleDto(LinkCardTag linkCardTag){
         this(linkCardTag.getTagId(), linkCardTag.getTagType());
     }
-    public LinkCardTagSimpleDto(LinkCardTagSimpleEncryptDto dto){this(dto.getDecryptionId(), dto.tagType());}
+    public LinkCardTagSimpleDto(LinkCardTagSimpleEncryptDto dto){this(dto.decryptionId(), dto.tagType());}
 }
