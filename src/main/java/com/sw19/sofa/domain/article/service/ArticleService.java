@@ -11,19 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ArticleService {
     private final ArticleRepository articleRepository;
 
-    @Transactional(readOnly = true)
     public Article getArticleByUrl(String url){
         return articleRepository.findByUrl(url).orElseThrow(() -> new BusinessException(ArticleErrorCode.NOT_FOUND_ARTICLE));
     }
 
-    @Transactional(readOnly = true)
     public ArticleDto getArticleDtoByUrlOrElseNull(String url){
         Article article = articleRepository.findByUrl(url).orElse(null);
         return article != null ? new ArticleDto(article) : null;
     }
+
     @Transactional
     public void enterArticle(Article article) {
         article.enter();
