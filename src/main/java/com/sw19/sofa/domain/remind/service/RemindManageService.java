@@ -1,6 +1,5 @@
 package com.sw19.sofa.domain.remind.service;
 
-import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.domain.remind.dto.response.RemindRes;
 import com.sw19.sofa.domain.remind.entity.Remind;
@@ -8,12 +7,14 @@ import com.sw19.sofa.domain.remind.enums.RemindSortBy;
 import com.sw19.sofa.global.common.dto.ListRes;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RemindManageService {
@@ -46,12 +47,5 @@ public class RemindManageService {
                 .toList();
 
         return new ListRes<>(responses, limit, responses.size(), hasNext);
-    }
-
-    @Transactional
-    public void removeFromRemind(LinkCard linkCard, Member member) {
-        if (remindService.existsRemind(linkCard, member)) {
-            remindService.deleteRemind(linkCard, member);
-        }
     }
 }

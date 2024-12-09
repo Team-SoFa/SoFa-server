@@ -18,11 +18,7 @@ public class SettingService {
     private final SettingRepository settingRepository;
 
     @Transactional
-    public void setNewUser(Member member) {
-        if (settingRepository.existsByMember(member)) {
-            throw new BusinessException(SettingErrorCode.SETTING_ALREADY_EXISTS);
-        }
-
+    public void setNewUser(Member member){
         Setting setting = Setting.builder()
                 .member(member)
                 .is_recommend(true)

@@ -9,8 +9,6 @@ import com.sw19.sofa.domain.linkcard.service.LinkCardMangeService;
 import com.sw19.sofa.domain.member.entity.Member;
 import com.sw19.sofa.global.common.dto.BaseResponse;
 import com.sw19.sofa.global.common.dto.ListRes;
-import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
-import com.sw19.sofa.global.util.EncryptionUtil;
 import com.sw19.sofa.global.common.dto.enums.SortOrder;
 import com.sw19.sofa.security.jwt.AuthMember;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +53,14 @@ public class LinkCardController implements LinkCardApi {
             @RequestParam(name = "sortBy") LinkCardSortBy linkCardSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit, @AuthMember Member member
     ) {
         ListRes<LinkCardSimpleRes> res = linkCardMangeService.getLinkCardList(member,linkCardSortBy, sortOrder, lastId, limit);
+        return BaseResponse.ok(res);
+    }
+
+    @Override
+    @GetMapping("/most-tag")
+    public ResponseEntity<MostTagLinkCardListRes> getMostTagLinkCardList(
+            @RequestParam(name = "sortBy") LinkCardSortBy linkCardSortBy, @RequestParam SortOrder sortOrder, @RequestParam String lastId, @RequestParam int limit, @AuthMember Member member) {
+        MostTagLinkCardListRes res = linkCardMangeService.getMostTagLinkCardList(member, linkCardSortBy, sortOrder, lastId, limit);
         return BaseResponse.ok(res);
     }
 

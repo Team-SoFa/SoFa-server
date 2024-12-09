@@ -2,7 +2,6 @@ package com.sw19.sofa.domain.remind.dto.response;
 
 import com.sw19.sofa.domain.linkcard.entity.LinkCard;
 import com.sw19.sofa.domain.remind.entity.Remind;
-import com.sw19.sofa.global.util.EncryptionUtil;
 
 import java.time.LocalDateTime;
 

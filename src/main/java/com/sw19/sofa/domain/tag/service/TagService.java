@@ -1,6 +1,5 @@
 package com.sw19.sofa.domain.tag.service;
 
-import com.sw19.sofa.domain.tag.dto.response.TagRes;
 import com.sw19.sofa.domain.tag.entity.Tag;
 import com.sw19.sofa.domain.tag.error.TagErrorCode;
 import com.sw19.sofa.domain.tag.repository.TagRepository;
@@ -10,6 +9,7 @@ import com.sw19.sofa.global.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -17,6 +17,24 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TagService {
     private final TagRepository tagRepository;
+
+    @Transactional
+    public List<Tag> createAiTags(List<String> tagNames) {
+        // AI가 생성한 태그명들로 태그 생성
+        return tagNames.stream()
+                .map(name -> Tag.builder()
+                        .name(name)
+                        .build())
+                .map(tagRepository::save)
+                .toList();
+    }
+
+    public TagDto getTagDto(Long tagId) {
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+
+        return new TagDto(tag);
+    }
 
     public List<TagDto> getTagDtoListByIdList(List<Long> tagIdList) {
         if (tagIdList == null || tagIdList.isEmpty()) {

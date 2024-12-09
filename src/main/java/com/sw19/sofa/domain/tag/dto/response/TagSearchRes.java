@@ -11,21 +11,19 @@ public record TagSearchRes (
     @Schema(description = "태그 이름")
     String name,
     @Schema(description = "태그 타입")
-    TagType type,
-    @Schema(description = "맴버 아이디")
-    String memberId
+    TagType type
 ){
 
     public TagSearchRes(Tag tag) {
-        this(tag.getEncryptedId(), tag.getName(), TagType.AI, null);
+        this(tag.getEncryptedId(), tag.getName(), TagType.AI);
     }
 
 
     public TagSearchRes(CustomTagRes customTag) {
-        this(customTag.id(), customTag.name(), TagType.CUSTOM, customTag.memberId());
+        this(customTag.id(), customTag.name(), TagType.CUSTOM);
     }
 
     public TagSearchRes(CustomTag customTag) {
-        this(customTag.getEncryptedId(), customTag.getName(), TagType.CUSTOM, customTag.getMember().getEncryptUserId());
+        this(customTag.getEncryptedId(), customTag.getName(), TagType.CUSTOM);
     }
 }

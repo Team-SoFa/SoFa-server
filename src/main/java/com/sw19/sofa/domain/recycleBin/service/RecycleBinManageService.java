@@ -20,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RecycleBinManageService {
     private final LinkCardService linkCardService;
     private final FolderService folderService;
@@ -34,7 +35,6 @@ public class RecycleBinManageService {
         linkCardService.deleteLinkCard(linkCard);
     }
 
-    @Transactional(readOnly = true)
     public ListRes<RecycleBinLinkCardRes> getLinkCardListInRecycleBin(Member member, RecycleBinSortBy recycleBinSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long lastId = EncryptionUtil.decrypt(encryptLastId);
 
@@ -49,6 +49,7 @@ public class RecycleBinManageService {
                 linkCardListRes.hasNext()
         );
     }
+
     @Transactional
     public void recycle(String encryptLinkCardId, String encryptFolderId) {
         Long linkCardId = EncryptionUtil.decrypt(encryptLinkCardId);
@@ -56,6 +57,12 @@ public class RecycleBinManageService {
 
         Folder folder = folderService.getFolder(folderId);
         linkCardService.editLinkCardFolder(linkCardId, folder);
+    }
+
+    @Transactional
+    public void deleteExpiredLinkCardList() {
+        List<LinkCard> linkCardList = linkCardService.getExpiredLinkCardsInRecycleBin();
+        linkCardService.deleteLinkCardList(linkCardList);
     }
 
     @Transactional

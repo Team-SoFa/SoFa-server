@@ -16,5 +16,4 @@ public interface SettingRepository extends JpaRepository<Setting, Long> {
     default Setting findByMemberOrThrow(Member member) {
         return findByMember(member).orElseThrow(() -> new BusinessException(SETTING_NOT_FOUND));
     }
-    boolean existsByMember(Member member);
 }
