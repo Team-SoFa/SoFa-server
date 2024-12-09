@@ -105,6 +105,8 @@ public class LinkCardMangeService {
                     titleAndSummaryDto.summary()
             );
             articleTagService.addArticleTagListByArticleAndTagListIn(article, tagList);
+
+            articleDto = new ArticleDto(article);
         }
         List<FolderRes> userFolders = folderService.getFolderList(member).folderList().stream()
                 .filter(folder -> !folder.name().equals(Constants.recycleBinName))
