@@ -75,4 +75,26 @@ public class SearchHistoryService {
         List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_TAG_HISTORY, key);
         return history != null ? history : new ArrayList<>();
     }
+
+    @SuppressWarnings("unchecked")
+    public void deleteSearchKeywordHistory(Long memberId, String keyword) {
+        String key = "search:keywords:" + memberId;
+        List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_KEYWORD_HISTORY, key);
+
+        if (history != null) {
+            history.remove(keyword);
+            redisService.save(RedisPrefix.SEARCH_KEYWORD_HISTORY, key, history);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void deleteSearchTagHistory(Long memberId, String tagId) {
+        String key = "search:tags:" + memberId;
+        List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_TAG_HISTORY, key);
+
+        if (history != null) {
+            history.remove(tagId);
+            redisService.save(RedisPrefix.SEARCH_TAG_HISTORY, key, history);
+        }
+    }
 }

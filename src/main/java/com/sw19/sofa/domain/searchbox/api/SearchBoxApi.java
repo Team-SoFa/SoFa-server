@@ -52,4 +52,32 @@ public interface SearchBoxApi {
 
     @Operation(summary = "최근 검색 태그 조회", description = "사용자의 최근 검색 태그 목록을 조회합니다")
     ResponseEntity<List<String>> getRecentSearchTags(@AuthMember Member member);
+
+    @Operation(summary = "검색 키워드 기록 삭제", description = "메인 검색창의 특정 검색 키워드 기록을 삭제합니다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "검색 키워드 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    ResponseEntity<Void> deleteSearchKeyword(
+            @Parameter(description = "삭제할 검색 키워드") String keyword,
+            @Parameter(hidden = true) @AuthMember Member member
+    );
+
+    @Operation(summary = "태그 검색 기록 삭제", description = "태그 검색창의 특정 태그 검색 기록을 삭제합니다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "태그 검색 기록 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    ResponseEntity<Void> deleteSearchTag(
+            @Parameter(description = "삭제할 태그 ID") String tagId,
+            @Parameter(hidden = true) @AuthMember Member member
+    );
 }
