@@ -6,10 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 public record CreateLinkCardBasicInfoReq(
         @NotBlank(message = "링크 주소가 필요합니다.")
         @Schema(description = "링크 주소")
-        String url,
-        @NotBlank(message = "이미지 링크가 필요합니다.")
-        @Schema(description = "이미지 링크")
-        String imageUrl
-
+        String url
 ) {
 }

@@ -42,6 +42,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class LinkCardMangeService {
     private final TagService tagService;
     private final CustomTagService customTagService;
@@ -50,7 +51,7 @@ public class LinkCardMangeService {
     private final ArticleService articleService;
     private final LinkCardTagService linkCardTagService;
     private final ArticleTagService articleTagService;
-    private final AiManageService manageAiService;
+    private final AiManageService aiManageService;
     private final RemindService remindService;
 
     private static final int MAX_RETRIES = 3;
@@ -93,16 +94,15 @@ public class LinkCardMangeService {
             List<Long> tagIdList = articleTagDtoList.stream().map(ArticleTagDto::tagId).toList();
             tagDtoList = tagService.getTagDtoListByIdList(tagIdList);
         } else {
-            titleAndSummaryDto = manageAiService.createTitleAndSummary(req.url());
-            List<String> tagNameList = manageAiService.createTagList(req.url());
+            titleAndSummaryDto = aiManageService.createTitleAndSummary(req.url());
+            List<String> tagNameList = aiManageService.createTagList(req.url());
             List<Tag> tagList = tagService.createAiTags(tagNameList);
             tagDtoList = tagList.stream().map(TagDto::new).toList();
 
             Article article = articleService.addArticle(
                     req.url(),
                     titleAndSummaryDto.title(),
-                    titleAndSummaryDto.summary(),
-                    req.imageUrl()
+                    titleAndSummaryDto.summary()
             );
             articleTagService.addArticleTagListByArticleAndTagListIn(article, tagList);
         }
@@ -113,7 +113,7 @@ public class LinkCardMangeService {
         Folder selectedFolder = null;
 
         if (!userFolders.isEmpty()) {
-            String recommendedFolderName = manageAiService.recommendFolder(
+            String recommendedFolderName = aiManageService.recommendFolder(
                     titleAndSummaryDto.summary(),
                     userFolders.stream().map(FolderRes::name).toList()
             );
@@ -121,7 +121,7 @@ public class LinkCardMangeService {
         }
 
         if (selectedFolder == null) {
-            String defaultFolderName = manageAiService.recommendFolder(
+            String defaultFolderName = aiManageService.recommendFolder(
                     titleAndSummaryDto.summary(),
                     Constants.DEFAULT_FOLDER_CATEGORIES
             );
@@ -140,7 +140,8 @@ public class LinkCardMangeService {
                 titleAndSummaryDto.title(),
                 titleAndSummaryDto.summary(),
                 linkCardTagDtoList,
-                linkCardFolderDto
+                linkCardFolderDto,
+                articleDto.imageUrl()
         );
     }
 
@@ -171,7 +172,6 @@ public class LinkCardMangeService {
 
     }
 
-    @Transactional(readOnly = true)
     public ListRes<LinkCardSimpleRes> getLinkCardList(Member member, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long lastId = encryptLastId.equals("0") ? 0 : EncryptionUtil.decrypt(encryptLastId);
         List<Long> folderIdList = folderService.getFolderList(member).folderList().stream()
@@ -181,7 +181,6 @@ public class LinkCardMangeService {
         return linkCardListInfiniteScroll(folderIdList, linkCardSortBy, sortOrder, limit, lastId);
     }
 
-    @Transactional(readOnly = true)
     public MostTagLinkCardListRes getMostTagLinkCardList(Member member, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long lsatId = EncryptionUtil.decrypt(encryptLastId);
 
@@ -201,7 +200,6 @@ public class LinkCardMangeService {
         return new MostTagLinkCardListRes(tagDto, data, limit, linkCardListRes.size(), linkCardListRes.hasNext());
     }
 
-    @Transactional(readOnly = true)
     public ListRes<LinkCardSimpleRes> getLinkCardListByFolder(String encryptFolderId, LinkCardSortBy linkCardSortBy, SortOrder sortOrder, String encryptLastId, int limit) {
         Long folderId = EncryptionUtil.decrypt(encryptFolderId);
         Long lastId = encryptLastId.equals("0") ? 0 : EncryptionUtil.decrypt(encryptLastId);

@@ -3,6 +3,7 @@ package com.sw19.sofa.domain.article.service;
 import com.sw19.sofa.domain.article.entity.Article;
 import com.sw19.sofa.domain.article.error.ArticleErrorCode;
 import com.sw19.sofa.domain.article.repository.ArticleRepository;
+import com.sw19.sofa.global.util.ImageExtractor;
 import com.sw19.sofa.global.common.dto.ArticleDto;
 import com.sw19.sofa.global.error.code.CommonErrorCode;
 import com.sw19.sofa.global.error.exception.BusinessException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final EntityManager entityManager;
+    private final ImageExtractor imageExtractor;
 
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY = 1000;
@@ -39,7 +41,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public Article addArticle(String url, String title, String summary, String imageUrl) {
+    public Article addArticle(String url, String title, String summary) {
+        String imageUrl = imageExtractor.extractMainImage(url);
+
         int attempts = 0;
         while (attempts < MAX_RETRIES) {
             try {
