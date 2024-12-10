@@ -54,4 +54,24 @@ public class SearchBoxController implements SearchBoxApi {
     public ResponseEntity<List<TagSearchRes>> searchTags(@RequestParam String keyword) {
         return ResponseEntity.ok(searchBoxService.searchTags(keyword));
     }
+
+    @Override
+    @DeleteMapping("/history/keywords/{keyword}")
+    public ResponseEntity<Void> deleteSearchKeyword(
+            @PathVariable String keyword,
+            @AuthMember Member member
+    ) {
+        searchHistoryService.deleteSearchKeywordHistory(member.getId(), keyword);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @DeleteMapping("/history/tags/{tagId}")
+    public ResponseEntity<Void> deleteSearchTag(
+            @PathVariable String tagId,
+            @AuthMember Member member
+    ) {
+        searchHistoryService.deleteSearchTagHistory(member.getId(), tagId);
+        return ResponseEntity.ok().build();
+    }
 }
