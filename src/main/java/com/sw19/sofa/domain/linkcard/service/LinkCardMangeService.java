@@ -10,6 +10,7 @@ import com.sw19.sofa.domain.folder.service.FolderService;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardFolderDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagDto;
 import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleDto;
+import com.sw19.sofa.domain.linkcard.dto.LinkCardTagSimpleEncryptDto;
 import com.sw19.sofa.domain.linkcard.dto.enums.LinkCardSortBy;
 import com.sw19.sofa.domain.linkcard.dto.request.CreateLinkCardBasicInfoReq;
 import com.sw19.sofa.domain.linkcard.dto.request.LinkCardInfoEditReq;
@@ -217,10 +218,12 @@ public class LinkCardMangeService {
     }
 
     @Transactional
-    public LinkCardTagListRes addLinkCardTag(String encryptId, List<LinkCardTagSimpleDto> tagList) {
+    public LinkCardTagListRes addLinkCardTag(String encryptId, List<LinkCardTagSimpleEncryptDto> tagList) {
         Long linkCardId = EncryptionUtil.decrypt(encryptId);
         LinkCard linkCard = linkCardService.getLinkCard(linkCardId);
-        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.addLinkCardTagList(linkCard, tagList).stream().map(LinkCardTagSimpleDto::new).toList();
+
+        List<LinkCardTagSimpleDto> req = tagList.stream().map(LinkCardTagSimpleDto::new).toList();
+        List<LinkCardTagSimpleDto> linkCardTagSimpleDtoList = linkCardTagService.addLinkCardTagList(linkCard, req).stream().map(LinkCardTagSimpleDto::new).toList();
 
         List<LinkCardTagDto> linkCardTagDtoList = getLinkCardTagDtoList(linkCardTagSimpleDtoList);
 
