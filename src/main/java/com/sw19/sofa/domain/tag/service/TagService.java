@@ -21,12 +21,11 @@ public class TagService {
     @Transactional
     public List<Tag> createAiTags(List<String> tagNames) {
         // AI가 생성한 태그명들로 태그 생성
-        return tagNames.stream()
+        List<Tag> tagList = tagNames.stream()
                 .map(name -> Tag.builder()
                         .name(name)
-                        .build())
-                .map(tagRepository::save)
-                .toList();
+                        .build()).toList();
+        return tagRepository.saveAll(tagList);
     }
 
     public TagDto getTagDto(Long tagId) {
