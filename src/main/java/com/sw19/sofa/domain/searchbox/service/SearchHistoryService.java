@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sw19.sofa.global.common.constants.Constants.SEARCH_KEYWORDS_PREFIX;
+import static com.sw19.sofa.global.common.constants.Constants.SEARCH_TAGS_PREFIX;
+
 @Service
 @RequiredArgsConstructor
 public class SearchHistoryService {
@@ -16,7 +19,7 @@ public class SearchHistoryService {
 
     @SuppressWarnings("unchecked")
     public List<String> addSearchKeywordHistory(Long memberId, String keyword) {
-        String key = "search:keywords:" + memberId;
+        String key = SEARCH_KEYWORDS_PREFIX + memberId;
         List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_KEYWORD_HISTORY, key);
         if (history == null) {
             history = new ArrayList<>();
@@ -35,7 +38,7 @@ public class SearchHistoryService {
 
     @SuppressWarnings("unchecked")
     public List<String> addSearchTagHistory(Long memberId, String tagName) {
-        String key = "search:tags:" + memberId;
+        String key = SEARCH_TAGS_PREFIX + memberId;
         List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_TAG_HISTORY, key);
         if (history == null) {
             history = new ArrayList<>();
@@ -63,14 +66,14 @@ public class SearchHistoryService {
     }
 
     public List<String> getSearchKeywordHistory(Long memberId) {
-        String key = "search:keywords:" + memberId;
+        String key = SEARCH_KEYWORDS_PREFIX + memberId;
         @SuppressWarnings("unchecked")
         List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_KEYWORD_HISTORY, key);
         return history != null ? history : new ArrayList<>();
     }
 
     public List<String> getSearchTagHistory(Long memberId) {
-        String key = "search:tags:" + memberId;
+        String key = SEARCH_TAGS_PREFIX + memberId;
         @SuppressWarnings("unchecked")
         List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_TAG_HISTORY, key);
         return history != null ? history : new ArrayList<>();
@@ -78,7 +81,7 @@ public class SearchHistoryService {
 
     @SuppressWarnings("unchecked")
     public void deleteSearchKeywordHistory(Long memberId, String keyword) {
-        String key = "search:keywords:" + memberId;
+        String key = SEARCH_KEYWORDS_PREFIX + memberId;
         List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_KEYWORD_HISTORY, key);
 
         if (history != null) {
@@ -89,7 +92,7 @@ public class SearchHistoryService {
 
     @SuppressWarnings("unchecked")
     public void deleteSearchTagHistory(Long memberId, String tagId) {
-        String key = "search:tags:" + memberId;
+        String key = SEARCH_TAGS_PREFIX + memberId;
         List<String> history = (List<String>) redisService.get(RedisPrefix.SEARCH_TAG_HISTORY, key);
 
         if (history != null) {

@@ -14,6 +14,10 @@ public class Constants {
     public static final int batchConcurrencyLimit = 5;
     public static final int batchChunkSize = 10;
 
+    //search History
+    public static final String SEARCH_KEYWORDS_PREFIX = "search:keywords:";
+    public static final String SEARCH_TAGS_PREFIX = "search:tags:";
+
     //AI
     public static final List<String> DEFAULT_FOLDER_CATEGORIES = List.of(
             "CS",
