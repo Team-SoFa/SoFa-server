@@ -52,7 +52,7 @@ public class JwtTokenProvider {
     }
 
     public String createRefreshToken(String encryptId) {
-        String token = createJwtToken(encryptId, accessTokenValidTime, REFRESH_TOKEN_TYPE.getValue());
+        String token = createJwtToken(encryptId, refreshTokenValidTime, REFRESH_TOKEN_TYPE.getValue());
 
         redisService.save(REFRESH_TOKEN, encryptId, token, REFRESH_TOKEN.getDuration());
         return token;
