@@ -105,7 +105,6 @@ public class JwtTokenProvider {
     }
 
     public void validateRefreshToken(String refreshToken, String userId) {
-        validateToken(refreshToken);
         String tokenType = getBody(refreshToken).get(TOKEN_TYPE.getValue(), String.class);
 
         if(!tokenType.equals(REFRESH_TOKEN_TYPE.getValue())){
