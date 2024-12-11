@@ -52,7 +52,7 @@ public class JwtTokenProvider {
     }
 
     public String createRefreshToken(String encryptId) {
-        String token = createJwtToken(encryptId, accessTokenValidTime, REFRESH_TOKEN_TYPE.getValue());
+        String token = createJwtToken(encryptId, refreshTokenValidTime, REFRESH_TOKEN_TYPE.getValue());
 
         redisService.save(REFRESH_TOKEN, encryptId, token, REFRESH_TOKEN.getDuration());
         return token;
@@ -105,7 +105,6 @@ public class JwtTokenProvider {
     }
 
     public void validateRefreshToken(String refreshToken, String userId) {
-        validateToken(refreshToken);
         String tokenType = getBody(refreshToken).get(TOKEN_TYPE.getValue(), String.class);
 
         if(!tokenType.equals(REFRESH_TOKEN_TYPE.getValue())){

@@ -163,8 +163,12 @@ public class GoogleOAuth2Service {
     public TokenRes refreshToken(String refreshToken) {
 
         refreshToken = refreshToken.substring(7);
+
+        jwtTokenProvider.validateToken(refreshToken);
+
         String encryptUserId = jwtTokenProvider.getUserIdFromToken(refreshToken);
         jwtTokenProvider.validateRefreshToken(refreshToken, encryptUserId);
+
         String newAccessToken = jwtTokenProvider.createAccessToken(encryptUserId);
 
         return new TokenRes(newAccessToken, refreshToken);
